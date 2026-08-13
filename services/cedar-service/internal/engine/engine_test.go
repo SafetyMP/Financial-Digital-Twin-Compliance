@@ -150,6 +150,68 @@ func TestDORA_R001_AllowNonCritical(t *testing.T) {
 	}
 }
 
+func TestEvaluateDeniesOnDiagnosticTypeError(t *testing.T) {
+	src := policyDir(t)
+	dst := t.TempDir()
+	entries, err := os.ReadDir(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		data, err := os.ReadFile(filepath.Join(src, entry.Name()))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(dst, entry.Name()), data, 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	// String.contains is a Cedar type error; leftover permit must not Allow (FO-010).
+	typeErrorPolicy := []byte(`permit(
+  principal,
+  action == DigitalTwin::Action::"view",
+  resource
+);
+forbid(
+  principal,
+  action == DigitalTwin::Action::"view",
+  resource
+)
+when {
+  resource.tenantId.contains("0000")
+};
+`)
+	if err := os.WriteFile(filepath.Join(dst, "int-r003.cedar"), typeErrorPolicy, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	eng, err := engine.New(dst)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := eng.Evaluate(engine.EvaluateRequest{
+		RuleCode:  "INT-R003",
+		Principal: engine.PrincipalInput{ID: "u1", Roles: []string{"Reporter"}},
+		Resource: engine.ResourceInput{
+			Type: "TwinData",
+			ID:   "t1",
+			Attrs: map[string]any{
+				"sensitivity": "high",
+				"tenantId":    "00000000-0000-0000-0000-000000000001",
+			},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Outcome != "Deny" {
+		t.Fatalf("outcome = %q want Deny when evaluation diagnostics include type errors", got.Outcome)
+	}
+}
+
 func TestUnknownRuleCode(t *testing.T) {
 	t.Parallel()
 	eng := newEngine(t)

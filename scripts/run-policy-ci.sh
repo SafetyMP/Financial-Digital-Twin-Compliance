@@ -12,9 +12,16 @@ if command -v cedar >/dev/null 2>&1; then
     echo "no Cedar policies found under policies/cedar/" >&2
     exit 1
   fi
+  SCHEMA="policies/cedar/schema.cedarschema"
+  if [[ ! -f "$SCHEMA" ]]; then
+    echo "missing Cedar schema ${SCHEMA}" >&2
+    exit 1
+  fi
   for policy in "${cedar_policies[@]}"; do
     echo "cedar check-parse -p ${policy}"
     cedar check-parse -p "${policy}"
+    echo "cedar validate --schema ${SCHEMA} --policies ${policy}"
+    cedar validate --schema "${SCHEMA}" --policies "${policy}"
   done
 else
   if [[ "${CI:-}" == "true" || "${GITHUB_ACTIONS:-}" == "true" ]]; then

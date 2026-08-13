@@ -159,11 +159,13 @@ func (e *Engine) Evaluate(req EvaluateRequest) (decision.RuleDecision, error) {
 	authDecision, diag := cedar.Authorize(ps, entities, cedarReq)
 	outcome := "Deny"
 	rationale := denyRationale(code)
-	if authDecision == cedar.Allow {
+	// Diagnostic errors must fail closed (FO-010). cedar-policy/cedar-go can
+	// still report Allow when a typed forbid is discarded (GHSA-jqc6-6pxv-g2ww).
+	if len(diag.Errors) > 0 {
+		rationale = diag.Errors[0].Message
+	} else if authDecision == cedar.Allow {
 		outcome = "Allow"
 		rationale = fmt.Sprintf("%s evaluation permitted", code)
-	} else if len(diag.Errors) > 0 {
-		rationale = diag.Errors[0].Message
 	}
 	return decision.NewDecision(code, outcome, rationale, policyVersion, req), nil
 }
