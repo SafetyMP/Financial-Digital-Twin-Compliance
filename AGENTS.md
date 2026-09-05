@@ -1,6 +1,70 @@
 # AGENTS.md
 
-Operational contract for coding agents working in this repository.
+Community contract for humans and coding agents. Nested service contracts stay
+in [`services/*/AGENTS.md`](services/) — do not flatten or delete them.
+
+## What this is
+
+**Supervisory twin composition:** Debezium CDC + Flink CEP + Cedar/Zen + XBRL/SDMX + immudb.
+
+A runnable financial-compliance digital-twin reference (Kafka twin state, policy
+evaluation, regulatory reporting, hardening overlay, tamper-evident audit). It is
+not a certified Basel engine, not commercial XBRL/SDMX parity, and not a
+multi-tenant supervisory SaaS.
+
+## Community commands
+
+| Command | Purpose |
+|---------|---------|
+| `./scripts/harness/verify.sh` | Definition of Done (static + CECT hermetic gates; no Docker smoke) |
+| `./scripts/verify.sh` | Wrapper → harness verify |
+| `./scripts/smoke-test.sh` … `smoke-test-phase4.sh` | Phase 1–4 integration (Compose stack) |
+| `./scripts/check-cutting-edge-claims.sh` | Marketing-claim lint (wired in verify) |
+
+Full smoke, worktree, and eval commands: [Commands](#commands) below.
+
+## Stack and layout
+
+| Path | Purpose |
+|------|---------|
+| `services/*/AGENTS.md` | Per-service agent contracts (keep nested) |
+| `jobs/compliance-cep/` | Flink CEP job (Java) |
+| `policies/` | Cedar (`.cedar`) and Zen (`.zen`) bundles |
+| `apps/*` | Next.js consoles (alert, audit, graph, simulation, report) |
+| `docs/` | Architecture, ADRs, phase specs |
+| `scripts/harness/` | Verify + adversarial oracles |
+
+## Always / Ask first / Never
+
+**Always**
+
+- Load this file and the scoped `services/<svc>/AGENTS.md` before editing a service
+- Run `./scripts/harness/verify.sh` (or the touched package tests) before claiming done
+- Keep the composition: CDC → Kafka → Flink CEP → Cedar/Zen → XBRL/SDMX → immudb
+
+**Ask first**
+
+- Replacing Cedar or GoRules Zen
+- Claiming commercial Basel / XBRL suite parity
+- Exposing Compose ports or treating the dev stack as production
+
+**Never**
+
+- Use real customer or PII financial data in fixtures or demos
+- Auto-approve policy exceptions or weaken smoke / claim-lint gates
+- Write `cutting-edge OSS supervisory` marketing (claim lint fails closed)
+- Flatten nested `services/*/AGENTS.md` into this file
+- Bump Go, Java, or Next unless a dedicated dependency PR says so
+
+This root file is the community contract, not a factory Site-contract overlay.
+Corp-site id `digital-twin` and digest-bound gates live in `.corp-harness/` and
+[corporate-site-harness](https://github.com/SafetyMP/corporate-site-harness).
+
+---
+
+# Operational contract
+
+Operational notes for coding agents working in this repository.
 
 ## Current phase
 

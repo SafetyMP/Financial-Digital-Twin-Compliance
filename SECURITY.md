@@ -10,11 +10,11 @@
 
 Report security issues against the current `main` branch unless you are running a specific release tag.
 
-## Reporting a vulnerability
+## Reporting a Vulnerability
 
 If you discover a security issue, **do not** open a public GitHub issue.
 
-Contact the maintainers privately through [GitHub Security Advisories](https://github.com/SafetyMP/Digital-Twin-Compliance/security/advisories/new) on this repository, or reach out to [SafetyMP](https://github.com/SafetyMP) directly.
+Contact the maintainers privately through [GitHub Security Advisories](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/security/advisories/new) on this repository, or reach out to [SafetyMP](https://github.com/SafetyMP) directly. See also [`.github/SECURITY.md`](.github/SECURITY.md).
 
 Please include:
 
