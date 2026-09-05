@@ -2,6 +2,8 @@
 
 Open-source **supervisory twin composition** (CDC + Flink CEP + Cedar/Zen + XBRL/SDMX + immudb): event-driven financial-compliance twin state with CDC ingestion, stream processing, policy evaluation, regulatory reporting, hardening overlays, and a tamper-evident audit ledger.
 
+> **In the SafetyMP thesis:** Cedar/Zen and immudb gate **financial events**, not agents performing supervisory work. Live evals in `evals/` score coding-agent sessions, which is a separate path. See the [portfolio README](https://github.com/SafetyMP/SafetyMP).
+
 **Maintainers:** [SafetyMP](https://github.com/SafetyMP) · **License:** [Apache License 2.0](LICENSE)
 
 [![CI](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/ci.yml/badge.svg)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/ci.yml)
