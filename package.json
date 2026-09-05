@@ -3,7 +3,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/SafetyMP/Digital-Twin-Compliance.git"
+    "url": "https://github.com/SafetyMP/Financial-Digital-Twin-Compliance.git"
   },
   "type": "module",
   "scripts": {
