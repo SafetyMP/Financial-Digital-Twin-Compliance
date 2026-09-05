@@ -1,0 +1,24 @@
+# Financial Digital Twin Compliance
+
+> Supervisory twin composition (CDC + Flink CEP + Cedar/Zen + XBRL/SDMX + immudb). Apache-2.0 reference architecture — not a certified Basel engine or commercial XBRL/SDMX product.
+
+## Start
+
+- [README.md](README.md): clone, phase journeys, APIs
+- [AGENTS.md](AGENTS.md): community contract, verify, never-do
+- [SECURITY.md](SECURITY.md): supported versions and vulnerability reporting
+- [.github/SECURITY.md](.github/SECURITY.md): `## Reporting a Vulnerability` pointer
+
+## Architecture
+
+- [docs/architecture.md](docs/architecture.md): C4 and component map
+- [docs/data-flow.md](docs/data-flow.md): envelopes, topics, idempotency
+- [docs/phase-journeys.md](docs/phase-journeys.md): Phase 1–7 journeys
+- [docs/explainability.md](docs/explainability.md): decision rationale
+- [specs/threat-model.yaml](specs/threat-model.yaml): threat model
+- [docs/adr/](docs/adr/): architecture decisions
+
+## Verify
+
+- [scripts/harness/verify.sh](scripts/harness/verify.sh): Definition of Done
+- [CONTRIBUTING.md](CONTRIBUTING.md): contributor guide

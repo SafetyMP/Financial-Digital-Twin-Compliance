@@ -1,16 +1,16 @@
-# Digital Twin Compliance Platform
+# Financial Digital Twin Compliance
 
-Open-source **cutting-edge OSS supervisory** financial-compliance digital-twin reference: event-driven twin state with CDC ingestion, stream processing, policy evaluation, regulatory reporting, hardening overlays, and a tamper-evident audit ledger.
+Open-source **supervisory twin composition** (CDC + Flink CEP + Cedar/Zen + XBRL/SDMX + immudb): event-driven financial-compliance twin state with CDC ingestion, stream processing, policy evaluation, regulatory reporting, hardening overlays, and a tamper-evident audit ledger.
 
 **Maintainers:** [SafetyMP](https://github.com/SafetyMP) · **License:** [Apache License 2.0](LICENSE)
 
-[![CI](https://github.com/SafetyMP/Digital-Twin-Compliance/actions/workflows/ci.yml/badge.svg)](https://github.com/SafetyMP/Digital-Twin-Compliance/actions/workflows/ci.yml)
-[![Schema Compatibility](https://github.com/SafetyMP/Digital-Twin-Compliance/actions/workflows/schema-compat.yml/badge.svg)](https://github.com/SafetyMP/Digital-Twin-Compliance/actions/workflows/schema-compat.yml)
-[![Docker Publish](https://github.com/SafetyMP/Digital-Twin-Compliance/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/SafetyMP/Digital-Twin-Compliance/actions/workflows/docker-publish.yml)
-[![CodeQL](https://github.com/SafetyMP/Digital-Twin-Compliance/actions/workflows/codeql.yml/badge.svg)](https://github.com/SafetyMP/Digital-Twin-Compliance/actions/workflows/codeql.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/SafetyMP/Digital-Twin-Compliance/badge)](https://scorecard.dev/viewer/?uri=github.com/SafetyMP/Digital-Twin-Compliance)
-[![Release](https://img.shields.io/github/v/release/SafetyMP/Digital-Twin-Compliance)](https://github.com/SafetyMP/Digital-Twin-Compliance/releases)
-[![License](https://img.shields.io/github/license/SafetyMP/Digital-Twin-Compliance)](LICENSE)
+[![CI](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/ci.yml/badge.svg)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/ci.yml)
+[![Schema Compatibility](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/schema-compat.yml/badge.svg)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/schema-compat.yml)
+[![Docker Publish](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/docker-publish.yml)
+[![CodeQL](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/codeql.yml/badge.svg)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/SafetyMP/Financial-Digital-Twin-Compliance/badge)](https://scorecard.dev/viewer/?uri=github.com/SafetyMP/Financial-Digital-Twin-Compliance)
+[![Release](https://img.shields.io/github/v/release/SafetyMP/Financial-Digital-Twin-Compliance)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/releases)
+[![License](https://img.shields.io/github/license/SafetyMP/Financial-Digital-Twin-Compliance)](LICENSE)
 
 <p align="center">
   <img src="docs/assets/demo.gif" alt="Digital Twin demo — Alert, Audit, Graph, Simulation, and Report consoles with shared app switcher" width="900" />
@@ -31,7 +31,7 @@ Open-source **cutting-edge OSS supervisory** financial-compliance digital-twin r
 **Path A — full platform (cold start, ~10–40 min):**
 
 ```bash
-git clone https://github.com/SafetyMP/Digital-Twin-Compliance.git && cd Digital-Twin-Compliance
+git clone https://github.com/SafetyMP/Financial-Digital-Twin-Compliance.git && cd Financial-Digital-Twin-Compliance
 cp .env.example .env
 docker compose -f docker-compose.dev.yml up -d --wait && ./scripts/seed.sh
 ```
@@ -105,7 +105,7 @@ Phases 1–4 smoke in CI. Phases 5–7 + `./scripts/harness/verify.sh` are local
 | Cutting-edge analytics | Smoke-gated | [ADR-013](docs/adr/013-phase7-cutting-edge-foundation.md); contagion is on-demand, not a scheduled stream |
 | GHCR deploy (12 images) | Stable | Phase 1–4 via `docker-compose.deploy.yml` |
 
-Release history: [CHANGELOG.md](CHANGELOG.md) · [GitHub Releases](https://github.com/SafetyMP/Digital-Twin-Compliance/releases)
+Release history: [CHANGELOG.md](CHANGELOG.md) · [GitHub Releases](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/releases)
 
 ## Architecture
 
@@ -159,8 +159,8 @@ Run the full platform locally (~10–40 minutes cold start depending on image pu
 ### 1. Ingestion & twin
 
 ```bash
-git clone https://github.com/SafetyMP/Digital-Twin-Compliance.git
-cd Digital-Twin-Compliance
+git clone https://github.com/SafetyMP/Financial-Digital-Twin-Compliance.git
+cd Financial-Digital-Twin-Compliance
 
 cp .env.example .env
 
@@ -479,8 +479,8 @@ Local stacks use **mock principals only** — no production auth middleware. Def
 
 ## Community
 
-- **Bugs & features:** [GitHub Issues](https://github.com/SafetyMP/Digital-Twin-Compliance/issues/new/choose)
-- **Security:** [Private advisories](https://github.com/SafetyMP/Digital-Twin-Compliance/security/advisories/new) — see [SECURITY.md](SECURITY.md)
+- **Bugs & features:** [GitHub Issues](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/issues/new/choose)
+- **Security:** [Private advisories](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/security/advisories/new) — see [SECURITY.md](SECURITY.md)
 - **Conduct:** [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 - **Governance:** Maintained by SafetyMP; contributions via PR welcome on `main`
 
