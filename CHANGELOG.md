@@ -20,6 +20,7 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Security alert patch: PyJWT 2.13.0, kafka-python 2.3.2, lxml 6.1.0, pytest 9.0.3, grpc 1.83.1, moby/go-archive 0.3.0, nanoid 3.3.18, postcss 8.5.26; pin oidc-edge/reporting-service images to `python:3.11-slim` digest; cap audit-chain concat allocation to close CodeQL overflow
 - Dependency refresh: Next.js 15.5.24 (alert-console, audit-explorer), @types/node 26.4.0, jackson-bom 2.22.2, junit-jupiter 6.1.3, testcontainers-go 0.44.0; GitHub Actions pinned to immutable SHAs (CodeQL 4.37.9, setup-buildx 4.3.0, setup-java 6.0.0)
 - Public README / ROADMAP / github-setup metadata aligned with Phase 5–7 delivery
 - `docker-compose.dev.yml` wires reporting-service and related deps; hardening via `docker-compose.hardening.yml`

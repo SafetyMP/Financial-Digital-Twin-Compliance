@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math"
 	"sort"
 
 	"github.com/digital-twin/platform/services/audit-service/internal/events"
@@ -28,10 +29,21 @@ func canonicalConcat(payload, metadata json.RawMessage) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("canonical metadata: %w", err)
 	}
-	out := make([]byte, 0, len(payloadCanon)+len(metadataCanon))
+	size, err := concatAllocSize(len(payloadCanon), len(metadataCanon))
+	if err != nil {
+		return nil, err
+	}
+	out := make([]byte, 0, size)
 	out = append(out, payloadCanon...)
 	out = append(out, metadataCanon...)
 	return out, nil
+}
+
+func concatAllocSize(a, b int) (int, error) {
+	if a < 0 || b < 0 || a > math.MaxInt-b {
+		return 0, fmt.Errorf("canonical concat size overflow: %d + %d", a, b)
+	}
+	return a + b, nil
 }
 
 func canonicalJSON(raw json.RawMessage) ([]byte, error) {
