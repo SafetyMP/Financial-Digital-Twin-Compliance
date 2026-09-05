@@ -2,10 +2,26 @@ package chain
 
 import (
 	"encoding/json"
+	"math"
 	"testing"
 
 	"github.com/digital-twin/platform/services/audit-service/internal/events"
 )
+
+func TestConcatAllocSizeRejectsOverflow(t *testing.T) {
+	t.Parallel()
+
+	if _, err := concatAllocSize(math.MaxInt, 1); err == nil {
+		t.Fatal("expected overflow error")
+	}
+	size, err := concatAllocSize(4, 8)
+	if err != nil {
+		t.Fatalf("concatAllocSize: %v", err)
+	}
+	if size != 12 {
+		t.Fatalf("size = %d", size)
+	}
+}
 
 func TestPayloadHashDeterministic(t *testing.T) {
 	t.Parallel()
