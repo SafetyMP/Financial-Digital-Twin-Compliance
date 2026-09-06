@@ -3,7 +3,7 @@ module github.com/digital-twin/platform/services/audit-service
 go 1.25.8
 
 require (
-	github.com/codenotary/immudb v1.11.1
+	github.com/codenotary/immudb v1.11.2
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.10.0
 	github.com/segmentio/kafka-go v0.4.51

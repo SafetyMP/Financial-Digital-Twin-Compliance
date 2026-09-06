@@ -31,8 +31,8 @@ github.com/cockroachdb/redact v1.0.8 h1:8QG/764wK+vmEYoOlfobpe12EQcS81ukx/a4hdVM
 github.com/cockroachdb/redact v1.0.8/go.mod h1:BVNblN9mBWFyMyqK1k3AAiSxhvhfK2oOZZ2lK+dpvRg=
 github.com/cockroachdb/sentry-go v0.6.1-cockroachdb.2 h1:IKgmqgMQlVJIZj19CdocBeSfSaiCbEBZGKODaixqtHM=
 github.com/cockroachdb/sentry-go v0.6.1-cockroachdb.2/go.mod h1:8BT+cPK6xvFOcRlk0R8eg+OTkcqI6baNH4xAkpiYVvQ=
-github.com/codenotary/immudb v1.11.1 h1:GwflML04a7F5laGDinTHITE/3xkUZXwdG45nQtUqN0k=
-github.com/codenotary/immudb v1.11.1/go.mod h1:sNMlCqdfh/MSWB9/TaR5nMbYjg32njBIccZDgDhk7yI=
+github.com/codenotary/immudb v1.11.2 h1:tTF6/XpSo2kZw6N/YuRgLIUJ5MsEoEUmzffwvOYFy80=
+github.com/codenotary/immudb v1.11.2/go.mod h1:dHBO+QnfsU0/R6aI7WDJ49br++su/tZMqrdD2IZDKqY=
 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
