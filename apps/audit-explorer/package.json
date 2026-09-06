@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@digital-twin/console-shell": "file:../../packages/console-shell",
-    "next": "15.5.24",
+    "next": "15.5.25",
     "react": "19.2.7",
     "react-dom": "19.2.7"
   },
