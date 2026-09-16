@@ -486,3 +486,9 @@ Measure session efficiency separately with `./scripts/token-efficiency.sh --stri
 - [docs/architecture.md](docs/architecture.md) — C4 and component map
 - [docs/domain-model.md](docs/domain-model.md) — Entities and personas
 - [docs/adr/](docs/adr/) — Architecture decisions
+
+## Coding standards (September 2026)
+
+Path-specific Copilot instructions: [`.github/instructions/`](.github/instructions/).
+Repository-wide Copilot file: [`.github/copilot-instructions.md`](.github/copilot-instructions.md).
+Copilot code review skill: [`.github/skills/code-review/SKILL.md`](.github/skills/code-review/SKILL.md).

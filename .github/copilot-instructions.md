@@ -20,3 +20,7 @@ Debezium CDC + Flink CEP + Cedar/Zen + XBRL/SDMX + immudb.
 
 Read [AGENTS.md](../AGENTS.md) before editing. Security reports:
 [SECURITY.md](SECURITY.md) (`## Reporting a Vulnerability`).
+
+## Coding standards
+
+Follow path-specific files in [`.github/instructions/`](instructions/). Copilot code review loads [`.github/skills/code-review/`](skills/code-review/).

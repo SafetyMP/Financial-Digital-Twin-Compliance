@@ -22,3 +22,6 @@
 
 - [scripts/harness/verify.sh](scripts/harness/verify.sh): Definition of Done
 - [CONTRIBUTING.md](CONTRIBUTING.md): contributor guide
+- [.github/copilot-instructions.md](.github/copilot-instructions.md): repository-wide Copilot coding standards
+- [.github/instructions/](.github/instructions/): path-specific Copilot coding standards (September 2026)
+- [.github/skills/code-review/SKILL.md](.github/skills/code-review/SKILL.md): Copilot code review skill
