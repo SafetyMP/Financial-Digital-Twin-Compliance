@@ -556,7 +556,9 @@ services:
       NEXT_PUBLIC_REPORT_CONSOLE_URL: http://localhost:3005
 
   minio:
-    image: minio/minio:latest
+    # Official minio/minio Hub images are source-only / pull-denied (2025-10).
+    # Last CVE-patched community rebuild that GitHub Actions can pull anonymously.
+    image: coollabsio/minio:RELEASE.2025-10-15T17-29-55Z
     command: server /data --console-address ":9001"
     ports:
       - "9000:9000"
