@@ -1,8 +1,12 @@
 # Financial Digital Twin Compliance
 
-Open-source **supervisory twin composition** (CDC + Flink CEP + Cedar/Zen + XBRL/SDMX + immudb): event-driven financial-compliance twin state with CDC ingestion, stream processing, policy evaluation, regulatory reporting, hardening overlays, and a tamper-evident audit ledger.
+One path runs: a mock core-banking payment through Debezium, a Flink streaming job, a Cedar decision, and an immudb audit entry.
 
-> **Permit rule:** Cedar/Zen decide on **financial events**, not on an agent filing the report. Coding-agent evals in `evals/` are a separate path. Same instinct: [SafetyMP](https://github.com/SafetyMP/SafetyMP).
+The Flink job (`jobs/compliance-cep`) is per-record streaming. Each Kafka source uses `WatermarkStrategy.noWatermarks()`. `jobs/compliance-cep/pom.xml` depends on `flink-streaming-java`. It has no `flink-cep` artifact. Cedar is `cedar-go` (`github.com/cedar-policy/cedar-go` in `services/cedar-service`). immudb stores an application hash: `services/audit-service` writes the entry and the chain head with `Set` and reads them with `Get`, not `VerifiedGet`.
+
+`services/reporting-service` is a local-name fixture. Its validator checks XML local names with `lxml`. It is not part of the running path. Flink CEP, XBRL, and SDMX are not part of this path.
+
+> **Permit rule:** Cedar (`cedar-go`) decides on **financial events**, not on an agent filing the report. Coding-agent evals in `evals/` are a separate path. Same instinct: [SafetyMP](https://github.com/SafetyMP/SafetyMP).
 
 **Maintainers:** [SafetyMP](https://github.com/SafetyMP) · **License:** [Apache License 2.0](LICENSE)
 
@@ -30,28 +34,22 @@ Open-source **supervisory twin composition** (CDC + Flink CEP + Cedar/Zen + XBRL
 
 ## TL;DR
 
-**Path A — full platform (cold start, ~10–40 min):**
+Run that payment path. A cold Compose start is about 10–40 minutes:
 
 ```bash
 git clone https://github.com/SafetyMP/Financial-Digital-Twin-Compliance.git && cd Financial-Digital-Twin-Compliance
 cp .env.example .env
 docker compose -f docker-compose.dev.yml up -d --wait && ./scripts/seed.sh
+./scripts/register-schemas.sh && ./scripts/register-debezium-connector.sh
+docker compose -f docker-compose.dev.yml restart state-service
+./scripts/smoke-test.sh && ./scripts/submit-flink-job.sh && ./scripts/smoke-test-phase3.sh
 ```
 
-Then walk [phase journeys](docs/phase-journeys.md) via [Quick start](#quick-start) (Phases 1–5 smokes; Phase 6–7 overlay + harness when needed). Consoles share an app switcher on ports `3000`–`3005`.
+`./scripts/smoke-test.sh` checks Debezium into twin state. `./scripts/smoke-test-phase3.sh` calls the Cedar (`cedar-go`) decision and checks the immudb audit entry. It sends the mock payment burst when a fresh alert audit is not already present. `./scripts/verify-state-twin-pipeline.sh` checks that same stack. It is not a second product.
 
-**Path B — policy + audit demo (warm stack, ~5 min):** [docs/demo-phase3.md](docs/demo-phase3.md)
+`services/graph-service` (Neo4j), `services/simulation-service`, and `services/oidc-edge` are in the tree and outside this path. `services/reporting-service` is a local-name fixture, not XBRL or SDMX, and not part of the running path.
 
-```bash
-./scripts/demo-phase3.sh --trigger-alert --restart-policies
-SMOKE_PHASE3_SKIP_PREREQS=1 ./scripts/smoke-test-phase3.sh
-```
-
-Open [Alert Console](http://localhost:3000) and [Audit Explorer](http://localhost:3002) — use the header switcher for Graph / Simulation / Report.
-
-**How this differs:** streaming CDC → Kafka → twin state with Flink CEP and policy evaluation — not batch regulatory ETL. Later journeys add fixture-validated reporting, OIDC/TLS/OTel overlays, and analytics (effectiveness, contagion→audit, reg→policy proposals). Dev/CI architecture with mock principals; hardening is an explicit Compose overlay, not a multi-tenant production SaaS.
-
-**Quick links:** [Phase journeys](docs/phase-journeys.md) · [Demo Phase 3](docs/demo-phase3.md) · [Architecture](#architecture) · [Quick start](#quick-start) · [REST API](#rest-api) · [Contributing](#contributing)
+**Quick links:** [Quick start](#quick-start) · [Architecture](#architecture) · [Contributing](#contributing)
 
 ## Table of contents
 
@@ -73,7 +71,7 @@ Open [Alert Console](http://localhost:3000) and [Audit Explorer](http://localhos
 ## Who this is for
 
 - **Platform / data engineers** building CDC → Kafka → twin pipelines
-- **Compliance / regtech engineers** prototyping CEP rules, policy engines, and audit trails
+- **Compliance / regtech engineers** tracing one payment through a per-record Flink job, a `cedar-go` decision, and an immudb audit entry
 - **Contributors** who want a runnable, test-gated reference architecture (not slides)
 
 ## Phase journeys
@@ -102,7 +100,7 @@ Phases 1–4 smoke in CI. Phases 5–7 + `./scripts/harness/verify.sh` are local
 | Monitoring & alerts | Stable on `main` | INT-M001, INT-M002, BASEL-M001 |
 | Policy & audit | Stable on `main` | CI + [demo-phase3.md](docs/demo-phase3.md) |
 | Graph & simulation | Stable on `main` (CI) | [demo-phase4.md](docs/demo-phase4.md) |
-| Regulatory reporting | Smoke-gated | [demo-phase5.md](docs/demo-phase5.md) · [ADR-011](docs/adr/011-phase5-reporting-foundation.md) — not commercial XBRL parity |
+| Regulatory reporting | Local-name fixture | `services/reporting-service` checks XML local names. Not part of the running path |
 | Hardening | Smoke-gated overlay | [ADR-012](docs/adr/012-phase6-hardening-foundation.md) |
 | Cutting-edge analytics | Smoke-gated | [ADR-013](docs/adr/013-phase7-cutting-edge-foundation.md); contagion is on-demand, not a scheduled stream |
 | GHCR deploy (12 images) | Stable | Phase 1–4 via `docker-compose.deploy.yml` |
@@ -119,8 +117,8 @@ mock core-banking (PostgreSQL)
         │
         ├────────────────────────┬─────────────────────────┐
         ▼                        ▼                         ▼
-  State Service (Go)     Flink CEP (Java)          Audit Service (Go)
-   ├── twin store               ├── Redis features        ├── immudb (hash chain)
+  State Service (Go)     Flink streaming job       Audit Service (Go)
+   ├── twin store               ├── Redis features        ├── immudb (Set/Get hash)
    ├── outbox                   └── compliance.alerts     └── /api/v1/audit/*
    └── /api/v1/personas                 │                         ▲
                                         ▼                         │
@@ -137,7 +135,7 @@ mock core-banking (PostgreSQL)
             Audit Explorer (Next.js) — chain verify + search
 
 Neo4j + Graph Service (:8093) + Simulation Service (:8094)
-Graph Explorer (:3003) + Simulation Console (:3004) — Phase 4 (dev compose)
+Graph Explorer (:3003) + Simulation Console (:3004) — outside the payment-audit path
 
 Grafana ← Flink / Kafka metrics (Compose)
 ```
@@ -150,13 +148,13 @@ Details: [docs/architecture.md](docs/architecture.md) · [docs/data-flow.md](doc
 - [Go 1.25+](https://go.dev/dl/) (`go.mod`; CI/Docker images use 1.25–1.26 per service)
 - [Node 20](https://nodejs.org/) — Next.js app builds (matches CI)
 - Python 3.11+ — `simulation-service` tests (`pytest`; CI uses system `python3`)
-- Java 17 — Flink CEP job (`jobs/compliance-cep`; matches CI)
+- Java 17 — Flink streaming job (`jobs/compliance-cep`; `WatermarkStrategy.noWatermarks()`, no `flink-cep` artifact; matches CI)
 - CLI tools: `curl`, `jq`, `psql` (PostgreSQL client)
 - **Maven not required** — run Flink job unit tests via Docker (see [CONTRIBUTING.md](CONTRIBUTING.md))
 
 ## Quick start
 
-Run the full platform locally (~10–40 minutes cold start depending on image pulls):
+Run the payment path on the Compose stack (~10–40 minutes cold start depending on image pulls):
 
 ### 1. Ingestion & twin
 
@@ -180,7 +178,7 @@ docker compose -f docker-compose.dev.yml up -d --wait state-service
 
 ### 2. Monitoring & alerts
 
-After ingestion smoke passes, ensure the Flink CEP job is **RUNNING** (Compose `flink-job-submitter` usually handles this; re-submit if needed):
+After ingestion smoke passes, ensure the Flink streaming job is **RUNNING** (Compose `flink-job-submitter` usually handles this; re-submit if needed). The job is per-record streaming (`WatermarkStrategy.noWatermarks()`, no `flink-cep` artifact):
 
 ```bash
 ./scripts/submit-flink-job.sh
@@ -364,15 +362,15 @@ Full contract: [docs/phase3-implementation-spec.md](docs/phase3-implementation-s
 |------|---------|
 | [services/state-service/](services/state-service/) | Go REST API, Kafka consumer, transactional outbox |
 | [services/alert-service/](services/alert-service/) | Alerts REST + WebSocket + `compliance.alerts` consumer |
-| [services/cedar-service/](services/cedar-service/) | Cedar policy evaluation |
+| [services/cedar-service/](services/cedar-service/) | Cedar decision (`cedar-go`) |
 | [services/decision-service/](services/decision-service/) | GoRules Zen decision engine |
-| [services/audit-service/](services/audit-service/) | immudb audit ledger + verify API |
-| [jobs/compliance-cep/](jobs/compliance-cep/) | Flink CEP job (Java) — INT-M001, INT-M002, BASEL-M001 |
+| [services/audit-service/](services/audit-service/) | immudb application hash via `Set`/`Get` (not `VerifiedGet`) |
+| [jobs/compliance-cep/](jobs/compliance-cep/) | Flink streaming job (per-record, `WatermarkStrategy.noWatermarks()`, no `flink-cep` artifact) |
 | [apps/alert-console/](apps/alert-console/) | Next.js alert UI (Monitoring · Phase 2) |
 | [apps/audit-explorer/](apps/audit-explorer/) | Next.js audit explorer (Policy & audit · Phase 3) |
 | [apps/graph-explorer/](apps/graph-explorer/) | Next.js exposure graph (Graph · Phase 4) |
 | [apps/simulation-console/](apps/simulation-console/) | Next.js stress sim (Simulation · Phase 4) |
-| [apps/report-console/](apps/report-console/) | Next.js report lifecycle (Reporting · Phase 5) |
+| [apps/report-console/](apps/report-console/) | Next.js UI for the local-name reporting fixture (not the running path) |
 | [packages/console-shell/](packages/console-shell/) | Shared console chrome + app switcher |
 | [policies/](policies/) | Cedar (`.cedar`) and Zen (`.zen`) policy bundles |
 | [infra/grafana/](infra/grafana/) | Grafana dashboards and provisioning |
@@ -426,7 +424,7 @@ Full contract: [docs/phase3-implementation-spec.md](docs/phase3-implementation-s
 | **Container registry** | Eight application images on GHCR (`ghcr.io/safetymp/digital-twin-compliance/*`) |
 | **Releases** | Tag `v*.*.*` to publish versioned images and a GitHub Release |
 | **Staging deploy** | Manual workflow — SSH deploy to a host running `docker-compose.deploy.yml` |
-| **Dependabot** | Weekly updates for Go (all services), npm (UIs), Maven (CEP), GitHub Actions, and Docker |
+| **Dependabot** | Weekly updates for Go (all services), npm (UIs), Maven (Flink job), GitHub Actions, and Docker |
 | **CodeQL** | Go security analysis on push, PR, and weekly schedule |
 | **OpenSSF Scorecard** | Supply-chain security posture on push and weekly schedule ([`.github/workflows/scorecard.yml`](.github/workflows/scorecard.yml)) |
 | **Issue templates** | Structured bug reports and feature requests |
