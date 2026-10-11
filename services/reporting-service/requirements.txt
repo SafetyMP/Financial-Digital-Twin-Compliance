@@ -4,6 +4,10 @@
 #
 #    pip-compile --generate-hashes --output-file=services/reporting-service/requirements.txt services/reporting-service/requirements.in
 #
+annotated-doc==0.0.5 \
+    --hash=sha256:117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101 \
+    --hash=sha256:c7e58ce09192557605d8bbd92836d7e1d520ac9580096042c0bfd197efacf1bb
+    # via fastapi
 annotated-types==0.8.0 \
     --hash=sha256:13b2beaad985e05e2d6407ee4c4f35590b11f8d693a258a561055cac8f64cab7 \
     --hash=sha256:f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0
@@ -362,10 +366,10 @@ deprecated==1.3.1 \
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
     #   opentelemetry-semantic-conventions
-fastapi==0.115.12 \
-    --hash=sha256:1e2c2a2646905f9e83d32f04a3f86aff4a286669c6c950ca95b5fd68c2602681 \
-    --hash=sha256:e94613d6c05e27be7ffebdd6ea5f388112e5e430c8f7d6494a9d1d88d43e814d
-    # via -r /tmp/reporting-service.in
+fastapi==0.133.0 \
+    --hash=sha256:0a78878483d60702a1dde864c24ab349a1a53ef4db6b6f74f8cd4a2b2bc67d2f \
+    --hash=sha256:b900a2bf5685cdb0647a41d5900bdeafc3a9e8a28ac08c6246b76699e164d60d
+    # via -r services/reporting-service/requirements.in
 googleapis-common-protos==1.75.0 \
     --hash=sha256:53a062ff3c32552fbd62c11fe23768b78e4ddf0494d5e5fd97d3f4689c75fbbd \
     --hash=sha256:961ed60399c457ceb0ee8f285a84c870aabc9c6a832b9d37bb281b5bebde43ed
@@ -490,7 +494,7 @@ httptools==0.8.0 \
 httpx==0.28.1 \
     --hash=sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc \
     --hash=sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
-    # via -r /tmp/reporting-service.in
+    # via -r services/reporting-service/requirements.in
 idna==3.19 \
     --hash=sha256:5e0811a4383b21dc5838069f801c4fb62113b7447663d2530d2bd6e77b49bf15 \
     --hash=sha256:815e7be7a7806d54abb586dc943addc79e8b2ee16915059658cbeff4b1b43bf4
@@ -509,7 +513,7 @@ iniconfig==2.3.0 \
 kafka-python==2.3.2 \
     --hash=sha256:2d2469bcabc2551be7eaf7fb512e1241484d358800f2665b90e7e24fea84259d \
     --hash=sha256:e8a5e6f2c4ce13a8041669337038d5125e0e09e6d6f0911902ae5939e5b9595e
-    # via -r /tmp/reporting-service.in
+    # via -r services/reporting-service/requirements.in
 lxml==6.1.0 \
     --hash=sha256:00750d63ef0031a05331b9223463b1c7c02b9004cef2346a5b2877f0f9494dd2 \
     --hash=sha256:022981127642fe19866d2907d76241bb07ed21749601f727d5d5dd1ce5d1b773 \
@@ -645,16 +649,16 @@ lxml==6.1.0 \
     --hash=sha256:fcf3da95e93349e0647d48d4b36a12783105bcc74cb0c416952f9988410846a3 \
     --hash=sha256:fe022f20bc4569ec66b63b3fb275a3d628d9d32da6326b2982584104db6d3086 \
     --hash=sha256:ffb34ea45a82dd637c2c97ae1bbb920850c1e59bcae79ce1c15af531d83e7215
-    # via -r /tmp/reporting-service.in
+    # via -r services/reporting-service/requirements.in
 minio==7.2.15 \
     --hash=sha256:5247df5d4dca7bfa4c9b20093acd5ad43e82d8710ceb059d79c6eea970f49f79 \
     --hash=sha256:c06ef7a43e5d67107067f77b6c07ebdd68733e5aa7eed03076472410ca19d876
-    # via -r /tmp/reporting-service.in
+    # via -r services/reporting-service/requirements.in
 opentelemetry-api==1.29.0 \
     --hash=sha256:5fcd94c4141cc49c736271f3e1efb777bebe9cc535759c54c936cca4f1b312b8 \
     --hash=sha256:d04a6cf78aad09614f52964ecb38021e248f5714dc32c2e0d8fd99517b4d69cf
     # via
-    #   -r /tmp/reporting-service.in
+    #   -r services/reporting-service/requirements.in
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
     #   opentelemetry-instrumentation
@@ -665,7 +669,7 @@ opentelemetry-api==1.29.0 \
 opentelemetry-exporter-otlp==1.29.0 \
     --hash=sha256:b8da6e20f5b0ffe604154b1e16a407eade17ce310c42fb85bb4e1246fc3688ad \
     --hash=sha256:ee7dfcccbb5e87ad9b389908452e10b7beeab55f70a83f41ce5b8c4efbde6544
-    # via -r /tmp/reporting-service.in
+    # via -r services/reporting-service/requirements.in
 opentelemetry-exporter-otlp-proto-common==1.29.0 \
     --hash=sha256:a9d7376c06b4da9cf350677bcddb9618ed4b8255c3f6476975f5e38274ecd3aa \
     --hash=sha256:e7c39b5dbd1b78fe199e40ddfe477e6983cb61aa74ba836df09c3869a3e3e163
@@ -693,7 +697,7 @@ opentelemetry-instrumentation-asgi==0.50b0 \
 opentelemetry-instrumentation-fastapi==0.50b0 \
     --hash=sha256:16b9181682136da210295def2bb304a32fb9bdee9a935cdc9da43567f7c1149e \
     --hash=sha256:8f03b738495e4705fbae51a2826389c7369629dace89d0f291c06ffefdff5e52
-    # via -r /tmp/reporting-service.in
+    # via -r services/reporting-service/requirements.in
 opentelemetry-proto==1.29.0 \
     --hash=sha256:3c136aa293782e9b44978c738fff72877a4b78b5d21a64e879898db7b2d93e5d \
     --hash=sha256:495069c6f5495cbf732501cdcd3b7f60fda2b9d3d4255706ca99b7ca8dec53ff
@@ -705,7 +709,7 @@ opentelemetry-sdk==1.29.0 \
     --hash=sha256:173be3b5d3f8f7d671f20ea37056710217959e774e2749d984355d1f9391a30a \
     --hash=sha256:b0787ce6aade6ab84315302e72bd7a7f2f014b0fb1b7c3295b88afe014ed0643
     # via
-    #   -r /tmp/reporting-service.in
+    #   -r services/reporting-service/requirements.in
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
 opentelemetry-semantic-conventions==0.50b0 \
@@ -750,7 +754,7 @@ protobuf==5.29.6 \
 psycopg[binary]==3.2.9 \
     --hash=sha256:01a8dadccdaac2123c916208c96e06631641c0566b22005493f09663c7a8d3b6 \
     --hash=sha256:2fbb46fcd17bc81f993f28c47f1ebea38d66ae97cc2dbc3cad73b37cefbff700
-    # via -r /tmp/reporting-service.in
+    # via -r services/reporting-service/requirements.in
 psycopg-binary==3.2.9 \
     --hash=sha256:001e986656f7e06c273dd4104e27f4b4e0614092e544d950c7c938d822b1a894 \
     --hash=sha256:08bf9d5eabba160dd4f6ad247cf12f229cc19d2458511cab2eb9647f42fa6795 \
@@ -869,7 +873,7 @@ pydantic==2.11.4 \
     --hash=sha256:32738d19d63a226a52eed76645a98ee07c1f410ee41d93b4afbfa85ed8111c2d \
     --hash=sha256:d9615eaa9ac5a063471da949c8fc16376a84afb5024688b3ff885693506764eb
     # via
-    #   -r /tmp/reporting-service.in
+    #   -r services/reporting-service/requirements.in
     #   fastapi
 pydantic-core==2.33.2 \
     --hash=sha256:0069c9acc3f3981b9ff4cdfaf088e98d83440a4c7ea1bc07460af3d4dc22e72d \
@@ -979,7 +983,7 @@ pygments==2.21.0 \
 pytest==9.0.3 \
     --hash=sha256:2c5efc453d45394fdd706ade797c0a81091eccd1d6e4bccfcd476e2b8e0ab5d9 \
     --hash=sha256:b86ada508af81d19edeb213c681b1d48246c1a91d304c6c81a427674c17eb91c
-    # via -r /tmp/reporting-service.in
+    # via -r services/reporting-service/requirements.in
 python-dotenv==1.2.3 \
     --hash=sha256:904552145e8bfed22162c09dab1c2b9b54fefa7b23ba780f4f26ca0316b0f0d9 \
     --hash=sha256:a20a594dabeaa385725aa239d5244871c143ecb356add8a20fcf23773a6c3a35
@@ -1063,10 +1067,12 @@ requests==2.34.2 \
     --hash=sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0 \
     --hash=sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed
     # via opentelemetry-exporter-otlp-proto-http
-starlette==0.46.2 \
-    --hash=sha256:595633ce89f8ffa71a015caed34a5b2dc1c0cdb3f0f1fbd1e69339cf2abeec35 \
-    --hash=sha256:7f7361f34eed179294600af672f565727419830b54b7b084efe44bb82d2fccd5
-    # via fastapi
+starlette==1.3.1 \
+    --hash=sha256:05d0213193f2fbaae60e2ecb593b4add4262ad4e46536b54abe36f11a71724e0 \
+    --hash=sha256:c7372aae11c3c3f26a42df7bd626cec2f47d03483d261d369516a615a53714c6
+    # via
+    #   -r services/reporting-service/requirements.in
+    #   fastapi
 typing-extensions==4.16.0 \
     --hash=sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8 \
     --hash=sha256:dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5
@@ -1082,17 +1088,20 @@ typing-extensions==4.16.0 \
 typing-inspection==0.4.4 \
     --hash=sha256:547274fa6b0a561ccf549cc9524b999a578e737d015d8709d021f9d0d13bea47 \
     --hash=sha256:65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147
-    # via pydantic
-urllib3==2.7.0 \
-    --hash=sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c \
-    --hash=sha256:9fb4c81ebbb1ce9531cce37674bbc6f1360472bc18ca9a553ede278ef7276897
     # via
+    #   fastapi
+    #   pydantic
+urllib3==2.8.0 \
+    --hash=sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3 \
+    --hash=sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63
+    # via
+    #   -r services/reporting-service/requirements.in
     #   minio
     #   requests
 uvicorn[standard]==0.34.2 \
     --hash=sha256:0e929828f6186353a80b58ea719861d2629d766293b6d19baf086ba31d4f3328 \
     --hash=sha256:deb49af569084536d269fe0a6d67e3754f104cf03aba7c11c40f01aadf33c403
-    # via -r /tmp/reporting-service.in
+    # via -r services/reporting-service/requirements.in
 uvloop==0.22.1 \
     --hash=sha256:017bd46f9e7b78e81606329d07141d3da446f8798c6baeec124260e22c262772 \
     --hash=sha256:0530a5fbad9c9e4ee3f2b33b148c6a64d47bbad8000ea63704fa8260f4cf728e \
