@@ -8,7 +8,7 @@ Please read the [Code of Conduct](CODE_OF_CONDUCT.md) and [ROADMAP.md](ROADMAP.m
 
 1. Fork the repository and clone your fork.
 2. Copy `.env.example` to `.env` (never commit `.env`).
-3. Follow the [README quick start](README.md#quick-start) to run the stack locally.
+3. Follow the [running path](README.md) (one mock payment through Debezium, the Flink streaming job, a Cedar decision, and an immudb audit entry). The [quick start](README.md#quick-start) is that same Compose stack.
 4. Create a feature branch from `main` (e.g. `feat/...`, `fix/...`, `docs/...`).
 
 ## Development workflow
@@ -39,7 +39,7 @@ cd services/audit-service && go test ./...
 ./scripts/smoke-test-phase3.sh
 ```
 
-Flink CEP unit tests (no local Maven required):
+Flink streaming-job unit tests (per-record; no `flink-cep` artifact; no local Maven required):
 
 ```bash
 docker run --rm -v "$PWD/jobs/compliance-cep:/app" -w /app maven:3.9-eclipse-temurin-17 mvn -q test
@@ -79,20 +79,24 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) when practical:
 |-----------|------|---------------|
 | State Service | `services/state-service/` | `go test ./...`, `./scripts/smoke-test.sh` |
 | Alert Service | `services/alert-service/` | `go test ./...`, `./scripts/smoke-test-phase2.sh` |
-| Flink CEP | `jobs/compliance-cep/` | `mvn test`, Phase 2 smoke |
+| Flink streaming job | `jobs/compliance-cep/` | `mvn test`, `./scripts/check-honest-flink-path.sh`, Phase 2 smoke |
 | Alert Console | `apps/alert-console/` | `npm run build`, Phase 2 smoke |
 | Cedar / Zen | `services/cedar-service/`, `services/decision-service/`, `policies/` | `./scripts/run-policy-ci.sh` |
 | Audit ledger | `services/audit-service/`, `apps/audit-explorer/` | `./scripts/smoke-test-phase3.sh` |
 | Kafka contracts | `schemas/avro/`, `contracts/kafka/` | `./scripts/check-kafka-contracts.sh` |
 
-## Not on the roadmap yet
+## Outside the running path
 
-These are **planned but not built** — discuss in an issue before opening a large PR:
+The path that runs is one mock core-banking payment through Debezium, the Flink streaming job (`WatermarkStrategy.noWatermarks()`, no `flink-cep` artifact), a Cedar decision (`cedar-go`), and an immudb audit entry (`Set` / `Get`, not `VerifiedGet`). These directories exist. They are not that path:
 
-- Neo4j graph service and exposure UI
-- Python simulation / stress testing service
-- Regulatory reporting (XBRL / SDMX)
-- Full OIDC auth middleware (today: mock principals only)
+| Directory | What it is |
+|-----------|------------|
+| `services/graph-service`, `apps/graph-explorer` | Neo4j exposure graph. Implemented, and outside the payment-audit path. |
+| `services/simulation-service`, `apps/simulation-console` | Python stress simulation. Implemented, and outside the payment-audit path. |
+| `services/reporting-service`, `apps/report-console` | Local-name XML fixture (`lxml` local names). Not an XBRL or SDMX engine, and not the running path. |
+| `services/oidc-edge` | Hardening overlay that checks bearer tokens. The running path uses mock principals. |
+
+Do not describe these trees as unbuilt. Do not treat `services/reporting-service` as taxonomy validation.
 
 Details: [ROADMAP.md](ROADMAP.md) and [docs/roadmap.md](docs/roadmap.md).
 

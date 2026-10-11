@@ -74,5 +74,10 @@ bash -n scripts/smoke-test-phase7-effectiveness.sh scripts/smoke-test-phase7-con
 ./scripts/check-cutting-edge-claims.sh
 ./scripts/smoke-test-phase7-reg2policy.sh
 
-echo "verify: OK (static parity + CECT hermetic ADR-011/012/013 + claim lint + reg2policy; full smoke needs Docker)"
+echo "==> honest flink path"
+test -x scripts/check-honest-flink-path.sh || fail "missing honest flink path check"
+bash -n scripts/check-honest-flink-path.sh
+./scripts/check-honest-flink-path.sh
+
+echo "verify: OK (static parity + CECT hermetic ADR-011/012/013 + claim lint + reg2policy + honest flink path; full smoke needs Docker)"
 exit 0
