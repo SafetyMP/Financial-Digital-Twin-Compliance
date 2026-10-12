@@ -1,5 +1,7 @@
 # Handoff: Phase 2 Agent
 
+The monitoring job on main is per-record streaming in `jobs/compliance-cep`. `pom.xml` depends on `flink-streaming-java` and has no `flink-cep` artifact. "Flink CEP" in the scope line below is the original handoff name.
+
 > **Status (2026-06):** Phase 2 is **implemented** in the repository. Mechanical smoke and unit tests pass locally ([phase2-exit-checklist.md](./review/phase2-exit-checklist.md)). Use this document for **extensions, fixes, and verification** — not greenfield implementation. Formal Phase 2 completion still requires mechanical nightly evals and the behavior eval pillar ([AGENTS.md](../AGENTS.md#behavior-evals-phase-2)).
 
 **Created**: 2026-06-13  

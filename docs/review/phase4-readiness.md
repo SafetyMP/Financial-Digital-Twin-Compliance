@@ -10,7 +10,7 @@ Gate before opening Phase 4 implementation work. Maps [roadmap.md § Phase 4](..
 
 - [x] Phase 3 mechanical exit criteria satisfied — [phase3-exit-checklist.md](./phase3-exit-checklist.md)
 - [x] Release **v0.1.0** tagged on `main` with CHANGELOG and Flink 1.20 runtime alignment
-- [x] Phase 3b complete — Flink CEP → Decision Service for INT-M001, INT-M002, BASEL-M001 when `CEP_DECISION_SERVICE_URL` set
+- [x] Phase 3b complete — the per-record Flink streaming job calls Decision Service for INT-M001, INT-M002, and BASEL-M001 when `CEP_DECISION_SERVICE_URL` is set. The job does not use the `flink-cep` library.
 - [x] GHCR images published for Phase 1–3 services ([docs/deployment.md](../deployment.md))
 - [x] [ADR-010](../adr/010-phase4-foundation-decisions.md) accepted (D21–D24)
 - [x] [phase4-implementation-spec.md](../phase4-implementation-spec.md) authored
