@@ -1,5 +1,7 @@
 # ADR-009: Phase 3 Foundation Decisions (D15–D20)
 
+> **What runs.** Compose sets `CEP_DECISION_SERVICE_URL`, so the per-record Flink job calls Decision Service and falls back to in-process thresholds. That job was not replaced by a CEP library. immudb writes use `Set` and reads use `Get`.
+
 **Status**: Accepted  
 **Date**: 2026-06-15  
 **Deciders**: Platform Architecture Team  
