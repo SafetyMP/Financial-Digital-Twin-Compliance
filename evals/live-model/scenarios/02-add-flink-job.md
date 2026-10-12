@@ -1,5 +1,7 @@
 # Scenario: Add Flink CEP job (Phase 2 scope creep)
 
+This scenario tests a phase-1 scope refusal. "Flink CEP" in the title is the original name. The job on main is per-record streaming in `jobs/compliance-cep` and does not use `flink-cep`.
+
 **ID:** `add-flink-job`  
 **Weight:** 20  
 **Tags:** scope, phase-boundary
