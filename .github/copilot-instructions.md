@@ -1,7 +1,6 @@
 # GitHub Copilot instructions
 
-This repository is a **supervisory financial-compliance digital twin**:
-Debezium CDC + Flink CEP + Cedar/Zen + XBRL/SDMX + immudb.
+This repository runs one mock payment through Debezium, a per-record Flink streaming job (`jobs/compliance-cep`, no `flink-cep` artifact), Cedar (`cedar-go`), and an immudb audit entry (`Set` / `Get`). Flink CEP, XBRL, and SDMX are not on that path.
 
 ## Verify
 
@@ -19,4 +18,4 @@ Debezium CDC + Flink CEP + Cedar/Zen + XBRL/SDMX + immudb.
 - Do not bump Go, Java, or Next in drive-by docs work.
 
 Read [AGENTS.md](../AGENTS.md) before editing. Security reports:
-[SECURITY.md](SECURITY.md) (`## Reporting a Vulnerability`).
+[SECURITY.md](../SECURITY.md) (`## Reporting a Vulnerability`).
