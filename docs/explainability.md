@@ -9,9 +9,9 @@ they link to the immudb audit chain for the Digital Twin reference deploy.
 
 | Signal | Source | Consumer |
 |--------|--------|----------|
-| Payment velocity | Flink CEP Redis `vel:*` | INT-M001 / Zen INT-R001 |
-| Counterparty exposure | Flink Redis `exp:*` | INT-M002 / Zen INT-R002 |
-| LCR | Twin `liquidity.lcr` ← core CDC | BASEL-M001 / Zen BASEL-R001 |
+| Payment velocity | Per-record Flink job, Redis `vel:*` | INT-M001, or Zen INT-R001 when `CEP_DECISION_SERVICE_URL` is set |
+| Counterparty exposure | Same job, Redis `exp:*` from twin notional | INT-M002, or Zen INT-R002 when that URL is set |
+| LCR | Twin `liquidity.lcr`, then `setLcr` | BASEL-M001, or Zen BASEL-R001 when that URL is set |
 | Stressed CET1 / capital | Simulation Service | Zen COREP-R001/R002 |
 
 ## Policy decisions
