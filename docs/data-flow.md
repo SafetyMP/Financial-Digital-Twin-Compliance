@@ -1,6 +1,6 @@
 # Data Flow
 
-> **Running path.** The root [README](../README.md) is the status of record. Diagrams and phase notes below may still say Flink CEP, XBRL, or SDMX. The Flink job is per-record streaming and does not depend on `flink-cep`. Reporting is a local-name fixture and is not on the running path.
+> **Running path.** The root [README](../README.md) is the status of record. Alerts come from the per-record Flink job. Report examples are the local-name XML fixture, not an XBRL filing or SDMX.
 
 
 Kafka topics, event/schema contracts, audit ledger record format, and end-to-end data flows for the Financial Digital Twin + Compliance Platform.
@@ -206,7 +206,7 @@ Emitted by Cedar Service or Decision Service after evaluation.
 
 ### 4.2 ComplianceAlertRaised
 
-Emitted by Flink CEP or rule engine when a breach is detected.
+Emitted by the per-record Flink streaming job (`VelocityChecker`, `ExposureChecker`, or `LcrChecker`) when a breach is detected.
 
 ```json
 {
@@ -259,7 +259,7 @@ Emitted by Flink CEP or rule engine when a breach is detected.
       "start": "2026-01-01",
       "end": "2026-03-31"
     },
-    "format": "XBRL",
+    "format": "local-name-xml",
     "status": "Validated",
     "recordCount": 1247,
     "validationErrors": [],
@@ -404,7 +404,7 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
   participant Kafka as domain.events
-  participant Flink as Flink CEP
+  participant Flink as Flink streaming job
   participant Redis as Redis Features
   participant Decision as Decision Service
   participant Alerts as compliance.alerts
@@ -460,7 +460,7 @@ sequenceDiagram
   Report->>PG: Query twin state + taxonomy mappings
   Report->>CH: Query aggregated metrics
   Report->>Immu: Query audit evidence
-  Report->>Report: Generate XBRL artifact
+  Report->>Report: Generate local-name XML fixture
   Report->>Report: Validate against EBA taxonomy
   Report->>S3: Store report (Object Lock)
   Report->>Kafka: ReportGenerated event
