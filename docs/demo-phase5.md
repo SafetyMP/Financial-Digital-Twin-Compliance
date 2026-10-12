@@ -2,7 +2,7 @@
 
 Walkthrough for Report Console. `services/reporting-service/reporting_service/generators.py` string-builds local-name XML. FINREP uses an `xbrl` root and the namespace `http://digitaltwin.local/finrep/f01/`. AnaCredit and DORA use their own local namespaces. `validate.py` checks those local names. This is not an Arelle or EBA filing, not SDMX, and not the payment path.
 
-The dropdown labels in the console still say XBRL and SDMX. Those strings are the UI, not the file format.
+The dropdown labels say local-name XML. That matches `generators.py`. It is not an EBA or ECB filing.
 
 **Prerequisites**: Docker, `curl`, `jq`. Dev Compose with `reporting-service`, MinIO, and Report Console healthy.
 
@@ -36,7 +36,7 @@ If those services were never built, use `docker compose -f docker-compose.dev.ym
 
 ### 1. Create draft (3 min)
 
-Open **Report Console** (http://localhost:3005). Choose **FINREP F01 (XBRL)**, **AnaCredit Table 2 (SDMX)**, or **DORA ICT Register (XML)**. Those are the option labels in `apps/report-console/src/app/page.tsx`. Click **Create draft** and show `id` + `status=draft`.
+Open **Report Console** (http://localhost:3005). Choose **FINREP F01 (local-name XML)**, **AnaCredit Table 2 (local-name XML)**, or **DORA ICT Register (local-name XML)**. Those are the option labels in `apps/report-console/src/app/page.tsx`. Click **Create draft** and show `id` + `status=draft`.
 
 ### 2. Validate → submit (4 min)
 
