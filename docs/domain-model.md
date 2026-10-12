@@ -1,5 +1,7 @@
 # Domain Model
 
+> **Running path.** The root [README](../README.md) is the status of record. Monitoring is three in-process checkers on the per-record Flink job, not a CEP library. Reporting emits local-name XML for `FINREP_F01`, `ANACREDIT_T2`, and `DORA_ICT`.
+
 This document defines the bounded contexts, core entities, digital twin personas, relationships, and ubiquitous language for the Financial Digital Twin + Compliance Platform.
 
 ## Purpose
@@ -16,10 +18,10 @@ The twin is an **intelligence layer** over source systems. It does not replace c
 |---------|----------------|------|
 | **Twin Core** | Entity state, graph topology, simulation | Personas, exposures, liquidity flows |
 | **Ingestion** | Event capture, CDC, schema validation | Connectors, topic contracts |
-| **Compliance Monitoring** | Real-time CEP, thresholds, velocity checks | Alerts, breach events |
+| **Compliance Monitoring** | Per-record thresholds on the Flink job | Alerts for `INT-M001`, `INT-M002`, and `BASEL-M001` |
 | **Policy & Rules** | Authorization, obligation evaluation, risk scoring | Cedar policies, decision models |
 | **Audit & Evidence** | Immutable decision log, evidence artifacts | Ledger entries, report archives |
-| **Regulatory Reporting** | Taxonomy mapping, report generation | XBRL/SDMX outputs, submission metadata |
+| **Regulatory Reporting** | Local-name XML fixture | `FINREP_F01`, `ANACREDIT_T2`, and `DORA_ICT`. Not an XBRL or SDMX filing |
 
 ```mermaid
 flowchart LR
@@ -231,7 +233,7 @@ A generated regulatory submission artifact.
 | `regime` | enum | Target regulatory framework |
 | `reportType` | string | e.g., `FINREP_F01`, `AnaCredit_Table1` |
 | `reportingPeriod` | date range | Covered period |
-| `format` | enum | `XBRL`, `SDMX`, `CSV`, `XML` |
+| `format` | enum | Shipped artifacts are local-name XML. `XBRL`, `SDMX`, and `CSV` were the original plan |
 | `status` | enum | `Draft`, `Validated`, `Submitted`, `Accepted`, `Rejected` |
 | `artifactRef` | string | Object storage reference (immutable) |
 | `generatedAt` | timestamp | Generation time |

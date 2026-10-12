@@ -180,16 +180,16 @@ flowchart TB
 
 | Component | Technology | Responsibility |
 |-----------|------------|----------------|
-| Debezium Connect | Java (Kafka Connect) | CDC from PostgreSQL, Oracle, SQL Server source DBs |
-| Custom API Connectors | Go | Poll/pull from REST APIs (market data, regulatory feeds) |
-| File Connectors | Go | Batch ingest of XBRL, CSV regulatory files |
-| Schema Registry | Confluent / Apicurio | Avro/Protobuf schema enforcement, compatibility checks |
-| Event Envelope | Avro | Standard wrapper: `eventId`, `eventType`, `source`, `timestamp`, `payload`, `correlationId` |
+| Debezium Connect | Java (Kafka Connect) | CDC from the Compose PostgreSQL source (`io.debezium.connector.postgresql.PostgresConnector`) |
+| Schema Registry | Confluent | Present in Compose. The Flink job reads Kafka values as strings and does not use it |
+| Alert envelope | JSON | `ComplianceCepJob` writes `eventId`, `eventType`, `source`, `timestamp`, `payload`, and `correlationId` as JSON |
+
+Custom API connectors, file ingest of XBRL, and Oracle or SQL Server CDC were the original plan. This repository does not ship them.
 
 **Design notes**:
 - All events land on Kafka topics partitioned by entity ID for ordering guarantees.
 - Dead-letter topics (`*.dlq`) for poison messages with alerting.
-- Idempotency keys on all producer events to support exactly-once downstream processing.
+- The Flink alert sink is at-least-once. Idempotency keys dedupe alerts. Exactly-once downstream processing was the original plan.
 
 ### 4.2 Event Backbone
 
