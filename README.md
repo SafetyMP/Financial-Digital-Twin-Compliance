@@ -2,7 +2,7 @@
 
 One path runs: a mock core-banking payment through Debezium, a Flink streaming job, a Cedar decision, and an immudb audit entry.
 
-The Flink job (`jobs/compliance-cep`) is per-record streaming. Each Kafka source uses `WatermarkStrategy.noWatermarks()`. `jobs/compliance-cep/pom.xml` depends on `flink-streaming-java`. It has no `flink-cep` artifact. Cedar is `cedar-go` (`github.com/cedar-policy/cedar-go` in `services/cedar-service`). immudb stores an application hash: `services/audit-service` writes the entry and the chain head with `Set` and reads them with `Get`, not `VerifiedGet`.
+The Flink job (`jobs/compliance-cep`) is per-record streaming. Each Kafka source uses `WatermarkStrategy.forBoundedOutOfOrderness`. `jobs/compliance-cep/pom.xml` depends on `flink-streaming-java`. It has no `flink-cep` artifact. Cedar is `cedar-go` (`github.com/cedar-policy/cedar-go` in `services/cedar-service`). immudb stores an application hash: `services/audit-service` writes the entry and the chain head with `Set` and reads them with `VerifiedGet`.
 
 `services/reporting-service` is a local-name fixture. Its validator checks XML local names with `lxml`. It is not part of the running path. Flink CEP, XBRL, and SDMX are not part of this path.
 
@@ -148,13 +148,19 @@ Details: [docs/architecture.md](docs/architecture.md) · [docs/data-flow.md](doc
 - [Go 1.25+](https://go.dev/dl/) (`go.mod`; CI/Docker images use 1.25–1.26 per service)
 - [Node 20](https://nodejs.org/) — Next.js app builds (matches CI)
 - Python 3.11+ — `simulation-service` tests (`pytest`; CI uses system `python3`)
-- Java 17 — Flink streaming job (`jobs/compliance-cep`; `WatermarkStrategy.noWatermarks()`, no `flink-cep` artifact; matches CI)
+- Java 17 — Flink streaming job (`jobs/compliance-cep`; `WatermarkStrategy.forBoundedOutOfOrderness`, no `flink-cep` artifact; matches CI)
 - CLI tools: `curl`, `jq`, `psql` (PostgreSQL client)
 - **Maven not required** — run Flink job unit tests via Docker (see [CONTRIBUTING.md](CONTRIBUTING.md))
 
 ## Quick start
 
-Run the payment path on the Compose stack (~10–40 minutes cold start depending on image pulls):
+One job, no Compose: three payments from the same originator inside ten minutes of event time emit one `INT-VEL-10M` alert. Event time follows the dataflow model (Akidau et al., VLDB 2015), not processing time. If this machine has no JDK, the script uses the `maven:3.9-eclipse-temurin-17` image.
+
+```bash
+./scripts/velocity-demo.sh
+```
+
+The full platform is a longer cold start (~10–40 minutes depending on image pulls):
 
 ### 1. Ingestion & twin
 
@@ -178,7 +184,7 @@ docker compose -f docker-compose.dev.yml up -d --wait state-service
 
 ### 2. Monitoring & alerts
 
-After ingestion smoke passes, ensure the Flink streaming job is **RUNNING** (Compose `flink-job-submitter` usually handles this; re-submit if needed). The job is per-record streaming (`WatermarkStrategy.noWatermarks()`, no `flink-cep` artifact):
+After ingestion smoke passes, ensure the Flink streaming job is **RUNNING** (Compose `flink-job-submitter` usually handles this; re-submit if needed). The job is per-record streaming (`WatermarkStrategy.forBoundedOutOfOrderness`, no `flink-cep` artifact):
 
 ```bash
 ./scripts/submit-flink-job.sh
@@ -364,8 +370,8 @@ Full contract: [docs/phase3-implementation-spec.md](docs/phase3-implementation-s
 | [services/alert-service/](services/alert-service/) | Alerts REST + WebSocket + `compliance.alerts` consumer |
 | [services/cedar-service/](services/cedar-service/) | Cedar decision (`cedar-go`) |
 | [services/decision-service/](services/decision-service/) | GoRules Zen decision engine |
-| [services/audit-service/](services/audit-service/) | immudb application hash via `Set`/`Get` (not `VerifiedGet`) |
-| [jobs/compliance-cep/](jobs/compliance-cep/) | Flink streaming job (per-record, `WatermarkStrategy.noWatermarks()`, no `flink-cep` artifact) |
+| [services/audit-service/](services/audit-service/) | immudb application hash via `Set`/`VerifiedGet` |
+| [jobs/compliance-cep/](jobs/compliance-cep/) | Flink streaming job (per-record, `WatermarkStrategy.forBoundedOutOfOrderness`, no `flink-cep` artifact) |
 | [apps/alert-console/](apps/alert-console/) | Next.js alert UI (Monitoring · Phase 2) |
 | [apps/audit-explorer/](apps/audit-explorer/) | Next.js audit explorer (Policy & audit · Phase 3) |
 | [apps/graph-explorer/](apps/graph-explorer/) | Next.js exposure graph (Graph · Phase 4) |

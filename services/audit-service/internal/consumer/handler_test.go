@@ -11,9 +11,10 @@ import (
 )
 
 type fakeLedger struct {
-	head    immudb.HeadState
-	entries []events.AuditEntry
-	getErr  error
+	head      immudb.HeadState
+	entries   []events.AuditEntry
+	getErr    error
+	appendErr error
 }
 
 func (f *fakeLedger) Ping(ctx context.Context) error { return nil }
@@ -26,6 +27,10 @@ func (f *fakeLedger) GetHead(ctx context.Context) (immudb.HeadState, error) {
 }
 
 func (f *fakeLedger) AppendEntry(ctx context.Context, entry events.AuditEntry) error {
+	if f.appendErr != nil {
+		// A failed transaction must not publish a new head or store the entry.
+		return f.appendErr
+	}
 	for _, e := range f.entries {
 		if e.EntryID == entry.EntryID {
 			return nil
@@ -156,6 +161,35 @@ func TestHandlerPropagatesGetHeadErrors(t *testing.T) {
 
 	if err := h.HandleMessage(context.Background(), buildPendingEnvelope("idem-3")); err == nil {
 		t.Fatal("expected GetHead error to fail handle")
+	}
+}
+
+func TestHandlerAppendFailureDoesNotPublishHead(t *testing.T) {
+	t.Parallel()
+
+	ledger := &fakeLedger{
+		head:      immudb.HeadState{LastSequence: 7, LastPayloadHash: "sha256:prev"},
+		appendErr: errors.New("immudb tx aborted"),
+	}
+	st := &fakeStore{processed: map[string]string{}}
+	pub := &fakePublisher{}
+	h := NewHandler(ledger, st, pub, "audit-service")
+
+	err := h.HandleMessage(context.Background(), buildPendingEnvelope("idem-fail"))
+	if err == nil {
+		t.Fatal("expected append failure")
+	}
+	if ledger.head.LastSequence != 7 || ledger.head.LastPayloadHash != "sha256:prev" {
+		t.Fatalf("head advanced on failed append: %+v", ledger.head)
+	}
+	if len(ledger.entries) != 0 {
+		t.Fatalf("entry stored without a committed head: %d", len(ledger.entries))
+	}
+	if len(pub.entries) != 0 {
+		t.Fatalf("published despite failed append: %d", len(pub.entries))
+	}
+	if len(st.recorded) != 0 {
+		t.Fatalf("indexed despite failed append: %d", len(st.recorded))
 	}
 }
 

@@ -35,38 +35,91 @@ log "generated stubs under ${OUT}/"
 reject_ok=0
 accept_ok=0
 
+# 0 = parsed, 1 = parse error, 2 = tool/read error. Never treat a missing check as reject.
+proposal_parses() {
+  local file="$1"
+  local out="$2"
+  local status=0
+  case "$parser" in
+    cedar)
+      if cedar check-parse -p "$file" >"$out" 2>&1; then
+        return 0
+      fi
+      return 1
+      ;;
+    checkparse)
+      "$checkparse_bin" "$file" >"$out" 2>&1 || status=$?
+      return "$status"
+      ;;
+    *)
+      return 2
+      ;;
+  esac
+}
+
+parser=""
+checkparse_bin=""
 if command -v cedar >/dev/null 2>&1; then
-  if cedar check-parse -p "$OUT/proposed-invalid.cedar" >/tmp/reg2-invalid.out 2>&1; then
-    log "FAIL: invalid stub unexpectedly parsed"
-    exit 1
+  parser="cedar"
+elif command -v go >/dev/null 2>&1; then
+  checkparse_bin="${TMP_BASE}/checkparse"
+  build_log="${TMP_BASE}/checkparse-build.log"
+  if (
+    cd "${ROOT}/services/cedar-service"
+    go build -o "$checkparse_bin" ./cmd/checkparse
+  ) >"$build_log" 2>&1; then
+    parser="checkparse"
   else
-    log "reject_path=PASS (invalid stub failed parse)"
-    reject_ok=1
+    log "checkparse build failed; using fail-closed text check"
+    cat "$build_log" >&2 || true
+    parser="text"
   fi
-  if cedar check-parse -p "$OUT/proposed-valid.cedar" >/tmp/reg2-valid.out 2>&1; then
-    log "accept_path=PASS (valid stub parsed)"
+else
+  log "cedar and go absent; using fail-closed text check"
+  parser="text"
+fi
+
+if [[ "$parser" == "text" ]]; then
+  if grep -q 'permit' "$OUT/proposed-invalid.cedar" && ! grep -q ');' "$OUT/proposed-invalid.cedar"; then
+    log "reject_path=PASS (fail-closed text: invalid contains permit and lacks );)"
+    reject_ok=1
+  else
+    log "FAIL: invalid stub failed fail-closed text check"
+    exit 1
+  fi
+  if grep -q 'permit' "$OUT/proposed-valid.cedar" && grep -q 'when' "$OUT/proposed-valid.cedar" && grep -q ');' "$OUT/proposed-valid.cedar"; then
+    log "accept_path=PASS (fail-closed text: valid contains permit, when, and );)"
     accept_ok=1
   else
-    log "FAIL: valid stub did not parse"
-    cat /tmp/reg2-valid.out >&2 || true
+    log "FAIL: valid stub failed fail-closed text check"
     exit 1
   fi
 else
-  # Fixture-equivalent without cedar CLI: structural checks
-  if grep -q 'permit' "$OUT/proposed-invalid.cedar" && ! grep -q ');' "$OUT/proposed-invalid.cedar"; then
-    log "reject_path=PASS (fixture-equivalent: invalid missing closing);"
-    reject_ok=1
-  else
-    log "reject_path=PASS (fixture-equivalent: invalid stub present, cedar CLI absent)"
-    reject_ok=1
-  fi
-  if grep -q 'permit' "$OUT/proposed-valid.cedar" && grep -q 'when' "$OUT/proposed-valid.cedar"; then
-    log "accept_path=PASS (fixture-equivalent: valid stub shape)"
-    accept_ok=1
-  else
-    log "FAIL: valid stub shape"
+  invalid_out="${TMP_BASE}/reg2-invalid.out"
+  valid_out="${TMP_BASE}/reg2-valid.out"
+  invalid_status=0
+  proposal_parses "$OUT/proposed-invalid.cedar" "$invalid_out" || invalid_status=$?
+  if [[ "$invalid_status" -eq 0 ]]; then
+    log "FAIL: invalid stub unexpectedly parsed"
     exit 1
   fi
+  if [[ "$parser" == "checkparse" && "$invalid_status" -ne 1 ]]; then
+    log "FAIL: checkparse error on invalid stub (exit ${invalid_status})"
+    cat "$invalid_out" >&2 || true
+    exit 1
+  fi
+  log "reject_path=PASS (invalid stub failed parse)"
+  reject_ok=1
+
+  valid_status=0
+  proposal_parses "$OUT/proposed-valid.cedar" "$valid_out" || valid_status=$?
+  if [[ "$valid_status" -ne 0 ]]; then
+    log "FAIL: valid stub did not parse"
+    cat "$valid_out" >&2 || true
+    exit 1
+  fi
+  log "accept_path=PASS (valid stub parsed)"
+  accept_ok=1
 fi
 
 # Ensure we did NOT auto-deploy into policies/

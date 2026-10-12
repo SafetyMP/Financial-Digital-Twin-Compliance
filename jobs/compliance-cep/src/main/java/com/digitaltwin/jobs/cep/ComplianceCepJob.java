@@ -1,18 +1,25 @@
 package com.digitaltwin.jobs.cep;
 
+import com.digitaltwin.jobs.cep.patterns.EventTimeVelocityPattern;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
+import org.apache.flink.api.common.state.ValueState;
+import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.connector.base.DeliveryGuarantee;
 import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.streaming.api.functions.ProcessFunction;
 import org.apache.flink.util.Collector;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -46,10 +53,11 @@ public class ComplianceCepJob {
                 .setValueOnlyDeserializer(new SimpleStringSchema())
                 .build();
 
-        DataStream<String> paymentAlerts = env.fromSource(paymentsSource, WatermarkStrategy.noWatermarks(), "payments")
+        DataStream<String> paymentAlerts = env.fromSource(paymentsSource, paymentEventWatermarks(), "payments")
+                .keyBy(new PaymentOriginatorKey())
                 .process(new PaymentAlertProcess(config));
 
-        DataStream<String> twinAlerts = env.fromSource(twinSource, WatermarkStrategy.noWatermarks(), "twin-state")
+        DataStream<String> twinAlerts = env.fromSource(twinSource, twinEventWatermarks(), "twin-state")
                 .process(new TwinAlertProcess(config));
 
         paymentAlerts.sinkTo(buildAlertSink(config)).name("payment-alerts-sink");
@@ -117,9 +125,100 @@ public class ComplianceCepJob {
         return MAPPER.writeValueAsString(envelope);
     }
 
-    static class PaymentAlertProcess extends ProcessFunction<String, String> {
+    /** Payments may arrive slightly out of order; lateness is event time, not processing time. */
+    static final Duration PAYMENT_EVENT_TIME_OUT_OF_ORDERNESS = Duration.ofMinutes(1);
+
+    static WatermarkStrategy<String> twinEventWatermarks() {
+        return WatermarkStrategy
+                .<String>forBoundedOutOfOrderness(PAYMENT_EVENT_TIME_OUT_OF_ORDERNESS)
+                .withTimestampAssigner(new TwinTimestampAssigner());
+    }
+
+    /**
+     * Event time is the envelope timestamp, otherwise the twin's own sync time.
+     * A snapshot at or behind the watermark is late (Akidau et al., VLDB 2015).
+     */
+    static long twinEventTimeMillis(String raw) {
+        try {
+            com.fasterxml.jackson.databind.JsonNode root = MAPPER.readTree(raw);
+            String stamp = JsonParsers.text(root, "timestamp");
+            com.fasterxml.jackson.databind.JsonNode payload = root;
+            if (root.has("payload")) {
+                com.fasterxml.jackson.databind.JsonNode wrapped = root.get("payload");
+                payload = wrapped.isTextual() ? MAPPER.readTree(wrapped.asText()) : wrapped;
+            }
+            if (stamp.isEmpty()) {
+                stamp = JsonParsers.text(payload, "lastSyncedAt");
+            }
+            if (stamp.isEmpty() && payload.has("currentState") && payload.get("currentState").isObject()) {
+                stamp = JsonParsers.text(payload.get("currentState"), "updated_at");
+            }
+            return EventTimeVelocityPattern.eventTimeMillis(stamp);
+        } catch (Exception e) {
+            return Long.MIN_VALUE;
+        }
+    }
+
+    static boolean twinEventIsLate(long eventTimeMillis, long watermarkMillis) {
+        if (watermarkMillis == Long.MIN_VALUE || eventTimeMillis == Long.MIN_VALUE) {
+            return false;
+        }
+        return eventTimeMillis <= watermarkMillis;
+    }
+
+    static WatermarkStrategy<String> paymentEventWatermarks() {
+        return WatermarkStrategy
+                .<String>forBoundedOutOfOrderness(PAYMENT_EVENT_TIME_OUT_OF_ORDERNESS)
+                .withTimestampAssigner(new PaymentTimestampAssigner());
+    }
+
+    static long paymentEventTimeMillis(String raw) {
+        Optional<JsonParsers.PaymentEvent> payment = JsonParsers.parsePayment(raw);
+        if (payment.isEmpty()) {
+            return 0L;
+        }
+        long eventTime = EventTimeVelocityPattern.eventTimeMillis(payment.get().initiatedAt());
+        return eventTime == Long.MIN_VALUE ? 0L : eventTime;
+    }
+
+    static String paymentOriginator(String raw) {
+        return JsonParsers.parsePayment(raw)
+                .map(JsonParsers.PaymentEvent::sourceAccountId)
+                .orElse("");
+    }
+
+    static final class TwinTimestampAssigner implements SerializableTimestampAssigner<String> {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public long extractTimestamp(String element, long recordTimestamp) {
+            long eventTime = twinEventTimeMillis(element);
+            return eventTime == Long.MIN_VALUE ? 0L : eventTime;
+        }
+    }
+
+    static final class PaymentTimestampAssigner implements SerializableTimestampAssigner<String> {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public long extractTimestamp(String element, long recordTimestamp) {
+            return paymentEventTimeMillis(element);
+        }
+    }
+
+    static final class PaymentOriginatorKey implements KeySelector<String, String> {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public String getKey(String value) {
+            return paymentOriginator(value);
+        }
+    }
+
+    static class PaymentAlertProcess extends KeyedProcessFunction<String, String, String> {
         private transient PatternEngine engine;
         private transient RedisFeatureStore redis;
+        private transient ValueState<String> velocityWindow;
 
         private final JobConfig config;
 
@@ -137,6 +236,8 @@ public class ComplianceCepJob {
                 LOG.info("Phase 3b: INT-M001 uses Decision Service (INT-R001) at " + config.decisionServiceUrl);
             }
             engine = new PatternEngine(config, redis, decisionClient);
+            velocityWindow = getRuntimeContext().getState(
+                    new ValueStateDescriptor<>("int-vel-10m", String.class));
         }
 
         @Override
@@ -153,9 +254,25 @@ public class ComplianceCepJob {
                 LOG.warning("dropped unparseable payment event: " + previewPayload(value));
                 return;
             }
-            Optional<AlertRecord> alert = engine.onPayment(payment.get());
+            JsonParsers.PaymentEvent event = payment.get();
+            Optional<AlertRecord> alert = engine.onPayment(event);
             if (alert.isPresent()) {
                 out.collect(toEnvelopeJson(alert.get()));
+            }
+            long watermark = ctx.timerService().currentWatermark();
+            String savedWindow = velocityWindow.value();
+            if (savedWindow != null) {
+                engine.restoreEventTimeVelocity(event.sourceAccountId(), savedWindow);
+            }
+            Optional<AlertRecord> eventTimeAlert = engine.onEventTimeVelocity(event, watermark);
+            String nextWindow = engine.checkpointEventTimeVelocity(event.sourceAccountId());
+            if (nextWindow == null) {
+                velocityWindow.clear();
+            } else {
+                velocityWindow.update(nextWindow);
+            }
+            if (eventTimeAlert.isPresent()) {
+                out.collect(toEnvelopeJson(eventTimeAlert.get()));
             }
         }
     }
@@ -193,6 +310,11 @@ public class ComplianceCepJob {
             Optional<JsonParsers.TwinStateEvent> twin = JsonParsers.parseTwinState(value);
             if (twin.isEmpty()) {
                 LOG.warning("dropped unparseable twin.state.updated event: " + previewPayload(value));
+                return;
+            }
+            long watermark = ctx.timerService().currentWatermark();
+            if (twinEventIsLate(twinEventTimeMillis(value), watermark)) {
+                LOG.warning("dropped late twin.state.updated event: " + previewPayload(value));
                 return;
             }
             Optional<AlertRecord> alert = engine.onTwinState(twin.get());

@@ -234,7 +234,7 @@ See [ADR-001](./adr/001-kafka-flink-streaming.md).
 
 #### Real-Time Monitoring (Apache Flink — Java)
 
-The job in `jobs/compliance-cep` is per-record streaming. `ComplianceCepJob` uses `WatermarkStrategy.noWatermarks()` and `ProcessFunction`. `pom.xml` depends on `flink-streaming-java` and does not depend on `flink-cep`.
+The job in `jobs/compliance-cep` is per-record streaming. `ComplianceCepJob` uses `WatermarkStrategy.forBoundedOutOfOrderness` and `ProcessFunction`. `pom.xml` depends on `flink-streaming-java` and does not depend on `flink-cep`.
 
 `PatternEngine` calls three Java checkers: `VelocityChecker` (INT-M001), `ExposureChecker`, and `LcrChecker` (BASEL-M001). A payment calls the velocity checker. Twin state calls LCR for an institution and exposure for an instrument. When `CEP_DECISION_SERVICE_URL` is set, those checkers call the Decision Service and fall back to the in-process threshold. Alerts are written to the `compliance.alerts` Kafka topic.
 
