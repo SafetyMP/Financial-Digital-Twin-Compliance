@@ -16,13 +16,13 @@ Public roadmap for the **Digital Twin Compliance Platform** — an open-source s
 | **Monitoring & alerts** | 2 | Per-record Flink streaming (not `flink-cep`), Redis features, Alert Service, Alert Console, Grafana | `./scripts/smoke-test-phase2.sh` |
 | **Policy & audit** | 3 | Cedar + GoRules Zen, immudb ledger, Audit Explorer, `evidenceRef` on alerts | `./scripts/smoke-test-phase3.sh` · [demo](docs/demo-phase3.md) |
 | **Graph & simulation** | 4 | Neo4j exposure graph, deterministic stress simulation, Graph Explorer + Simulation Console | `./scripts/smoke-test-phase4.sh` · [demo](docs/demo-phase4.md) |
-| **Regulatory reporting** | 5 | `services/reporting-service` checks XML local names. It is not XBRL or SDMX and it is not on the payment path | `./scripts/smoke-test-phase5.sh` · [ADR-011](docs/adr/011-phase5-reporting-foundation.md) |
+| **Regulatory reporting** | 5 | `services/reporting-service` checks XML local names. It is not XBRL or SDMX and it is not on the payment path | [demo-phase5.md](docs/demo-phase5.md). `./scripts/smoke-test-phase5.sh` cannot pass on this Compose file: submit requires `objectLock == true`, and MinIO is one drive |
 | **Hardening** | 6 | Keycloak/OIDC edge, TLS nginx, OpenTelemetry, DR runbooks, explainability pack | `docker-compose.hardening.yml` · `./scripts/smoke-test-phase6-*.sh` · [ADR-012](docs/adr/012-phase6-hardening-foundation.md) |
 | **Cutting-edge analytics** | 7 | Control-effectiveness twin, contagion→audit, reg→policy proposals (no auto-deploy), graph path/centrality | `./scripts/smoke-test-phase7-*.sh` · [ADR-013](docs/adr/013-phase7-cutting-edge-foundation.md) |
 
 CI on every PR runs Phase 1–4 smoke suites plus policy CI ([README § CI](README.md#ci)). Phase 5–7 smokes and `./scripts/harness/verify.sh` are local/harness gates (CI wiring is a follow-up).
 
-**Release [v0.1.0](https://github.com/SafetyMP/Digital-Twin-Compliance/releases/tag/v0.1.0)** — Phase 1–3 smoke-stable; Flink 1.20 runtime aligned. Phases 5–7 (CECT delivery) land under `[Unreleased]` until the next semver tag.
+**Release [v0.1.0](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/releases/tag/v0.1.0)** — Phase 1–3 smoke-stable; Flink 1.20 runtime aligned. Phases 5–7 (CECT delivery) land under `[Unreleased]` until the next semver tag.
 
 ## Stability
 

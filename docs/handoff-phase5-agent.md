@@ -3,8 +3,10 @@
 ## Done when
 
 - ADR-011 on disk and indexed
-- `./scripts/smoke-test-phase5.sh` exits 0
+- Generators emit local-name XML for `FINREP_F01`, `ANACREDIT_T2`, and `DORA_ICT`
 - Acceptance IDs `AC-A-P5-001` … `AC-A-P5-005` have executable evidence
+
+`./scripts/smoke-test-phase5.sh` requires `objectLock == true` on submit. `docker-compose.dev.yml` starts MinIO as one drive, so that script cannot exit 0 on the current Compose file. See [demo-phase5.md](demo-phase5.md).
 
 ## Start with
 
