@@ -1,5 +1,7 @@
 # ADR-003: immudb for Tamper-Evident Audit Ledger
 
+> **Original decision.** The client in `services/audit-service` uses immudb `Set` and `Get`, not `VerifiedGet`. Compose runs MinIO as one drive, so it cannot satisfy object lock. Report artifacts are local-name XML, not XBRL or SDMX filings.
+
 **Status**: Accepted  
 **Date**: 2026-06-13  
 **Deciders**: Platform Architecture Team

@@ -11,7 +11,7 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - **CECT r1 (Phase 5–7)** — reporting, hardening overlay, and cutting-edge leapfrog capabilities (corporate program `cect` revision 1, user-approved)
-- Reporting Service: FINREP F01 (XBRL), AnaCredit Table 2 (SDMX), DORA ICT Register (XML); MinIO Object Lock; taxonomy fixtures; Report Console lifecycle
+- Reporting Service: local-name XML for FINREP F01, AnaCredit Table 2, and the DORA ICT register. Not an XBRL or SDMX filing. The service requests MinIO object lock; Compose runs one drive, so that lock cannot complete. Report Console lifecycle
 - Hardening: Keycloak/OIDC edge (`oidc-edge`), TLS nginx edge, OpenTelemetry collector, DR runbooks (Kafka/Flink/immudb), [docs/explainability.md](docs/explainability.md)
 - Phase 7: control-effectiveness twin, contagion→audit (on-demand), reg→policy proposal CI (no auto-deploy), graph path/centrality APIs
 - Site harness wrappers: `./scripts/harness/verify.sh`, `./scripts/harness/adversarial.sh`, `./scripts/check-cutting-edge-claims.sh`
@@ -56,7 +56,7 @@ Capability milestones (internal phase specs remain under `docs/phase*-implementa
 | Milestone | Highlights |
 |-----------|------------|
 | Ingestion & twin | Debezium CDC, State Service, outbox, persona API |
-| Monitoring | Flink CEP, Alert Service, alert console, Grafana |
+| Monitoring | Per-record Flink streaming job, Alert Service, alert console, Grafana |
 | Policy & audit | Cedar + Zen, immudb ledger, Audit Explorer, `evidenceRef` |
 
 ## Cutting a release
@@ -65,4 +65,4 @@ Capability milestones (internal phase specs remain under `docs/phase*-implementa
 2. Tag `vX.Y.Z` and push — triggers [release.yml](.github/workflows/release.yml) and [docker-publish.yml](.github/workflows/docker-publish.yml)
 3. Validate deploy with tagged images (see [docs/deployment.md](docs/deployment.md#release-validation))
 
-Previous tags: [GitHub Releases](https://github.com/SafetyMP/Digital-Twin-Compliance/releases).
+Previous tags: [GitHub Releases](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/releases).
