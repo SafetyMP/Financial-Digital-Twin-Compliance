@@ -1,5 +1,8 @@
 # Data Flow
 
+> **Running path.** The root [README](../README.md) is the status of record. Diagrams and phase notes below may still say Flink CEP, XBRL, or SDMX. The Flink job is per-record streaming and does not depend on `flink-cep`. Reporting is a local-name fixture and is not on the running path.
+
+
 Kafka topics, event/schema contracts, audit ledger record format, and end-to-end data flows for the Financial Digital Twin + Compliance Platform.
 
 See also: [architecture.md](./architecture.md), [domain-model.md](./domain-model.md), [compliance-mapping.md](./compliance-mapping.md).

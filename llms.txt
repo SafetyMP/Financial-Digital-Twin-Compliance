@@ -1,13 +1,12 @@
 # Financial Digital Twin Compliance
 
-> Supervisory twin composition (CDC + Flink CEP + Cedar/Zen + XBRL/SDMX + immudb). Apache-2.0 reference architecture — not a certified Basel engine or commercial XBRL/SDMX product.
+> One mock payment through Debezium, a per-record Flink streaming job, Cedar (`cedar-go`), and an immudb audit entry. Not Flink CEP, XBRL, or SDMX.
 
 ## Start
 
 - [README.md](README.md): clone, phase journeys, APIs
 - [AGENTS.md](AGENTS.md): community contract, verify, never-do
 - [SECURITY.md](SECURITY.md): supported versions and vulnerability reporting
-- [.github/SECURITY.md](.github/SECURITY.md): `## Reporting a Vulnerability` pointer
 
 ## Architecture
 

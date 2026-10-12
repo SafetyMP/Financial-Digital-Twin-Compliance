@@ -1,5 +1,8 @@
 # Architecture
 
+> **Running path.** The root [README](../README.md) is the status of record. Diagrams and phase notes below may still say Flink CEP, XBRL, or SDMX. The Flink job is per-record streaming and does not depend on `flink-cep`. Reporting is a local-name fixture and is not on the running path.
+
+
 System architecture for the Financial Digital Twin + Compliance Platform. This document expands the high-level design with C4 context/container/component views and technology assignments per component.
 
 See also: [domain-model.md](./domain-model.md), [data-flow.md](./data-flow.md), [adr/](./adr/).
@@ -14,7 +17,7 @@ This document describes the architecture across all phases. **Public status of r
 |-----------|-------|--------|
 | Kafka, Schema Registry, Debezium CDC | 1 | Implemented (CI smoke) |
 | State Service, outbox, persona REST API | 1 | Implemented (CI smoke) |
-| Flink CEP (INT-M001, INT-M002, BASEL-M001) | 2 | Implemented (CI smoke) |
+| Per-record Flink streaming (`jobs/compliance-cep`, not `flink-cep`) | 2 | On the running path. Older CEP names in this document are design history |
 | Redis online feature store | 2 | Implemented (CI smoke) |
 | Alert Service, WebSocket, Alert Console, Grafana | 2 | Implemented (CI smoke) |
 | Cedar Policy Service, GoRules Zen / Decision Service | 3 | Implemented (CI smoke) — [phase3-implementation-spec.md](./phase3-implementation-spec.md) |

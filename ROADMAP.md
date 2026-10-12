@@ -1,5 +1,7 @@
 # Roadmap
 
+> **Running path.** The root [README](README.md) is the status of record. The Flink job is per-record streaming and does not depend on `flink-cep`. XBRL and SDMX are not on that path.
+
 Public roadmap for the **Digital Twin Compliance Platform** — an open-source supervisory financial-compliance digital-twin reference.
 
 **Phase journeys (canonical map):** [docs/phase-journeys.md](docs/phase-journeys.md). Detailed engineering plan: [docs/roadmap.md](docs/roadmap.md).
@@ -11,10 +13,10 @@ Public roadmap for the **Digital Twin Compliance Platform** — an open-source s
 | Journey | Phase | What you get | Try it |
 |---------|-------|--------------|--------|
 | **Ingestion & twin** | 1 | Debezium CDC → Kafka → State Service, transactional outbox, persona REST API | `./scripts/smoke-test.sh` |
-| **Monitoring & alerts** | 2 | Flink CEP, Redis features, Alert Service, Alert Console, Grafana | `./scripts/smoke-test-phase2.sh` |
+| **Monitoring & alerts** | 2 | Per-record Flink streaming (not `flink-cep`), Redis features, Alert Service, Alert Console, Grafana | `./scripts/smoke-test-phase2.sh` |
 | **Policy & audit** | 3 | Cedar + GoRules Zen, immudb ledger, Audit Explorer, `evidenceRef` on alerts | `./scripts/smoke-test-phase3.sh` · [demo](docs/demo-phase3.md) |
 | **Graph & simulation** | 4 | Neo4j exposure graph, deterministic stress simulation, Graph Explorer + Simulation Console | `./scripts/smoke-test-phase4.sh` · [demo](docs/demo-phase4.md) |
-| **Regulatory reporting** | 5 | FINREP F01 / AnaCredit / DORA; MinIO Object Lock; Report Console lifecycle | `./scripts/smoke-test-phase5.sh` · [demo](docs/demo-phase5.md) · [ADR-011](docs/adr/011-phase5-reporting-foundation.md) |
+| **Regulatory reporting** | 5 | `services/reporting-service` checks XML local names. It is not XBRL or SDMX and it is not on the payment path | `./scripts/smoke-test-phase5.sh` · [ADR-011](docs/adr/011-phase5-reporting-foundation.md) |
 | **Hardening** | 6 | Keycloak/OIDC edge, TLS nginx, OpenTelemetry, DR runbooks, explainability pack | `docker-compose.hardening.yml` · `./scripts/smoke-test-phase6-*.sh` · [ADR-012](docs/adr/012-phase6-hardening-foundation.md) |
 | **Cutting-edge analytics** | 7 | Control-effectiveness twin, contagion→audit, reg→policy proposals (no auto-deploy), graph path/centrality | `./scripts/smoke-test-phase7-*.sh` · [ADR-013](docs/adr/013-phase7-cutting-edge-foundation.md) |
 
