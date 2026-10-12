@@ -1,6 +1,8 @@
 # ADR-012: Phase 6 Hardening Foundation (D30–D35)
 
-**Status**: Accepted (planning)  
+> **What runs.** `docker-compose.hardening.yml` adds Keycloak, `oidc-edge`, nginx `tls-edge`, and Jaeger. Direct service ports stay open. Kubernetes HA and a 10K events/sec proof are not this overlay.
+
+**Status**: Accepted  
 **Date**: 2026-07-25  
 **Deciders**: Platform Architecture Team  
 **Implements**: CECT master-spec §2.2  

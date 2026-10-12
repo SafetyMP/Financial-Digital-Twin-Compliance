@@ -242,7 +242,7 @@ gantt
 **Dependencies**: Phase 4 complete  
 **What shipped:** `services/reporting-service` string-builds local-name XML. It does not validate with Arelle, it does not emit SDMX, and it is not on the payment path. The list below is the original plan.
 
-### Scope
+### Scope (original plan)
 
 - Reporting Service (Python)
 - Taxonomy mapping layer (PostgreSQL)
@@ -254,7 +254,7 @@ gantt
 - Report review and submission tracking UI
 - ClickHouse for report aggregation metrics
 
-### Deliverables
+### Deliverables (original plan)
 
 | Component | Technology | Acceptance Criteria |
 |-----------|------------|---------------------|
@@ -271,14 +271,16 @@ gantt
 | Risk | Likelihood | Impact | Mitigation |
 |------|------------|--------|------------|
 | Taxonomy complexity | High | High | Start with one FINREP template; expand incrementally |
-| XBRL library maturity | Medium | Medium | Use arelle for validation; test against published examples |
+| XBRL library maturity (original plan) | Medium | Medium | Use arelle for validation; test against published examples |
 | Mapping errors | High | High | Compliance officer review gate before submission |
 
-### Exit Criteria
+### Exit Criteria (original plan)
 
 - FINREP F01 generated from seed data and passes taxonomy validation
 - Report artifacts stored in S3 Object Lock with audit ledger reference
 - Report UI shows draft → validated → submitted lifecycle
+
+These checks did not ship. There is no Arelle validation and no SDMX output. Compose MinIO is one drive, so object lock cannot complete.
 
 ---
 
@@ -287,7 +289,9 @@ gantt
 **Duration**: 4 weeks  
 **Dependencies**: Phase 5 complete
 
-### Scope
+**What shipped:** `docker-compose.hardening.yml` adds Keycloak, `oidc-edge`, an nginx `tls-edge`, and Jaeger. `oidc-edge` exports OTLP to Jaeger. DR notes are in `docs/runbooks/`. Direct service ports stay open. Kubernetes HA, Vault, and a 10K events/sec load test are not this overlay. The lists below are the original plan.
+
+### Scope (original plan)
 
 - Kubernetes production deployment (Terraform IaC)
 - immudb HA cluster
@@ -298,7 +302,7 @@ gantt
 - Runbooks and operational documentation
 - Explainability documentation for regulators
 
-### Deliverables
+### Deliverables (original plan)
 
 | Component | Technology | Acceptance Criteria |
 |-----------|------------|---------------------|
@@ -317,7 +321,7 @@ gantt
 | Production ops complexity | High | High | Managed services where possible; runbooks tested |
 | Security findings | Medium | High | Security review in Phase 3; address incrementally |
 
-### Exit Criteria
+### Exit Criteria (original plan)
 
 - All services deployed to staging with HA
 - Load test passes 10K events/sec target

@@ -1,6 +1,8 @@
 # ADR-010: Phase 4 Foundation Decisions (D21–D24)
 
-**Status**: Accepted (planning)  
+> **What runs.** Neo4j, Graph Service, and Simulation Service are on main. They are outside the payment path.
+
+**Status**: Accepted  
 **Date**: 2026-06-29  
 **Deciders**: Platform Architecture Team  
 **Implements**: [phase4-implementation-spec.md](../phase4-implementation-spec.md)
