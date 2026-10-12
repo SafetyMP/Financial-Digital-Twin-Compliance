@@ -1,5 +1,7 @@
 # Handoff: Phase 3 Implementation Agent
 
+Cedar on main is `cedar-go` in `services/cedar-service` (`POST /api/v1/evaluate`). immudb writes use `Set` and reads use `Get`, not `VerifiedGet`. This file is the original implementation brief.
+
 Use this document when starting Phase 3 implementation in a **new** Cursor chat.
 
 **Created**: 2026-06-15  

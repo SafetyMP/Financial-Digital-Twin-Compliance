@@ -1,10 +1,10 @@
 # Phase 3 Exit Criteria Checklist
 
-**Phase 3: COMPLETE** — release [v0.1.0](https://github.com/SafetyMP/Digital-Twin-Compliance/releases/tag/v0.1.0) on `main` (2026-06-29).
+**Phase 3: COMPLETE** — release [v0.1.0](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/releases/tag/v0.1.0) on `main` (2026-06-29). Cedar on that path is `cedar-go`. immudb uses `Set` and `Get`, not `VerifiedGet`.
 
 Maps [phase3-implementation-spec.md §13](../phase3-implementation-spec.md#13-phase-3-exit-criteria-checklist) to fresh local evidence.
 
-Verified: 2026-06-29 — `main` at `7ee99c7` after [PR #69](https://github.com/SafetyMP/Digital-Twin-Compliance/pull/69) (Flink 1.20, CHANGELOG, deploy docs). Prior verification: 2026-06-28 — [PR #19](https://github.com/SafetyMP/Digital-Twin-Compliance/pull/19) merge ([CI run](https://github.com/SafetyMP/Digital-Twin-Compliance/actions/runs/28335248362)).
+Verified: 2026-06-29 — `main` at `7ee99c7` after [PR #69](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/pull/69) (Flink 1.20, CHANGELOG, deploy docs). Prior verification: 2026-06-28 — [PR #19](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/pull/19) merge ([CI run](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/28335248362)).
 
 ---
 
