@@ -5,12 +5,9 @@ in [`services/*/AGENTS.md`](services/) — do not flatten or delete them.
 
 ## What this is
 
-**Supervisory twin composition:** Debezium CDC + Flink CEP + Cedar/Zen + XBRL/SDMX + immudb.
+**Running path:** a mock payment through Debezium, a per-record Flink streaming job (`jobs/compliance-cep`, no `flink-cep` dependency), a Cedar decision (`cedar-go`), and an immudb audit entry. Flink CEP, XBRL, and SDMX are not on that path. `services/reporting-service` is a local-name fixture.
 
-A runnable financial-compliance digital-twin reference (Kafka twin state, policy
-evaluation, regulatory reporting, hardening overlay, tamper-evident audit). It is
-not a certified Basel engine, not commercial XBRL/SDMX parity, and not a
-multi-tenant supervisory SaaS.
+It is not a certified Basel engine, not an XBRL or SDMX product, and not a multi-tenant supervisory SaaS.
 
 ## Community commands
 
@@ -28,7 +25,7 @@ Full smoke, worktree, and eval commands: [Commands](#commands) below.
 | Path | Purpose |
 |------|---------|
 | `services/*/AGENTS.md` | Per-service agent contracts (keep nested) |
-| `jobs/compliance-cep/` | Flink CEP job (Java) |
+| `jobs/compliance-cep/` | Per-record Flink streaming job (Java). Not the `flink-cep` library |
 | `policies/` | Cedar (`.cedar`) and Zen (`.zen`) bundles |
 | `apps/*` | Next.js consoles (alert, audit, graph, simulation, report) |
 | `docs/` | Architecture, ADRs, phase specs |
@@ -40,7 +37,7 @@ Full smoke, worktree, and eval commands: [Commands](#commands) below.
 
 - Load this file and the scoped `services/<svc>/AGENTS.md` before editing a service
 - Run `./scripts/harness/verify.sh` (or the touched package tests) before claiming done
-- Keep the composition: CDC → Kafka → Flink CEP → Cedar/Zen → XBRL/SDMX → immudb
+- Keep the running path: CDC → Kafka → per-record Flink streaming → Cedar (`cedar-go`) → immudb. Do not describe that path as Flink CEP, XBRL, or SDMX.
 
 **Ask first**
 
@@ -214,7 +211,7 @@ docker compose -f docker-compose.dev.yml restart state-service && docker compose
 # Phase 2: restart alert-service after seed so consumers see new topics
 docker compose -f docker-compose.dev.yml restart alert-service && docker compose -f docker-compose.dev.yml up -d --wait alert-service
 
-# Phase 2: ensure Flink CEP job RUNNING
+# Phase 2: ensure the Flink streaming job is RUNNING
 ./scripts/submit-flink-job.sh
 
 # State Service — tests
@@ -331,7 +328,7 @@ CI runs Go + `mvn test` + `check-kafka-contracts.sh` before `docker compose up`;
 | `schemas/avro/` | Kafka Avro schema definitions |
 | `services/state-service/` | Go REST + consumer + outbox |
 | `services/alert-service/` | Go alerts REST + WebSocket + consumer |
-| `jobs/compliance-cep/` | Flink CEP job (Java) |
+| `jobs/compliance-cep/` | Per-record Flink streaming job (Java). Not the `flink-cep` library |
 | `apps/alert-console/` | Next.js alert UI |
 | `mocks/core-banking/` | CDC source DB migrations and seed |
 | `contracts/kafka/` | Golden Kafka payload fixtures (cross-service API contract) |

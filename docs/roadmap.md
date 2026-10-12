@@ -1,5 +1,8 @@
 # Roadmap
 
+> **Running path.** The root [README](../README.md) is the status of record. Diagrams and phase notes below may still say Flink CEP, XBRL, or SDMX. The Flink job is per-record streaming and does not depend on `flink-cep`. Reporting is a local-name fixture and is not on the running path.
+
+
 Phased implementation plan, risks, and open decisions for the Financial Digital Twin + Compliance Platform.
 
 > **Status of record for what is shipped on `main`:** [ROADMAP.md](../ROADMAP.md) and [phase-journeys.md](./phase-journeys.md). This file is engineering detail (durations, risks, open decisions); the gantt below is historical planning, not live completion status.

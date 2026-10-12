@@ -1,6 +1,8 @@
 # GitHub repository setup
 
-One-time configuration for [SafetyMP/Digital-Twin-Compliance](https://github.com/SafetyMP/Digital-Twin-Compliance). Most items are repository **Settings** (not files in git).
+> The repository is [SafetyMP/Financial-Digital-Twin-Compliance](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance). The About description matches the root README: one mock payment, not Flink CEP, XBRL, or SDMX.
+
+One-time configuration for [SafetyMP/Financial-Digital-Twin-Compliance](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance). Most items are repository **Settings** (not files in git).
 
 ---
 
@@ -25,27 +27,27 @@ Align topics with the README, About description, and actual dependencies — not
 
 | Field | Value |
 |-------|-------|
-| Description | Cutting-edge OSS supervisory financial-compliance digital twin: CDC twin state, Flink CEP, Cedar/Zen policy, XBRL/SDMX reporting, OIDC/TLS/OTel hardening, and immudb audit. |
-| Website | `https://github.com/SafetyMP/Digital-Twin-Compliance#readme` (**applied**) |
-| Topics | See table below (**19 topics** — apply after CECT r1) |
+| Description | One mock payment through Debezium, a per-record Flink streaming job, Cedar, and immudb. Not Flink CEP, XBRL, or SDMX, and not a core-banking system. |
+| Website | `https://github.com/SafetyMP/Financial-Digital-Twin-Compliance#readme` (**applied**) |
+| Topics | See table below (**17 topics**) |
 | Social preview | Upload [docs/assets/social-preview.png](./assets/social-preview.png) (1280×640 PNG; export from SVG if needed) — **Settings → General → Social preview** |
 
-**Topics** (19 — purpose, stack, domain; all reflect shipped code):
+**Topics** (17 — purpose and stack that are on the running path):
 
 | Category | Topics |
 |----------|--------|
 | Purpose / architecture | `digital-twin`, `compliance`, `event-driven`, `transactional-outbox` |
-| Industry / domain | `regtech`, `fintech`, `core-banking`, `xbrl` |
+| Industry / domain | `regtech`, `fintech` |
 | Tech stack | `kafka`, `debezium`, `flink`, `postgresql`, `avro`, `immudb`, `cedar`, `oidc`, `keycloak`, `opentelemetry`, `minio` |
 
 Apply from a maintainer shell (replaces the full topic list):
 
 ```bash
-gh repo edit SafetyMP/Digital-Twin-Compliance \
-  --description "Cutting-edge OSS supervisory financial-compliance digital twin: CDC twin state, Flink CEP, Cedar/Zen policy, XBRL/SDMX reporting, OIDC/TLS/OTel hardening, and immudb audit."
+gh repo edit SafetyMP/Financial-Digital-Twin-Compliance \
+  --description "One mock payment through Debezium, a per-record Flink streaming job, Cedar, and immudb. Not Flink CEP, XBRL, or SDMX, and not a core-banking system."
 
-printf '%s' '{"names":["digital-twin","compliance","event-driven","transactional-outbox","regtech","fintech","core-banking","xbrl","kafka","debezium","flink","postgresql","avro","immudb","cedar","oidc","keycloak","opentelemetry","minio"]}' \
-  | gh api -X PUT repos/SafetyMP/Digital-Twin-Compliance/topics --input -
+printf '%s' '{"names":["digital-twin","compliance","event-driven","transactional-outbox","regtech","fintech","kafka","debezium","flink","postgresql","avro","immudb","cedar","oidc","keycloak","opentelemetry","minio"]}' \
+  | gh api -X PUT repos/SafetyMP/Financial-Digital-Twin-Compliance/topics --input -
 ```
 
 Enable **Issues** under Features. **Discussions** optional — useful for Q&A if issue volume grows.

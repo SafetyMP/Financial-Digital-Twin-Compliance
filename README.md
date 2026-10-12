@@ -489,3 +489,8 @@ Local stacks use **mock principals only** — no production auth middleware. Def
 Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [ROADMAP.md](ROADMAP.md) before opening a pull request.
 
 GitHub setup for maintainers: [docs/github-setup.md](docs/github-setup.md).
+
+
+## Documentation map
+
+[docs/README.md](docs/README.md) lists the repository layout. Community policy files are the root `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, and `SECURITY.md`.
