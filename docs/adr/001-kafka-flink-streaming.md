@@ -1,5 +1,7 @@
 # ADR-001: Kafka + Flink for Real-Time Event Streaming and Monitoring
 
+> **Original decision, 2026-06-13.** The shipped job is `jobs/compliance-cep`: per-record streaming with `WatermarkStrategy.noWatermarks()` and a `ProcessFunction`. `pom.xml` does not depend on `flink-cep`. The "Flink CEP" lines below are the original decision, not the running job.
+
 **Status**: Accepted  
 **Date**: 2026-06-13  
 **Deciders**: Platform Architecture Team
