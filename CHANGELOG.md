@@ -12,7 +12,7 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - **CECT r1 (Phase 5–7)** — reporting, hardening overlay, and cutting-edge leapfrog capabilities (corporate program `cect` revision 1, user-approved)
 - Reporting Service: local-name XML for FINREP F01, AnaCredit Table 2, and the DORA ICT register. Not an XBRL or SDMX filing. The service requests MinIO object lock; Compose runs one drive, so that lock cannot complete. Report Console lifecycle
-- Hardening: Keycloak/OIDC edge (`oidc-edge`), TLS nginx edge, OpenTelemetry collector, DR runbooks (Kafka/Flink/immudb), [docs/explainability.md](docs/explainability.md)
+- Hardening: Keycloak, `oidc-edge`, nginx `tls-edge`, and Jaeger all-in-one with OTLP enabled. DR runbooks cover Kafka, Flink, and immudb. See [docs/explainability.md](docs/explainability.md)
 - Phase 7: control-effectiveness twin, contagion→audit (on-demand), reg→policy proposal CI (no auto-deploy), graph path/centrality APIs
 - Site harness wrappers: `./scripts/harness/verify.sh`, `./scripts/harness/adversarial.sh`, `./scripts/check-cutting-edge-claims.sh`
 - ADRs 011–013 and phase5–7 implementation specs
