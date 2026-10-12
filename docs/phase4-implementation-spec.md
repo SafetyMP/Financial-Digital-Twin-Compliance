@@ -1,5 +1,7 @@
 # Phase 4 Implementation Spec
 
+Graph and simulation are in this tree and outside the payment path. That path is one mock payment through Debezium, the per-record Flink streaming job, Cedar (`cedar-go`), and immudb. This file is the original phase 4 plan.
+
 Executable handoff for the implementation agent. Implements [roadmap.md](./roadmap.md) Phase 4 only.
 
 **Prerequisites**: Phase 3 complete ([review/phase3-exit-checklist.md](./review/phase3-exit-checklist.md), release **v0.1.0+**). [ADR-010](./adr/010-phase4-foundation-decisions.md) (D21–D24).
