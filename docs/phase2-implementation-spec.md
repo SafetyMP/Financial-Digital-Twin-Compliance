@@ -1,6 +1,6 @@
 # Phase 2 Implementation Spec
 
-The job on main is per-record streaming in `jobs/compliance-cep`. `pom.xml` depends on `flink-streaming-java` and has no `flink-cep` artifact. The sections below are the original plan, including a CEP library this repository did not ship.
+The job on main is per-record streaming in `jobs/compliance-cep`. `pom.xml` depends on `flink-streaming-java` and has no `flink-cep` artifact. Section 8 describes that job. A CEP library, a Schema Registry deserializer, and an exactly-once Kafka sink were the original plan and did not ship.
 
 Executable handoff for the implementation agent. Implements [roadmap.md](./roadmap.md) Phase 2 only.
 
@@ -14,9 +14,9 @@ Executable handoff for the implementation agent. Implements [roadmap.md](./roadm
 
 Build real-time compliance monitoring and alert delivery so that:
 
-1. Three CEP patterns detect breaches from twin and payment events within **2s p99** (simulated load).
-2. Rolling features are maintained in **Redis** and updated by Flink.
-3. `ComplianceAlertRaised` events are published to **`compliance.alerts`** with Avro envelope.
+1. Three in-process checkers detect breaches from twin and payment events within **2s p99** (simulated load).
+2. Rolling features are maintained in **Redis** and updated by the Flink job through Jedis.
+3. `ComplianceAlertRaised` events are published to **`compliance.alerts`** as a JSON envelope.
 4. **Alert Service** persists alerts and streams them to the UI via **WebSocket** within **5s** of detection.
 5. **Alert Console** (Next.js) shows a live feed with **acknowledge** action.
 6. **Grafana** dashboards show Kafka consumer lag and Flink checkpoint health.
@@ -30,14 +30,14 @@ Build real-time compliance monitoring and alert delivery so that:
 
 | Deliverable | Technology |
 |-------------|------------|
-| Flink CEP job (3 patterns) | Java 17 + Flink 1.18+ |
+| Per-record Flink streaming job (three checkers) | Java 17 + Flink 1.20 |
 | Redis online feature store | Redis 7 |
 | Alert Service | Go + PostgreSQL |
 | WebSocket hub | Go (inside Alert Service or sub-package) |
 | Alert Console UI | Next.js 14+ (App Router), TypeScript |
 | Grafana dashboards | Grafana 10+ (Compose) |
 | Mock payment/event feed | SQL seed + optional Kafka injector script |
-| Avro schemas for alerts | `schemas/avro/` |
+| JSON alert envelope | `compliance.alerts` (Avro schemas were the original plan) |
 | CI + smoke test extensions | GitHub Actions |
 
 ### Out of scope (defer to Phase 3+)
@@ -57,7 +57,7 @@ Phase 2 implements these **monitoring check IDs**:
 
 | Check ID | Pattern | Threshold (dev default) | Severity | Source events |
 |----------|---------|-------------------------|----------|---------------|
-| `INT-M001` | Transaction velocity | > 50 payments / account / 1h sliding window | Warning | `PaymentInitiated` |
+| `INT-M001` | Transaction velocity | > 50 payments / account / Redis key with 3600s TTL | Warning | `PaymentInitiated` |
 | `INT-M002` | Counterparty exposure limit | Instrument notional to same counterparty > €10M per institution | Critical | `twin.state.updated` (Instrument persona) |
 | `BASEL-M001` | LCR below minimum | LCR < 100% | Critical | `twin.state.updated` (Institution persona liquidity fields) |
 
@@ -191,9 +191,9 @@ curl -X POST -H "Expect:" -F "jarfile=@target/compliance-cep-0.1.0-SNAPSHOT.jar"
 
 | Topic | Partitions (dev) | Producers | Consumers |
 |-------|------------------|-----------|-----------|
-| `twin.state.updated` | 3 | State Service (Phase 1) | Flink CEP, Alert Service (optional) |
-| `domain.events.public.payments` | 3 | Debezium (new table) | Flink CEP |
-| `compliance.alerts` | 3 | Flink CEP | Alert Service |
+| `twin.state.updated` | 3 | State Service (Phase 1) | per-record Flink job, Alert Service (optional) |
+| `domain.events.public.payments` | 3 | Debezium (new table) | per-record Flink job |
+| `compliance.alerts` | 3 | per-record Flink job | Alert Service |
 | `compliance.alerts.dlq` | 1 | Alert Service | Ops |
 
 Retention in dev: 7 days (production 7 years per [data-flow.md](./data-flow.md)).
@@ -292,29 +292,31 @@ Use `DEFAULT_TENANT_ID` from ADR-007 in keys.
 
 ### 7.2 Flink ↔ Redis
 
-- Use Flink Redis connector or async Redis client in a `RichMapFunction` with idempotent increments.
-- Checkpoint Redis writes: accept **at-least-once** counter updates in dev; document that production requires idempotent alert dedup by `idempotencyKey` on sink.
+- `RedisFeatureStore` uses Jedis from the `ProcessFunction` (`INCR` plus `EXPIRE` for velocity, a Lua script for exposure). There is no Flink Redis connector and no `RichMapFunction`.
+- Redis writes are at-least-once. Alert dedup uses `idempotencyKey`.
 
 ---
 
-## 8. Flink CEP job
+## 8. Per-record Flink job
 
-Path: `jobs/compliance-cep/`
+Path: `jobs/compliance-cep/`. Class `ComplianceCepJob`. The directory name is historical. `pom.xml` has `flink-streaming-java` and no `flink-cep` artifact.
 
 ### 8.1 Inputs
 
 | Source | Topic | Event types |
 |--------|-------|-------------|
-| Payments | `domain.events.public.payments` | Debezium CDC → normalized `PaymentInitiated` |
-| Twin | `twin.state.updated` | Envelope → Institution / Instrument payloads |
+| Payments | `domain.events.public.payments` | Debezium CDC JSON, read with `SimpleStringSchema` |
+| Twin | `twin.state.updated` | JSON envelope, read with `SimpleStringSchema` |
 
-Use KafkaSource with Schema Registry deserializer for `twin.state.updated`; JSON or Avro for Debezium payments (match Phase 1 Debezium format).
+Both sources use `WatermarkStrategy.noWatermarks()`. There is no Schema Registry deserializer.
 
-### 8.2 Patterns
+### 8.2 Checkers
+
+`PatternEngine` calls these classes from a `ProcessFunction`. They are not Flink CEP patterns. When `CEP_DECISION_SERVICE_URL` is set, each checker calls Decision Service and falls back to the in-process threshold.
 
 #### INT-M001 — Transaction velocity
 
-- **Window**: sliding 1 hour, keyed by `sourceAccountId`
+- **Window**: Redis `INCR` on `vel:{tenant}:{account}:1h` with a 3600s TTL, keyed by `sourceAccountId`. Not a Flink sliding window.
 - **Logic**: count payments; if count > `CEP_VELOCITY_MAX_PER_HOUR`, emit alert
 - **Dedup**: idempotencyKey = `INT-M001-{accountId}-{windowEnd}`
 
@@ -328,23 +330,26 @@ Use KafkaSource with Schema Registry deserializer for `twin.state.updated`; JSON
 
 - **Key**: `institutionId`
 - **Logic**: read `currentState.liquidity.lcr`; if < `CEP_LCR_MINIMUM`, emit alert
-- **Dedup**: idempotencyKey = `INT-M001-{institutionId}-{floor(lcr*100)}` — use `BASEL-M001-...`
+- **Dedup**: idempotencyKey = `BASEL-M001-{institutionId}-{floor(lcr*100)}`
 
 ### 8.3 Output sink
 
-- Kafka sink → `compliance.alerts` with Avro `EventEnvelope`
+- `KafkaSink` → `compliance.alerts` with a JSON `EventEnvelope` (`SimpleStringSchema`)
+- `DeliveryGuarantee.AT_LEAST_ONCE`
 - `source` = `flink-compliance-cep`
 - `correlationId` = from input event when present; else generate UUID
-- Enable Flink checkpointing: interval 30s, EXACTLY_ONCE Kafka producer where supported
+
+The original plan called for an Avro envelope and an exactly-once producer. The job does not do that.
 
 ### 8.4 Job configuration (dev)
 
 | Setting | Value |
 |---------|-------|
-| Parallelism | 2 |
-| State backend | HashMapState (dev); RocksDB optional |
-| Checkpoint dir | `file:///tmp/flink-checkpoints` (volume in Compose) |
-| Restart strategy | fixed-delay, 3 attempts |
+| Parallelism | `FLINK_PARALLELISM`, default 1 in `scripts/submit-flink-job.sh` |
+| Checkpoint dir | Compose mounts a volume at `/tmp/flink-checkpoints`. The Java job does not call `enableCheckpointing`. |
+| Delivery | `AT_LEAST_ONCE` |
+
+HashMap state, RocksDB, and a fixed-delay restart strategy were the original plan.
 
 ### 8.5 Tests
 

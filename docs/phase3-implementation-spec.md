@@ -69,7 +69,7 @@ Five **Cedar** policies (access / obligation) and five **Zen** models (Internal 
 | `COREP-R001` | Zen | CET1 ratio below regulatory minimum | REST evaluate + fixture |
 | `COREP-R002` | Zen | Total capital ratio below 8% | REST evaluate + fixture |
 
-**Note**: Phase 2 Flink CEP (`INT-M001`, `INT-M002`, `BASEL-M001`) remains inline per ADR-008 D12. Phase 3 Zen models must produce **equivalent outcomes** on shared seed fixtures so migration is possible later.
+**Note**: The Phase 2 per-record streaming job (`INT-M001`, `INT-M002`, `BASEL-M001`) stays in process. Phase 3 Zen models must produce **equivalent outcomes** on shared seed fixtures so a later move is possible. The job is not a Flink CEP pattern.
 
 ---
 

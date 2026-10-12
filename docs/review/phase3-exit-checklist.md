@@ -50,9 +50,9 @@ Verified: 2026-06-29 — `main` at `7ee99c7` after [PR #69](https://github.com/S
 
 ## Phase 3b (stretch — complete)
 
-- [x] Flink CEP → Decision Service for **INT-M001** (`INT-R001`) when `CEP_DECISION_SERVICE_URL` set
-- [x] Flink CEP → Decision Service for **INT-M002** (`INT-R002`) when URL set
-- [x] Flink CEP → Decision Service for **BASEL-M001** (`BASEL-R001`) when URL set
+- [x] Streaming job → Decision Service for **INT-M001** (`INT-R001`) when `CEP_DECISION_SERVICE_URL` set
+- [x] Streaming job → Decision Service for **INT-M002** (`INT-R002`) when URL set
+- [x] Streaming job → Decision Service for **BASEL-M001** (`BASEL-R001`) when URL set
   **Evidence**: `jobs/compliance-cep` DecisionServiceClient; inline thresholds remain fallback on HTTP failure. Rebuild jar + `./scripts/submit-flink-job.sh` after Java changes (AGENTS.md gotcha).
 
 ---

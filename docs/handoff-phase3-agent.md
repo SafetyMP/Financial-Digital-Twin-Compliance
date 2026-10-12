@@ -71,7 +71,7 @@ Load docs/data-flow.md only for audit envelope / Kafka tasks.
 
 Implement Phase 3 per docs/phase3-implementation-spec.md and ADR-009.
 Do NOT implement Phase 4+ (Neo4j, simulation, XBRL).
-Do NOT migrate Flink CEP to Zen unless task is explicitly Phase 3b.
+Do NOT migrate the per-record streaming job to Zen unless the task is explicitly Phase 3b.
 
 Order: immudb Compose → audit-service → policies → cedar-service →
 decision-service → alert-service evidenceRef → audit-explorer →
