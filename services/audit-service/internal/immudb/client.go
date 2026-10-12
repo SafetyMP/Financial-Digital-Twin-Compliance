@@ -28,8 +28,23 @@ type Ledger interface {
 	GetHead(ctx context.Context) (HeadState, error)
 }
 
+// chainStore is the immudb surface the ledger uses. SetAll writes every key in
+// one transaction. VerifiedGet checks the inclusion proof for a key.
+type chainStore interface {
+	VerifiedGet(ctx context.Context, key []byte, opts ...client.GetOption) (*schema.Entry, error)
+	Set(ctx context.Context, key []byte, value []byte) (*schema.TxHeader, error)
+	SetAll(ctx context.Context, req *schema.SetRequest) (*schema.TxHeader, error)
+	HealthCheck(ctx context.Context) error
+}
+
+type sessionCloser interface {
+	CloseSession(ctx context.Context) error
+	Disconnect() error
+}
+
 type Client struct {
-	cli      client.ImmuClient
+	cli      chainStore
+	session  sessionCloser
 	database string
 }
 
@@ -56,7 +71,7 @@ func Connect(ctx context.Context, host string, port int, database, user, passwor
 		}
 	}
 
-	return &Client{cli: cli, database: database}, nil
+	return &Client{cli: cli, session: cli, database: database}, nil
 }
 
 func tryCreateDatabase(ctx context.Context, host string, port int, user, password, database string) error {
@@ -75,12 +90,12 @@ func tryCreateDatabase(ctx context.Context, host string, port int, user, passwor
 }
 
 func (c *Client) Close() error {
-	if c == nil || c.cli == nil {
+	if c == nil || c.session == nil {
 		return nil
 	}
 	ctx := context.Background()
-	_ = c.cli.CloseSession(ctx)
-	return c.cli.Disconnect()
+	_ = c.session.CloseSession(ctx)
+	return c.session.Disconnect()
 }
 
 func (c *Client) Ping(ctx context.Context) error {
@@ -99,8 +114,13 @@ func (c *Client) ResetHead(ctx context.Context) error {
 	return err
 }
 
+func (c *Client) verifiedGet(ctx context.Context, key []byte) (*schema.Entry, error) {
+	// VerifiedGet checks the immudb inclusion proof before returning the value.
+	return c.cli.VerifiedGet(ctx, key)
+}
+
 func (c *Client) GetHead(ctx context.Context) (HeadState, error) {
-	entry, err := c.cli.Get(ctx, []byte(headKeyPrefix))
+	entry, err := c.verifiedGet(ctx, []byte(headKeyPrefix))
 	if err != nil {
 		if IsKeyNotFound(err) {
 			return HeadState{}, nil
@@ -124,13 +144,21 @@ func (c *Client) AppendEntry(ctx context.Context, entry events.AuditEntry) error
 		return err
 	}
 
-	body, err := json.Marshal(entry)
+	headNow, err := c.GetHead(ctx)
 	if err != nil {
 		return err
 	}
-	key := entryKeyPrefix + entry.EntryID
-	if _, err := c.cli.Set(ctx, []byte(key), body); err != nil {
-		return fmt.Errorf("set entry: %w", err)
+	if headNow.LastSequence == 0 {
+		if entry.PreviousHash != "" || entry.SequenceNumber != 1 {
+			return fmt.Errorf("first audit entry must be sequence 1 with an empty previous hash")
+		}
+	} else if entry.PreviousHash != headNow.LastPayloadHash || entry.SequenceNumber != headNow.LastSequence+1 {
+		return fmt.Errorf("audit entry does not extend the head")
+	}
+
+	body, err := json.Marshal(entry)
+	if err != nil {
+		return err
 	}
 	head := HeadState{
 		LastSequence:    entry.SequenceNumber,
@@ -140,19 +168,25 @@ func (c *Client) AppendEntry(ctx context.Context, entry events.AuditEntry) error
 	if err != nil {
 		return err
 	}
-	if _, err := c.cli.Set(ctx, []byte(headKeyPrefix), headBytes); err != nil {
-		return fmt.Errorf("set head: %w", err)
+	// One SetAll transaction commits the entry and the head together. A failure
+	// leaves both keys unchanged, so the head cannot move without the entry.
+	key := entryKeyPrefix + entry.EntryID
+	_, err = c.cli.SetAll(ctx, &schema.SetRequest{
+		KVs: []*schema.KeyValue{
+			{Key: []byte(key), Value: body},
+			{Key: []byte(headKeyPrefix), Value: headBytes},
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("commit entry and head: %w", err)
 	}
 	slog.Info("appended audit entry to immudb", "entryId", entry.EntryID, "sequence", entry.SequenceNumber)
 	return nil
 }
 
 func (c *Client) GetEntry(ctx context.Context, entryID string) (events.AuditEntry, error) {
-	entry, err := c.cli.Get(ctx, []byte(entryKeyPrefix+entryID))
+	entry, err := c.verifiedGet(ctx, []byte(entryKeyPrefix+entryID))
 	if err != nil {
-		if IsKeyNotFound(err) {
-			return events.AuditEntry{}, fmt.Errorf("get entry %s: %w", entryID, err)
-		}
 		return events.AuditEntry{}, fmt.Errorf("get entry %s: %w", entryID, err)
 	}
 	var out events.AuditEntry

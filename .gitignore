@@ -13,6 +13,7 @@ evals/live-model/results/*.json
 # Python
 __pycache__/
 *.pyc
+.venv/
 
 # Node / Next.js
 **/node_modules/

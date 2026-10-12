@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fixture XSD for a DORA ICT register — not the official RTS schema. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://digitaltwin.local/dora/ict"
+           targetNamespace="http://digitaltwin.local/dora/ict"
+           elementFormDefault="qualified">
+  <xs:simpleType name="nonEmpty">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="DORAICTRegister">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="ICTAsset" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="name" type="tns:nonEmpty" use="required"/>
+            <xs:attribute name="function" type="tns:nonEmpty" use="required"/>
+            <xs:attribute name="criticality" type="tns:nonEmpty" use="required"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="taxonomyVersion" type="tns:nonEmpty" use="required"/>
+      <xs:attribute name="asOf" type="xs:date" use="required"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

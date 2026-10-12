@@ -79,5 +79,16 @@ test -x scripts/check-honest-flink-path.sh || fail "missing honest flink path ch
 bash -n scripts/check-honest-flink-path.sh
 ./scripts/check-honest-flink-path.sh
 
-echo "verify: OK (static parity + CECT hermetic ADR-011/012/013 + claim lint + reg2policy + honest flink path; full smoke needs Docker)"
+echo "==> reporting validators"
+REPORTING_PY="services/reporting-service/.venv/bin/python"
+if [[ ! -x "$REPORTING_PY" ]]; then
+  python3 -m venv services/reporting-service/.venv
+  services/reporting-service/.venv/bin/pip install -r services/reporting-service/requirements.txt
+fi
+(
+  cd services/reporting-service
+  ./.venv/bin/python -m pytest -q tests/test_generators.py
+)
+
+echo "verify: OK (static parity + CECT hermetic ADR-011/012/013 + claim lint + reg2policy + honest flink path + reporting validators; full smoke needs Docker)"
 exit 0

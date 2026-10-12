@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Fixture XSD for FINREP F01 smoke — not a full EBA taxonomy. -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://digitaltwin.local/finrep/f01/2024.1"
            targetNamespace="http://digitaltwin.local/finrep/f01/2024.1"
            elementFormDefault="qualified">
-  <xs:element name="mi_cash" type="xs:decimal"/>
-  <xs:element name="mi_loans" type="xs:decimal"/>
-  <xs:element name="mi_deposits" type="xs:decimal"/>
-  <xs:element name="taxonomyVersion" type="xs:string"/>
+  <!-- XBRL facts carry contextRef and unitRef. The simple type still checks the value. -->
+  <xs:complexType name="decimalFact">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:anyAttribute processContents="skip"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="stringFact">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:anyAttribute processContents="skip"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:element name="mi_cash" type="tns:decimalFact"/>
+  <xs:element name="mi_loans" type="tns:decimalFact"/>
+  <xs:element name="mi_deposits" type="tns:decimalFact"/>
+  <xs:element name="taxonomyVersion" type="tns:stringFact"/>
 </xs:schema>
