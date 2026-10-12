@@ -1,6 +1,6 @@
 # Architecture
 
-> **Running path.** The root [README](../README.md) is the status of record. Diagrams and phase notes below may still say Flink CEP, XBRL, or SDMX. The Flink job is per-record streaming and does not depend on `flink-cep`. Reporting is a local-name fixture and is not on the running path.
+> **Running path.** The root [README](../README.md) is the status of record. Sections 1–5 describe the Compose path: per-record Flink streaming, `cedar-go`, and immudb `Set`/`Get`. Later sections include deployment targets that this repository does not run.
 
 
 System architecture for the Financial Digital Twin + Compliance Platform. This document expands the high-level design with C4 context/container/component views and technology assignments per component.
@@ -85,10 +85,10 @@ flowchart TB
 |----------------|-------------|
 | Ingest financial data | CDC and API connectors from operational systems |
 | Maintain digital twins | Entity state, graph model, simulation |
-| Monitor compliance | Real-time CEP, thresholds, velocity checks |
-| Evaluate rules | Cedar policies + decision models |
-| Record audit evidence | Immutable ledger + object storage |
-| Generate reports | XBRL/SDMX regulatory submissions |
+| Monitor compliance | Per-record Flink streaming plus Java checkers for velocity, exposure, and LCR. Not the `flink-cep` library |
+| Evaluate rules | Cedar (`cedar-go`) and, when configured, GoRules Zen |
+| Record audit evidence | immudb `Set`/`Get` of an application hash |
+| Generate reports | Local-name XML fixture in `services/reporting-service`. Not an XBRL taxonomy filing or SDMX, and not on the payment path |
 | Provide dashboards | Alerts, graph viz, scenario control, audit explorer |
 
 ---
@@ -112,8 +112,8 @@ flowchart TB
   end
 
   subgraph compLayer [Compliance Overlay]
-    flink[Flink CEP Jobs - Java]
-    cedarSvc[Cedar Policy Service - Go/Rust]
+    flink[Flink streaming job - Java ProcessFunction]
+    cedarSvc[Cedar Policy Service - cedar-go]
     decisionSvc[Decision Service - Go + Zen]
     auditSvc[Audit Service - Go + immudb]
     reportSvc[Reporting Service - Python]
@@ -234,20 +234,15 @@ See [ADR-001](./adr/001-kafka-flink-streaming.md).
 
 #### Real-Time Monitoring (Apache Flink — Java)
 
-- Stateful stream processing with exactly-once semantics.
-- CEP patterns: velocity limits, threshold breaches, settlement queue depth, SLA violations.
-- Windowed aggregations: rolling 24h transaction sums, intraday liquidity ratios.
-- Outputs: `ComplianceAlert` events to Kafka + Audit Service.
-- State backend: RocksDB with incremental checkpointing to S3.
+The job in `jobs/compliance-cep` is per-record streaming. `ComplianceCepJob` uses `WatermarkStrategy.noWatermarks()` and `ProcessFunction`. `pom.xml` depends on `flink-streaming-java` and does not depend on `flink-cep`.
+
+`PatternEngine` calls three Java checkers: `VelocityChecker` (INT-M001), `ExposureChecker`, and `LcrChecker` (BASEL-M001). A payment calls the velocity checker. Twin state calls LCR for an institution and exposure for an instrument. When `CEP_DECISION_SERVICE_URL` is set, those checkers call the Decision Service and fall back to the in-process threshold. Alerts are written to the `compliance.alerts` Kafka topic.
 
 See [ADR-001](./adr/001-kafka-flink-streaming.md).
 
-#### Policy Service (Cedar — Go/Rust SDK)
+#### Policy Service (Cedar — `cedar-go`)
 
-- In-process Cedar policy evaluation.
-- Principal-action-resource model for access control and obligation checks.
-- Formal verification via Cedar Analyzer in CI.
-- Sub-millisecond evaluation for hot paths.
+`services/cedar-service` is Go and depends on `github.com/cedar-policy/cedar-go`. It answers `POST /api/v1/evaluate`. It is not a Rust Cedar runtime and it does not run the Cedar Analyzer in CI.
 
 See [ADR-002](./adr/002-cedar-decision-engine.md).
 
@@ -262,20 +257,13 @@ See [ADR-002](./adr/002-cedar-decision-engine.md).
 
 #### Audit Service (Go + immudb)
 
-- Append-only, cryptographically verifiable ledger.
-- Records: state changes, rule decisions, alerts, report generation, access events.
-- Hash chain with client-side verification.
-- Evidence artifacts (reports, snapshots) stored in S3 Object Lock (Compliance mode).
+`services/audit-service` writes an application hash and the chain head with immudb `Set` and reads them with `Get`. It does not call `VerifiedGet`. S3 Object Lock is not part of this payment path.
 
 See [ADR-003](./adr/003-immudb-audit-ledger.md).
 
 #### Reporting Service (Python)
 
-- Reads twin state, audit ledger, and time-series metrics.
-- Maps to regulatory taxonomies (FINREP, COREP, AnaCredit, EMIR, DORA).
-- Generates XBRL/SDMX artifacts.
-- Validates against taxonomy schemas before archiving.
-- Scheduled (cron) and on-demand generation.
+`services/reporting-service` string-builds XML. `generate_finrep_f01` uses an `xbrl` root and a `http://digitaltwin.local/...` taxonomy. AnaCredit and DORA generators use the same local namespace style. `validate.py` checks XML local names with `lxml`. This is not an XBRL taxonomy filing, not SDMX, and not on the payment path.
 
 ### 4.5 API Layer
 
@@ -298,7 +286,7 @@ See [ADR-003](./adr/003-immudb-audit-ledger.md).
 | Alert Console | React components | Live alert feed, acknowledge/escalate |
 | Simulation Control | React forms | Scenario parameters, run/compare |
 | Audit Explorer | React + immudb client | Ledger search, hash verification |
-| Report Viewer | React + XBRL viewer | Draft review, submission tracking |
+| Report Console | Next.js | Views the local-name XML fixture. Not an XBRL viewer |
 
 ---
 
@@ -308,34 +296,26 @@ See [ADR-003](./adr/003-immudb-audit-ledger.md).
 
 ```mermaid
 flowchart LR
-  subgraph flinkJob [Flink CEP Job]
+  subgraph flinkJob [Flink streaming job]
     source[Kafka Source]
-    enrich[State Enrichment]
-    cep[CEP Pattern Engine]
-    window[Window Aggregator]
+    process[ProcessFunction]
+    checkers[Java checkers]
     sinkAlert[Alert Sink]
-    sinkAudit[Audit Sink]
   end
 
-  kafkaIn[(domain.events)] --> source
-  redis[(Redis feature store)] --> enrich
-  source --> enrich --> cep --> window
-  cep --> sinkAlert
-  window --> sinkAlert
+  kafkaIn[(domain.events.public.payments and twin.state.updated)] --> source
+  redis[(Redis feature store)] --> checkers
+  source --> process --> checkers --> sinkAlert
   sinkAlert --> kafkaAlerts[(compliance.alerts)]
-  sinkAlert --> sinkAudit
-  sinkAudit --> auditSvc[Audit Service]
 ```
 
-**CEP Patterns (examples)**:
+The checkers are Java classes, not Flink CEP patterns. `VEL-001`, `LIQ-001`, `SET-001`, `ICT-001`, and `EXP-001` are not rule codes in this job.
 
-| Pattern ID | Description | Regime |
-|------------|-------------|--------|
-| `VEL-001` | >N transactions same account in 1h exceeding threshold | AML / Internal |
-| `LIQ-001` | Intraday liquidity ratio below LCR minimum | Basel / COREP |
-| `SET-001` | RTGS queue depth > threshold for >5 min | Payment oversight |
-| `ICT-001` | ICT provider SLA uptime below contract minimum | DORA |
-| `EXP-001` | Counterparty exposure exceeds approved limit | Internal / EMIR |
+| Rule code | Checker | When it runs |
+|-----------|---------|--------------|
+| `INT-M001` | `VelocityChecker` | Each payment. Redis count against `velocityMaxPerHour`, or Decision Service when configured |
+| `BASEL-M001` | `LcrChecker` | Twin state for an institution |
+| Exposure | `ExposureChecker` | Twin state for an instrument |
 
 ### 5.2 Policy & Decision Evaluation
 
@@ -428,7 +408,7 @@ See [ADR-004](./adr/004-datastore-selection.md) for full rationale.
 
 | Requirement | Target | Component |
 |-------------|--------|-----------|
-| Monitoring latency | < 2s p99 from event to alert | Flink CEP |
+| Monitoring latency | < 2s p99 from event to alert | Flink streaming job (`jobs/compliance-cep`) |
 | Policy evaluation | < 5ms p99 in-process | Cedar / Zen |
 | API query latency | < 200ms p99 for state reads | State Service + Redis cache |
 | Audit write durability | Zero data loss (fsync + replication) | immudb |

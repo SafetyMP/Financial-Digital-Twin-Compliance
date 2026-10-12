@@ -2,7 +2,7 @@
 
 Executable walkthrough for showing **rules evaluation** (Cedar + Zen) and the **tamper-evident audit ledger** (immudb) on a laptop.
 
-**Prerequisites**: Docker, `curl`, `jq`, `psql`. Phase 2 stack healthy (Kafka, Flink CEP, alert-service).
+**Prerequisites**: Docker, `curl`, `jq`, `psql`. Phase 2 stack healthy (Kafka, the per-record Flink streaming job, alert-service). The job does not use `flink-cep`.
 
 ---
 
@@ -68,7 +68,7 @@ chmod +x scripts/demo-phase3.sh
 
 ### 1. Phase 2 context (2 min)
 
-Open **Alert Console** (http://localhost:3000). Explain that Flink CEP already fires `INT-M001`, `INT-M002`, `BASEL-M001` from twin state.
+Open **Alert Console** (http://localhost:3000). The streaming job fires `INT-M001` from each payment. Twin state fires `INT-M002` for an instrument and `BASEL-M001` for an institution.
 
 ### 2. Phase 3 audit path (4 min)
 
@@ -136,7 +136,7 @@ Or use **Verify chain** in Audit Explorer.
 
 - Keycloak / full OIDC (mock `X-Roles` only)
 - Flink **INT-M001**, **INT-M002**, and **BASEL-M001** call Decision Service on the hot path when `CEP_DECISION_SERVICE_URL` is set (Phase 3b); inline thresholds on HTTP failure
-- Neo4j, simulation, XBRL (Phase 4+)
+- Neo4j and simulation are outside this payment demo. The report fixture is local-name XML, not XBRL, and it is not part of this walkthrough.
 - S3 Object Lock artifacts (filesystem stub in dev)
 
 ---

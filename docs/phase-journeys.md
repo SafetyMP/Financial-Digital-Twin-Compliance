@@ -19,10 +19,10 @@ flowchart LR
 | Phase | Journey name | What you prove | UI(s) | Smoke | Demo |
 |-------|--------------|----------------|-------|-------|------|
 | 1 | Ingestion & twin | CDC → persona API | (API `:8080`) | `./scripts/smoke-test.sh` | — |
-| 2 | Monitoring & alerts | CEP → open alert | [Alert Console](http://localhost:3000) `:3000` | `./scripts/smoke-test-phase2.sh` | — |
+| 2 | Monitoring & alerts | Per-record Flink streaming → open alert (not `flink-cep`) | [Alert Console](http://localhost:3000) `:3000` | `./scripts/smoke-test-phase2.sh` | — |
 | 3 | Policy & audit | Cedar/Zen + immudb proof | [Audit Explorer](http://localhost:3002) `:3002` | `./scripts/smoke-test-phase3.sh` | [demo-phase3.md](demo-phase3.md) |
 | 4 | Graph & simulation | Exposure + stress | [Graph Explorer](http://localhost:3003) `:3003`, [Simulation Console](http://localhost:3004) `:3004` | `./scripts/smoke-test-phase4.sh` | [demo-phase4.md](demo-phase4.md) |
-| 5 | Regulatory reporting | Draft → submit + Object Lock | [Report Console](http://localhost:3005) `:3005` | `./scripts/smoke-test-phase5.sh` | [demo-phase5.md](demo-phase5.md) |
+| 5 | Regulatory reporting | Local-name XML fixture. Not XBRL, SDMX, or the payment path | [Report Console](http://localhost:3005) `:3005` | `./scripts/smoke-test-phase5.sh` | [demo-phase5.md](demo-phase5.md) |
 | 6 | Hardening | OIDC / TLS / OTel | via edge `:8180` / `:8443` | `./scripts/smoke-test-phase6-*.sh` | [deployment.md](deployment.md) |
 | 7 | Cutting-edge analytics | Effectiveness / contagion / reg→policy / graph | APIs (no dedicated UI) | `./scripts/smoke-test-phase7-*.sh` | [ADR-013](adr/013-phase7-cutting-edge-foundation.md) |
 

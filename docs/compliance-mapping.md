@@ -16,9 +16,9 @@ Each regime is decomposed into four platform capabilities:
 | Capability | Platform Component | Output |
 |------------|-------------------|--------|
 | **Rules** | Cedar policies + Zen decision models | `RuleDecision` |
-| **Monitoring** | Flink CEP patterns | `ComplianceAlert` |
-| **Audit** | immudb ledger + S3 artifacts | `AuditEntry` |
-| **Reporting** | Reporting Service | `RegulatoryReport` (XBRL/SDMX) |
+| **Monitoring** | Per-record Flink job and Java checkers (`INT-M001`, `INT-M002`, `BASEL-M001`) | `ComplianceAlert` |
+| **Audit** | immudb `Set`/`Get` of an application hash | `AuditEntry` |
+| **Reporting** | Local-name XML fixture | Not an XBRL or SDMX filing |
 
 ```mermaid
 flowchart LR
