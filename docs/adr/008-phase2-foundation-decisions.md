@@ -1,5 +1,7 @@
 # ADR-008: Phase 2 Foundation Decisions (D10–D14)
 
+The monitoring job on main is per-record streaming in `jobs/compliance-cep`. `pom.xml` has no `flink-cep` artifact. "Flink CEP" in the context below is the original decision text.
+
 **Status**: Accepted  
 **Date**: 2026-06-13  
 **Deciders**: Platform Architecture Team  

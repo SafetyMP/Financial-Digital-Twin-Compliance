@@ -1,5 +1,7 @@
 # ADR-011: Phase 5 Reporting Foundation (D25–D29)
 
+What shipped is local-name XML from `services/reporting-service/reporting_service/generators.py`. `validate.py` checks local names. It is not an Arelle or EBA filing and not SDMX. `storage.py` requests object lock. Compose starts MinIO as `server /data` (one drive), so that lock cannot be satisfied. The decision text below is the original plan.
+
 **Status**: Accepted (planning)  
 **Date**: 2026-07-25  
 **Deciders**: Platform Architecture Team  
