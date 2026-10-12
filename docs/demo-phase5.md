@@ -1,6 +1,8 @@
 # Phase 5 local demo runbook
 
-Warm-stack walkthrough for **Regulatory reporting · Phase 5**: FINREP / AnaCredit / DORA draft → validate → submit with MinIO Object Lock.
+Walkthrough for Report Console. `services/reporting-service/reporting_service/generators.py` string-builds local-name XML. FINREP uses an `xbrl` root and the namespace `http://digitaltwin.local/finrep/f01/`. AnaCredit and DORA use their own local namespaces. `validate.py` checks those local names. This is not an Arelle or EBA filing, not SDMX, and not the payment path.
+
+The dropdown labels in the console still say XBRL and SDMX. Those strings are the UI, not the file format.
 
 **Prerequisites**: Docker, `curl`, `jq`. Dev Compose with `reporting-service`, MinIO, and Report Console healthy.
 
@@ -12,7 +14,7 @@ Warm-stack walkthrough for **Regulatory reporting · Phase 5**: FINREP / AnaCred
 |---------|-----|----------|
 | Report Console | http://localhost:3005 | Lifecycle UI |
 | Reporting Service | http://localhost:8095 | REST report API |
-| MinIO Console | http://localhost:9001 | Object Lock artifacts (optional) |
+| MinIO Console | http://localhost:9001 | Bucket browser |
 | Audit Explorer | http://localhost:3002 | `evidenceRef` after submit |
 
 Use the shared console app switcher to jump from Alert/Audit into Report Console.
@@ -22,12 +24,11 @@ Use the shared console app switcher to jump from Alert/Audit into Report Console
 ## Before the room (~5 min if stack warm)
 
 ```bash
-cd "/path/to/Digital Twin"
+cd Financial-Digital-Twin-Compliance
 docker compose -f docker-compose.dev.yml up -d --wait reporting-service report-console minio
-SMOKE_PHASE5_SKIP_PREREQS=1 ./scripts/smoke-test-phase5.sh
 ```
 
-If reporting services were never brought up, use full `docker compose -f docker-compose.dev.yml up -d --wait` then re-run smoke.
+If those services were never built, use `docker compose -f docker-compose.dev.yml up -d --wait` first. Do not treat `./scripts/smoke-test-phase5.sh` as a passing check on this Compose file: its submit step requires `objectLock == true`.
 
 ---
 
@@ -35,19 +36,15 @@ If reporting services were never brought up, use full `docker compose -f docker-
 
 ### 1. Create draft (3 min)
 
-Open **Report Console** (http://localhost:3005). Choose **FINREP F01 (XBRL)** (or AnaCredit / DORA). Click **Create draft** — show `id` + `status=draft`.
+Open **Report Console** (http://localhost:3005). Choose **FINREP F01 (XBRL)**, **AnaCredit Table 2 (SDMX)**, or **DORA ICT Register (XML)**. Those are the option labels in `apps/report-console/src/app/page.tsx`. Click **Create draft** and show `id` + `status=draft`.
 
 ### 2. Validate → submit (4 min)
 
-**Validate** then **Submit**. Show `taxonomyVersion`, `objectKey`, and `evidenceRef`. Optionally open MinIO and Audit Explorer for the locked object / ledger entry.
+**Validate** then **Submit**. Show `taxonomyVersion`, `objectKey`, and `evidenceRef`. `storage.py` creates the bucket with object lock and writes governance retention. `scripts/smoke-test-phase5.sh` requires `objectLock == true`. `docker-compose.dev.yml` starts MinIO as `server /data` (one drive). Object lock needs an erasure set, so this Compose service cannot complete that submit.
 
-### 3. Prove with smoke (2 min)
+### 3. Smoke script
 
-```bash
-SMOKE_PHASE5_SKIP_PREREQS=1 ./scripts/smoke-test-phase5.sh
-```
-
-Honest scope: fixture taxonomies for the reference stack — not commercial EBA XBRL suite parity. See [ADR-011](adr/011-phase5-reporting-foundation.md).
+`./scripts/smoke-test-phase5.sh` also checks taxonomy rows and an audit entry. On this Compose file it stops at submit, because `objectLock` is not true. See [ADR-011](adr/011-phase5-reporting-foundation.md) for the original plan.
 
 ---
 

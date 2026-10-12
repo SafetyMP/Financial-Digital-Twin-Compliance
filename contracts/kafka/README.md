@@ -5,9 +5,9 @@ Changes require updating the golden fixture here and **both** sides of the bound
 
 | Topic | Publisher | Consumer | Golden fixture(s) |
 |-------|-----------|----------|-------------------|
-| `twin.state.updated` | state-service (outbox) | Flink CEP | `twin.state.updated/*.payload.json` |
-| `domain.events.public.payments` | Debezium (core banking) | Flink CEP | `domain.events.public.payments/*.cdc.json` |
-| `compliance.alerts` | Flink CEP | alert-service | `compliance.alerts/*.envelope.json` |
+| `twin.state.updated` | state-service (outbox) | per-record Flink streaming job | `twin.state.updated/*.payload.json` |
+| `domain.events.public.payments` | Debezium (core banking) | per-record Flink streaming job | `domain.events.public.payments/*.cdc.json` |
+| `compliance.alerts` | per-record Flink streaming job | alert-service | `compliance.alerts/*.envelope.json` |
 | `compliance.audit.pending` | alert-service, cedar-service, decision-service | audit-service | `compliance.audit.pending/*.envelope.json` |
 | `rule-decision` (REST/Kafka inner) | cedar-service, decision-service | audit-service, clients | `rule-decision/*.payload.json` |
 

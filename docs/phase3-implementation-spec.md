@@ -1,5 +1,7 @@
 # Phase 3 Implementation Spec
 
+Cedar on main is `cedar-go` in `services/cedar-service` (`POST /api/v1/evaluate`). immudb writes use `Set` and reads use `Get`, not `VerifiedGet`. The sections below are the original plan.
+
 Executable handoff for the implementation agent. Implements [roadmap.md](./roadmap.md) Phase 3 only.
 
 **Prerequisites**: Phase 2 complete ([phase2-implementation-spec.md](./phase2-implementation-spec.md) §14 exit criteria). [ADR-002](./adr/002-cedar-decision-engine.md) (Cedar + Zen), [ADR-003](./adr/003-immudb-audit-ledger.md) (immudb), [ADR-009](./adr/009-phase3-foundation-decisions.md) (D15–D20).

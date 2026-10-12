@@ -1,5 +1,7 @@
 # Phase 2 Implementation Spec
 
+The job on main is per-record streaming in `jobs/compliance-cep`. `pom.xml` depends on `flink-streaming-java` and has no `flink-cep` artifact. The sections below are the original plan, including a CEP library this repository did not ship.
+
 Executable handoff for the implementation agent. Implements [roadmap.md](./roadmap.md) Phase 2 only.
 
 **Prerequisites**: Phase 1 complete ([phase1-implementation-spec.md](./phase1-implementation-spec.md) exit criteria). [ADR-001](./adr/001-kafka-flink-streaming.md) (Kafka + Flink), [ADR-007](./adr/007-phase1-foundation-decisions.md) (tenant, local dev).

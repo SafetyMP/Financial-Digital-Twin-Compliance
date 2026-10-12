@@ -1,4 +1,4 @@
-# Runbook — Flink CEP recovery
+# Runbook — Flink streaming job recovery
 
 ## Symptoms
 
