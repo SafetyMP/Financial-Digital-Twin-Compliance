@@ -91,9 +91,9 @@ export default function ReportConsolePage() {
           value={reportType}
           onChange={(e) => setReportType(e.target.value)}
         >
-          <option value="FINREP_F01">FINREP F01 (XBRL)</option>
-          <option value="ANACREDIT_T2">AnaCredit Table 2 (SDMX)</option>
-          <option value="DORA_ICT">DORA ICT Register (XML)</option>
+          <option value="FINREP_F01">FINREP F01 (local-name XML)</option>
+          <option value="ANACREDIT_T2">AnaCredit Table 2 (local-name XML)</option>
+          <option value="DORA_ICT">DORA ICT Register (local-name XML)</option>
         </select>
         <button
           onClick={createDraft}
