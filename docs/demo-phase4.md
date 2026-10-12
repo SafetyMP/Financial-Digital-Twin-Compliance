@@ -24,10 +24,10 @@ Use the shared console app switcher to move between UIs.
 ## Before the room (~5 min if stack warm)
 
 ```bash
-cd "/path/to/Digital Twin"
+cd Financial-Digital-Twin-Compliance
 docker compose -f docker-compose.dev.yml up -d --wait
 ./scripts/seed.sh
-./scripts/wait-graph-seeded.sh   # if present; else wait for graph-service healthy
+./scripts/wait-graph-seeded.sh
 SMOKE_PHASE4_SKIP_PREREQS=1 ./scripts/smoke-test-phase4.sh
 ```
 
@@ -56,4 +56,4 @@ SMOKE_PHASE4_SKIP_PREREQS=1 ./scripts/smoke-test-phase4.sh
 ## Related
 
 - Journey map: [phase-journeys.md](phase-journeys.md)
-- ADR: [010-phase4-foundation-decisions.md](adr/010-phase4-foundation-decisions.md) (if present) · Phase 4 spec
+- ADR: [010-phase4-foundation-decisions.md](adr/010-phase4-foundation-decisions.md) · Phase 4 spec
