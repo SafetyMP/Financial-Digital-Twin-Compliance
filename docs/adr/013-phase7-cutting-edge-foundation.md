@@ -1,6 +1,8 @@
 # ADR-013: Phase 7 Cutting-Edge Foundation (D36–D39)
 
-**Status**: Accepted (planning)  
+> **What is in the tree.** `services/simulation-service` contains `effectiveness.py` and `contagion.py`. Graph Service exposes `GET /api/v1/graph/paths` and `GET /api/v1/graph/centrality`. `scripts/smoke-test-phase7-*.sh` and `scripts/phase7/reg2policy.sh` are present. These are outside the payment path. The decision text below is the original plan.
+
+**Status**: Accepted  
 **Date**: 2026-07-25  
 **Deciders**: Platform Architecture Team  
 **Implements**: CECT master-spec §3  
