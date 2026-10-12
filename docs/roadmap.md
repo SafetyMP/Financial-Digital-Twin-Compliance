@@ -111,8 +111,8 @@ gantt
 
 ### Scope (as built)
 
-- Flink CEP job in local Compose (K8s Operator deferred to later phases)
-- 3 CEP patterns: velocity (INT-M001), exposure limit (INT-M002), LCR threshold (BASEL-M001)
+- Per-record Flink streaming job in local Compose (`flink-streaming-java` 1.20.5, no `flink-cep` artifact; K8s Operator deferred)
+- Java checkers: velocity (INT-M001), exposure limit (INT-M002), LCR threshold (BASEL-M001)
 - Redis online feature store (`vel:*`, `exp:*`, `lcr:*` keys)
 - Alert publishing to `compliance.alerts` and consumption by Alert Service
 - WebSocket hub for real-time alert streaming
@@ -124,7 +124,7 @@ gantt
 
 | Component | Technology | Status |
 |-----------|------------|--------|
-| Flink CEP job | Java (Flink 1.18) | Implemented — `jobs/compliance-cep/` |
+| Flink streaming job | Java (Flink 1.20.5, not `flink-cep`) | Implemented — `jobs/compliance-cep/` |
 | Redis feature store | Redis 7 | Implemented — Compose service |
 | Alert Service | Go | Implemented — `services/alert-service/` |
 | Alert Console UI | Next.js | Implemented — `apps/alert-console/` |
@@ -239,7 +239,8 @@ gantt
 ## Phase 5: Regulatory Reporting
 
 **Duration**: 6 weeks  
-**Dependencies**: Phase 4 complete
+**Dependencies**: Phase 4 complete  
+**What shipped:** `services/reporting-service` string-builds local-name XML. It does not validate with Arelle, it does not emit SDMX, and it is not on the payment path. The list below is the original plan.
 
 ### Scope
 
