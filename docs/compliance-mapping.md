@@ -1,6 +1,6 @@
 # Compliance Mapping
 
-> **Running path.** The root [README](../README.md) is the status of record. Diagrams and phase notes below may still say Flink CEP, XBRL, or SDMX. The Flink job is per-record streaming and does not depend on `flink-cep`. Reporting is a local-name fixture and is not on the running path.
+> **Running path.** The root [README](../README.md) is the status of record. Monitoring and report sections below are the original plan. The shipped Flink job is per-record streaming and does not depend on `flink-cep`. Reporting is a local-name fixture and is not on the running path.
 
 
 Maps target regulatory regimes to platform rules, real-time monitoring checks, audit requirements, and regulatory reports.
@@ -62,7 +62,7 @@ flowchart LR
 | `FINREP-R004` | Zen | Intercompany eliminations must net to zero within consolidation scope | Critical |
 | `FINREP-R005` | Cedar | Report submission requires four-eyes approval (`approver` ≠ `preparer`) | Blocking |
 
-### Monitoring (Flink CEP)
+### Monitoring (original plan)
 
 | Check ID | Pattern | Threshold | Alert Severity |
 |----------|---------|-----------|----------------|
@@ -77,7 +77,7 @@ flowchart LR
 - Every validation failure: `RuleDecision` with `outcome=Deny` and field-level rationale
 - Every submission: `ReportGenerated` with submission receipt reference
 
-### Reports
+### Reports (original plan)
 
 | Report Code | Description | Format | Schedule |
 |-------------|-------------|--------|----------|
@@ -104,7 +104,7 @@ flowchart LR
 | `COREP-R004` | Zen | RWA calculation must use approved IRB/SA methodology | Blocking |
 | `COREP-R005` | Cedar | Capital adjustment entries require `role=CapitalManager` authorization | Blocking |
 
-### Monitoring (Flink CEP)
+### Monitoring (original plan)
 
 | Check ID | Pattern | Threshold | Alert Severity |
 |----------|---------|-----------|----------------|
@@ -119,7 +119,7 @@ flowchart LR
 - Every breach alert: timestamp, ratio value, threshold, affected entity
 - Stress test results linked to COREP report submissions
 
-### Reports
+### Reports (original plan)
 
 | Report Code | Description | Format | Schedule |
 |-------------|-------------|--------|----------|
@@ -146,7 +146,7 @@ flowchart LR
 | `ANAC-R004` | Cedar | Loan-level data access restricted to `role=CreditAnalyst` or `role=Reporter` | Blocking |
 | `ANAC-R005` | Zen | Missing mandatory AnaCredit fields block report generation | Blocking |
 
-### Monitoring (Flink CEP)
+### Monitoring (original plan)
 
 | Check ID | Pattern | Threshold | Alert Severity |
 |----------|---------|-----------|----------------|
@@ -161,7 +161,7 @@ flowchart LR
 - Every identifier validation: LEI/NACE lookup result and timestamp
 - Report submission with record count and completeness score
 
-### Reports
+### Reports (original plan)
 
 | Report Code | Description | Format | Schedule |
 |-------------|-------------|--------|----------|
@@ -187,7 +187,7 @@ flowchart LR
 | `EMIR-R004` | Cedar | Trade reporting access restricted to `role=TradeReporter` | Blocking |
 | `EMIR-R005` | Zen | Counterparty above clearing threshold must be registered | Critical |
 
-### Monitoring (Flink CEP)
+### Monitoring (original plan)
 
 | Check ID | Pattern | Threshold | Alert Severity |
 |----------|---------|-----------|----------------|
@@ -203,7 +203,7 @@ flowchart LR
 - Every clearing decision: threshold calculation inputs and result
 - Every collateral valuation: methodology, market data source, timestamp
 
-### Reports
+### Reports (original plan)
 
 | Report Code | Description | Format | Schedule |
 |-------------|-------------|--------|----------|
@@ -229,7 +229,7 @@ flowchart LR
 | `DORA-R005` | Cedar | ICT incident classification requires `role=IncidentManager` | Blocking |
 | `DORA-R006` | Zen | Subcontracting chain depth ≤ 3 for critical ICT services | Warning |
 
-### Monitoring (Flink CEP)
+### Monitoring (original plan)
 
 | Check ID | Pattern | Threshold | Alert Severity |
 |----------|---------|-----------|----------------|
@@ -247,7 +247,7 @@ flowchart LR
 - Every incident: classification, timeline, impact assessment, notification status
 - Annual ICT register snapshot with hash verification
 
-### Reports
+### Reports (original plan)
 
 | Report Code | Description | Format | Schedule |
 |-------------|-------------|--------|----------|
@@ -271,7 +271,7 @@ flowchart LR
 | `BASEL-R003` | Zen | Large exposure to single counterparty ≤ 25% of Tier 1 capital | Critical |
 | `BASEL-R004` | Zen | Intraday liquidity buffer must cover projected outflows | Warning |
 
-### Monitoring (Flink CEP)
+### Monitoring (original plan)
 
 | Check ID | Pattern | Threshold | Alert Severity |
 |----------|---------|-----------|----------------|
@@ -287,7 +287,7 @@ flowchart LR
 - Every large exposure alert: counterparty, exposure amount, limit, Tier 1 capital
 - Stress test scenarios and results linked to liquidity reports
 
-### Reports
+### Reports (original plan)
 
 | Report Code | Description | Format | Schedule |
 |-------------|-------------|--------|----------|
@@ -311,7 +311,7 @@ Firm-specific limits and operational policies not tied to a specific regulatory 
 | `INT-R004` | Zen | Payment amount > dual authorization threshold requires approver | Blocking |
 | `INT-R005` | Zen | Sanctions screening must pass before payment release | Blocking |
 
-### Monitoring (Flink CEP)
+### Monitoring (original plan)
 
 | Check ID | Pattern | Threshold | Alert Severity |
 |----------|---------|-----------|----------------|
@@ -329,10 +329,10 @@ Firm-specific limits and operational policies not tied to a specific regulatory 
 |------------|--------|-------|-----------|------|------|-------|----------|
 | Cedar policies | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Zen decision models | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Flink CEP monitoring | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Flink CEP monitoring (original plan) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | immudb audit | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| XBRL reporting | ✓ | ✓ | — | — | — | ✓ | — |
-| SDMX reporting | — | — | ✓ | — | — | — | — |
+| XBRL reporting (original plan) | ✓ | ✓ | — | — | — | ✓ | — |
+| SDMX reporting (original plan) | — | — | ✓ | — | — | — | — |
 | XML reporting | — | — | — | ✓ | ✓ | — | — |
 | Graph analytics | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Simulation / stress | ✓ | ✓ | — | — | — | ✓ | — |

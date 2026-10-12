@@ -1,5 +1,7 @@
 # ADR-006: Polyglot Language Strategy
 
+> **Original decision, 2026-06-13.** The Java workload that shipped is one per-record Flink streaming job, not Flink CEP jobs. Reporting generates local-name XML; it does not use an XBRL or SDMX library. The table below is the original plan.
+
 **Status**: Accepted  
 **Date**: 2026-06-13  
 **Deciders**: Platform Architecture Team
