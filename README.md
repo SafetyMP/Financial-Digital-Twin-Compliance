@@ -1,4 +1,6 @@
-# Financial Digital Twin Compliance
+# Financial Digital Twin Compliance: Streaming Payment Policy and Audit Reference
+
+A financial compliance reference for change data capture (CDC), Kafka event streaming, per-record Apache Flink processing, Cedar authorization and immudb audit records. The runnable path uses mock banking data; this is not a production banking or regulatory reporting system.
 
 One path runs: a mock core-banking payment through Debezium, a Flink streaming job, a Cedar decision, and an immudb audit entry.
 
