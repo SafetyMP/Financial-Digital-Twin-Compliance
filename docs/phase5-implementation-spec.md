@@ -1,5 +1,7 @@
 # Phase 5 Implementation Spec (CECT)
 
+> Historical engineering specification. Original targets and status labels are retained; use the [product vision](product-vision.md) and [current capability map](phase-journeys.md) for present scope and verification.
+
 **Status**: What shipped is local-name XML in `generators.py`, checked by local names in `validate.py`. Not an Arelle or EBA filing, and not SDMX. The scope list below is the original plan.  
 **Authority**: [ADR-011](adr/011-phase5-reporting-foundation.md) + corporate acceptance `AC-A-P5-*`
 

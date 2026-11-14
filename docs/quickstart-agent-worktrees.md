@@ -1,5 +1,7 @@
 # Quickstart: Agent worktrees and dependency waves
 
+> Optional legacy engineering workflow. Current [AGENTS.md](../AGENTS.md) and [agent guide](agent-guide.md) take precedence. The external Cursor harness below is not required to build, test, or contribute to the governance workspace.
+
 Minimal path to use parallel agent tooling on this repo after PR #27.
 
 ## Prerequisites

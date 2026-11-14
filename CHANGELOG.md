@@ -2,13 +2,25 @@
 
 All notable changes to this open-source project are documented here.
 
-Release tags (`v*.*.*`) publish all application images to GHCR and create a GitHub Release. See [docs/deployment.md](docs/deployment.md) and [ROADMAP.md](ROADMAP.md) for deploy scope.
+Release tags (`v*.*.*`) publish the images configured in the Docker publishing workflow and create a GitHub Release. Historical entries describe their release snapshot, not current product scope. See [docs/deployment.md](docs/deployment.md) and [ROADMAP.md](ROADMAP.md) for deploy scope.
 
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-### Added
+### Governance workspace
+
+- Reoriented the product around governance professionals at financial institutions: a unified issue queue, contextual summaries, evidence inspection, acknowledgement/escalation, notes, review history, and exports.
+- Published a synthetic GitHub Pages demo with browser-local reviews, twin exploration, and a sensitivity scenario lab.
+- Added a connected development workspace sharing the interface, with server-side alert/audit integration, transactional PostgreSQL review history, actor attribution, idempotent retry handling, and explicit ledger-chain checks. Configured reviewer identity is development-only; review history is separate from the immudb evidence ledger.
+- Added real-service browser integration checks for evidence, reviews, restart persistence, fresh-browser history, exports, origin rejection, and backend outages.
+- Aligned repository entry points, community templates, and contribution guidance with the governance workflow while retaining historical implementation records.
+- Fixed full-stack CI startup ordering by creating Kafka topics before consumers join their groups.
+- Bundled licensed IBM Plex Sans assets for the engineering consoles to remove the build-time Google Fonts URL dependency.
+
+### Earlier engineering additions
+
+These retained implementation notes describe the earlier reference-stack work. Current product scope and priorities are in [README](README.md) and [ROADMAP](ROADMAP.md).
 
 - **CECT r1 (Phase 5–7)** — reporting, hardening overlay, and cutting-edge leapfrog capabilities (corporate program `cect` revision 1, user-approved)
 - Reporting Service: local-name XML for FINREP F01, AnaCredit Table 2, and the DORA ICT register. Not an XBRL or SDMX filing. The service requests MinIO object lock; Compose runs one drive, so that lock cannot complete. Report Console lifecycle
@@ -27,6 +39,8 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Graph Service path/centrality endpoints for Phase 7 analytics
 
 ## [0.1.0] — 2026-06-29
+
+Historical release record. References to “Flink CEP” below retain the original release wording; the current job is per-record Flink streaming without the `flink-cep` artifact. See [README](README.md) for current scope.
 
 First semver release: Phase 1–3 local stack, GHCR deploy for eight application images, and Phase 3b Decision Service hot path for Flink CEP.
 

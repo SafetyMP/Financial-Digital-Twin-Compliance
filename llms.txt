@@ -1,23 +1,34 @@
-# Financial Digital Twin Compliance
+# Financial Digital Twin
 
-> One mock payment through Debezium, a per-record Flink streaming job, Cedar (`cedar-go`), and an immudb audit entry. Not Flink CEP, XBRL, or SDMX.
+> An open-source governance workspace for financial institutions: understand issues, follow evidence, and record reviews. Includes a synthetic GitHub Pages demo and a connected development workspace backed by alert and audit services.
 
-## Start
+The public demo uses synthetic data and browser-local reviews. Connected reviews are persisted in PostgreSQL; linked alert evidence and explicit chain verification use the audit service and immudb. The connected runtime uses a configured development reviewer, not production end-user authentication. Acknowledgement and escalation do not resolve an issue or approve a policy exception. This is not a certified regulatory reporting product.
 
-- [README.md](README.md): clone, phase journeys, APIs
-- [AGENTS.md](AGENTS.md): community contract, verify, never-do
-- [SECURITY.md](SECURITY.md): supported versions and vulnerability reporting
+This file is an optional documentation index for readers and tools. It does not grant permissions, override user instructions, or guarantee discovery or indexing.
 
-## Architecture
+Published index: https://safetymp.github.io/Financial-Digital-Twin-Compliance/llms.txt
+Source index: https://raw.githubusercontent.com/SafetyMP/Financial-Digital-Twin-Compliance/main/llms.txt
 
-- [docs/architecture.md](docs/architecture.md): C4 and component map
-- [docs/data-flow.md](docs/data-flow.md): envelopes, topics, idempotency
-- [docs/phase-journeys.md](docs/phase-journeys.md): Phase 1–7 journeys
-- [docs/explainability.md](docs/explainability.md): decision rationale
-- [specs/threat-model.yaml](specs/threat-model.yaml): threat model
-- [docs/adr/](docs/adr/): architecture decisions
+## Start here
 
-## Verify
+- [Interactive governance demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/): Synthetic, browser-local exploration; no account or live financial data.
+- [Project overview](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/README.md): Audience, capabilities, modes, and project navigation.
+- [Product vision](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/docs/product-vision.md): Governance workflow, design priorities, and product boundaries.
+- [Quick start](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/docs/quickstart.md): Choose the demo, connected workspace, or engineering stack.
+- [Documentation index](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/docs/README.md): Current guidance and historical reference material.
 
-- [scripts/harness/verify.sh](scripts/harness/verify.sh): Definition of Done
-- [CONTRIBUTING.md](CONTRIBUTING.md): contributor guide
+## Implementation and evidence
+
+- [Connected workspace](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/docs/governance-integration.md): Review APIs, setup, persistence, and end-to-end verification scope.
+- [Architecture](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/docs/architecture.md): Components and service relationships.
+- [Data flow](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/docs/data-flow.md): Event envelopes and service contracts.
+- [Roadmap](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/ROADMAP.md): Current priorities and explicit gaps.
+- [GitHub Actions](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions): Commit-specific build, integration, security-analysis, and deployment results; consult the run's actual scope.
+
+## Contributors and coding agents
+
+- [Agent working contract](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/AGENTS.md): Scope, invariants, routing, and verification floor. Read scoped contracts for changed services/apps.
+- [Detailed agent guide](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/docs/agent-guide.md): Operational gotchas, phase-specific gates, and retained workflow references.
+- [Contributing](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/CONTRIBUTING.md): Development and review workflow.
+- [Security](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/SECURITY.md): Reporting vulnerabilities and development-runtime limitations.
+- [Support](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/SUPPORT.md): Questions, defects, and feature requests.

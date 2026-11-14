@@ -1,16 +1,23 @@
-# Default reviewers for all changes
+# Default review ownership; branch protection determines whether approval is required.
 * @SafetyMP
 
-# Service and contract boundaries
-/services/state-service/ @SafetyMP
-/services/alert-service/ @SafetyMP
-/services/audit-service/ @SafetyMP
-/services/cedar-service/ @SafetyMP
-/services/decision-service/ @SafetyMP
+# Governance product and shared interface
+/apps/governance-console/ @SafetyMP
+/apps/governance-live/ @SafetyMP
+/packages/console-shell/ @SafetyMP
+/scripts/governance-e2e/ @SafetyMP
+/docker-compose.governance*.yml @SafetyMP
+
+# Service and event-contract boundaries
+/services/ @SafetyMP
 /jobs/compliance-cep/ @SafetyMP
-/apps/alert-console/ @SafetyMP
-/apps/audit-explorer/ @SafetyMP
 /policies/ @SafetyMP
 /schemas/ @SafetyMP
+/contracts/kafka/ @SafetyMP
+
+# Public guidance, agent context, and delivery configuration
+/README.md @SafetyMP
+/ROADMAP.md @SafetyMP
+/AGENTS.md @SafetyMP
 /.github/ @SafetyMP
-/docs/adr/ @SafetyMP
+/docs/ @SafetyMP

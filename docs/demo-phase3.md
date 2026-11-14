@@ -1,5 +1,7 @@
 # Phase 3 local demo runbook
 
+> Engineering capability walkthrough. For the primary governance review journey, start with the [public demo or connected quickstart](quickstart.md). These commands exercise separate reference-stack tools.
+
 Executable walkthrough for showing **rules evaluation** (Cedar + Zen) and the **tamper-evident audit ledger** (immudb) on a laptop.
 
 **Prerequisites**: Docker, `curl`, `jq`, `psql`. Phase 2 stack healthy (Kafka, the per-record Flink streaming job, alert-service). The job does not use `flink-cep`.

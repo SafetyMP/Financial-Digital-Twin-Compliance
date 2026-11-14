@@ -1,20 +1,17 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Public roadmap
-    url: https://github.com/SafetyMP/Digital-Twin-Compliance/blob/main/ROADMAP.md
-    about: What is on main, what is planned, and release expectations
-  - name: Support policy
-    url: https://github.com/SafetyMP/Digital-Twin-Compliance/blob/main/SUPPORT.md
-    about: Channels, supported versions, and response expectations
-  - name: Phase 3 demo runbook
-    url: https://github.com/SafetyMP/Digital-Twin-Compliance/blob/main/docs/demo-phase3.md
-    about: Local walkthrough for Cedar/Zen policies and the immudb audit chain
-  - name: Deployment guide
-    url: https://github.com/SafetyMP/Digital-Twin-Compliance/blob/main/docs/deployment.md
-    about: GHCR images, staging deploy, and host setup
-  - name: Contributing
-    url: https://github.com/SafetyMP/Digital-Twin-Compliance/blob/main/CONTRIBUTING.md
-    about: Development workflow and PR expectations
-  - name: Security advisory
-    url: https://github.com/SafetyMP/Digital-Twin-Compliance/security/advisories/new
-    about: Report a vulnerability privately (do not use public issues)
+  - name: Try the governance demo
+    url: https://safetymp.github.io/Financial-Digital-Twin-Compliance/
+    about: Explore synthetic issues, evidence, and browser-local reviews
+  - name: Connected workspace setup
+    url: https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/docs/governance-integration.md
+    about: Run the review workflow with the alert and audit services
+  - name: Roadmap and current boundaries
+    url: https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/ROADMAP.md
+    about: Available capabilities, next priorities, and limitations
+  - name: Support and contribution guide
+    url: https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/SUPPORT.md
+    about: Where to get help and what to include in a report
+  - name: Security vulnerability
+    url: https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/security/advisories/new
+    about: Report privately; do not put vulnerability details in a public issue

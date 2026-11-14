@@ -1,5 +1,7 @@
 # Phase 1 Review — 2026-06-13 (Implementation)
 
+> Historical engineering review record. Results and open items apply to the revision and scope described here. See the [current capability map](../phase-journeys.md) and [governance verification](../governance-integration.md) for the merged workspace.
+
 **Branch/PR**: N/A — no git repository initialized  
 **Reviewer**: Planning agent (post-implementation review)
 

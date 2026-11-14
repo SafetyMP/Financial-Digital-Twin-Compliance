@@ -1,512 +1,128 @@
-# Financial Digital Twin Compliance: Streaming Payment Policy and Audit Reference
+# Financial Digital Twin · Governance workspace
 
-A financial compliance reference for change data capture (CDC), Kafka event streaming, per-record Apache Flink processing, Cedar authorization and immudb audit records. The runnable path uses mock banking data; this is not a production banking or regulatory reporting system.
+An open-source financial governance workspace for professionals at financial institutions. Bring monitoring issues, supporting evidence, and review decisions into one place: **understand what needs attention, follow the evidence, and record the next review action**.
 
-One path runs: a mock core-banking payment through Debezium, a Flink streaming job, a Cedar decision, and an immudb audit entry.
+**[Try the interactive demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/)** · **[Run the connected workspace](docs/governance-integration.md)** · [Documentation](docs/README.md) · [Roadmap](ROADMAP.md)
 
-The Flink job (`jobs/compliance-cep`) is per-record streaming. Each Kafka source uses `WatermarkStrategy.forBoundedOutOfOrderness`. `jobs/compliance-cep/pom.xml` depends on `flink-streaming-java`. It has no `flink-cep` artifact. Cedar is `cedar-go` (`github.com/cedar-policy/cedar-go` in `services/cedar-service`). immudb stores an application hash: `services/audit-service` writes the entry and the chain head with `Set` and reads them with `VerifiedGet`.
-
-`services/reporting-service` is a local-name fixture. Its validator checks XML local names with `lxml`. It is not part of the running path. Flink CEP, XBRL, and SDMX are not part of this path.
-
-> **Permit rule:** Cedar (`cedar-go`) decides on **financial events**, not on an agent filing the report. Coding-agent evals in `evals/` are a separate path. Same instinct: [SafetyMP](https://github.com/SafetyMP/SafetyMP).
-
-**Maintainers:** [SafetyMP](https://github.com/SafetyMP) · **License:** [Apache License 2.0](LICENSE)
-
-[![CI](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/ci.yml/badge.svg)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/ci.yml)
-[![Schema Compatibility](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/schema-compat.yml/badge.svg)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/schema-compat.yml)
-[![Docker Publish](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/docker-publish.yml)
-[![CodeQL](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/codeql.yml/badge.svg)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/codeql.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/SafetyMP/Financial-Digital-Twin-Compliance/badge)](https://scorecard.dev/viewer/?uri=github.com/SafetyMP/Financial-Digital-Twin-Compliance)
-[![Release](https://img.shields.io/github/v/release/SafetyMP/Financial-Digital-Twin-Compliance)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/releases)
+[![Governance integration](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/governance-integration.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/governance-integration.yml)
+[![Pages demo](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/governance-pages.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/governance-pages.yml)
+[![CI](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/codeql.yml)
 [![License](https://img.shields.io/github/license/SafetyMP/Financial-Digital-Twin-Compliance)](LICENSE)
 
-<p align="center">
-  <img src="docs/assets/demo.gif" alt="Digital Twin demo — Alert, Audit, Graph, Simulation, and Report consoles with shared app switcher" width="900" />
-</p>
+![Connected Financial Digital Twin governance workspace displaying synthetic integration-test reviews](docs/assets/governance-workspace.png)
 
-## Governance workspace demo
-
-Designed for governance professionals at financial institutions: prioritize an issue, understand the trigger, inspect illustrative evidence, and record a local review in one workspace.
-
-**[Open the interactive demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/)** · [Redesign scope and validation](docs/governance-redesign.md) · [Frontend source](apps/governance-console/)
-
-The GitHub Pages demo uses synthetic fixtures and browser-local review notes. It does not connect to the services below, evaluate live policies, verify a ledger, or submit reports. The original engineering consoles and backend reference remain available. A separate **[connected governance workspace](docs/governance-integration.md)** uses the real alert and audit services, with persisted review notes and escalation; it runs locally on port 3006.
-
-## Screenshots
-
-| Alert Console | Audit Explorer | Graph Explorer |
-|---------------|----------------|----------------|
-| ![Alert Console](docs/assets/alert-console.png) | ![Audit Explorer](docs/assets/audit-explorer.png) | ![Graph Explorer](docs/assets/graph-explorer.png) |
-
-| Simulation Console | Report Console |
-|--------------------|----------------|
-| ![Simulation Console](docs/assets/simulation-console.png) | ![Report Console](docs/assets/report-console.png) |
-
-## TL;DR
-
-Run that payment path. A cold Compose start is about 10–40 minutes:
-
-```bash
-git clone https://github.com/SafetyMP/Financial-Digital-Twin-Compliance.git && cd Financial-Digital-Twin-Compliance
-cp .env.example .env
-docker compose -f docker-compose.dev.yml up -d --wait && ./scripts/seed.sh
-./scripts/register-schemas.sh && ./scripts/register-debezium-connector.sh
-docker compose -f docker-compose.dev.yml restart state-service
-./scripts/smoke-test.sh && ./scripts/submit-flink-job.sh && ./scripts/smoke-test-phase3.sh
-```
-
-`./scripts/smoke-test.sh` checks Debezium into twin state. `./scripts/smoke-test-phase3.sh` calls the Cedar (`cedar-go`) decision and checks the immudb audit entry. It sends the mock payment burst when a fresh alert audit is not already present. `./scripts/verify-state-twin-pipeline.sh` checks that same stack. It is not a second product.
-
-`services/graph-service` (Neo4j), `services/simulation-service`, and `services/oidc-edge` are in the tree and outside this path. `services/reporting-service` is a local-name fixture, not XBRL or SDMX, and not part of the running path.
-
-**Quick links:** [Quick start](#quick-start) · [Architecture](#architecture) · [Contributing](#contributing)
-
-## Table of contents
-
-- [Who this is for](#who-this-is-for)
-- [Phase journeys](#phase-journeys)
-- [Features & maturity](#features--maturity)
-- [Architecture](#architecture)
-- [Prerequisites](#prerequisites)
-- [Quick start](#quick-start)
-- [REST API](#rest-api)
-- [Repository layout](#repository-layout)
-- [Documentation](#documentation)
-- [DevOps and deployment](#devops-and-deployment)
-- [CI](#ci)
-- [Security](#security)
-- [Community](#community)
-- [Contributing](#contributing)
+Connected development workspace with synthetic integration-test data and real alert/audit services.
 
 ## Who this is for
 
-- **Platform / data engineers** building CDC → Kafka → twin pipelines
-- **Compliance / regtech engineers** tracing one payment through a per-record Flink job, a `cedar-go` decision, and an immudb audit entry
-- **Contributors** who want a runnable, test-gated reference architecture (not slides)
+- **Governance, risk, and compliance professionals** exploring a clearer workflow for reviewing financial monitoring issues.
+- **Financial institution engineering teams** connecting review experiences to alert, policy, and audit services.
+- **Open-source contributors and coding agents** improving usability, evidence handling, and reliable integrations with reproducible checks.
 
-## Phase journeys
+The repository combines a governance application with a runnable financial digital twin reference backend. It uses synthetic banking data for development and demonstrations. It is not a production banking system, a certified compliance engine, or a regulatory filing product.
 
-Each capability is a **journey name + Phase N** (never Phase alone). Full matrix: [docs/phase-journeys.md](docs/phase-journeys.md).
+## The review workflow
 
-| Phase | Journey | UI | Smoke |
-|-------|---------|----|-------|
-| 1 | Ingestion & twin | API `:8080` | `./scripts/smoke-test.sh` |
-| 2 | Monitoring & alerts | Alert Console `:3000` | `./scripts/smoke-test-phase2.sh` |
-| 3 | Policy & audit | Audit Explorer `:3002` | `./scripts/smoke-test-phase3.sh` |
-| 4 | Graph & simulation | Graph `:3003` · Simulation `:3004` | `./scripts/smoke-test-phase4.sh` |
-| 5 | Regulatory reporting | Report Console `:3005` | `./scripts/smoke-test-phase5.sh` |
-| 6 | Hardening | OIDC/TLS edge `:8180`/`:8443` | `./scripts/smoke-test-phase6-*.sh` |
-| 7 | Cutting-edge analytics | APIs (no dedicated UI) | `./scripts/smoke-test-phase7-*.sh` |
+1. **Find an issue.** Search and filter the review queue by severity and review status.
+2. **Understand the trigger.** See the observation, threshold, monitoring rule, and available context together.
+3. **Follow the evidence.** Inspect linked evidence and, in connected mode, explicitly request an audit-chain check.
+4. **Record a review.** Acknowledge or escalate with a note. A review does not resolve the underlying issue or approve a policy exception.
+5. **Keep the context.** Revisit review history and export a review pack. Connected reviews persist across browser reloads and service restarts.
 
-Phases 1–4 smoke in CI. Phases 5–7 + `./scripts/harness/verify.sh` are local/harness gates. **CECT** is the corporate program that delivered Phases 5–7 — not a product tier.
+Ease of use is the redesign's priority. The interface and workflow are implemented and tested; customer usability outcomes have not yet been measured. [Design scope and validation](docs/governance-redesign.md).
 
-**Roadmap & gaps:** [ROADMAP.md](ROADMAP.md) · **Support:** [SUPPORT.md](SUPPORT.md) · **Explainability:** [docs/explainability.md](docs/explainability.md)
+## Choose your mode
 
-## Features & maturity
+| | Public demo | Connected development workspace |
+| --- | --- | --- |
+| Start | [Open in a browser](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) | [Setup guide](docs/governance-integration.md), port `3006` |
+| Data | Six synthetic issue fixtures | Alerts from the existing backend services |
+| Reviews | Saved in this browser | Stored transactionally by the alert service in PostgreSQL |
+| Evidence | Illustrative evidence; no live ledger check | Linked audit entries and an explicit audit-chain verification action |
+| Identity | Browser-local demonstration | Server-configured development reviewer; not end-user authentication |
+| Extra exploration | Synthetic twin view and scenario sensitivity lab | Selected-alert context; no live graph query or scenario lab |
 
-| Journey | Status | Notes |
-|---------|--------|-------|
-| Ingestion & twin | Stable on `main` | CI + `./scripts/smoke-test.sh` |
-| Monitoring & alerts | Stable on `main` | INT-M001, INT-M002, BASEL-M001 |
-| Policy & audit | Stable on `main` | CI + [demo-phase3.md](docs/demo-phase3.md) |
-| Graph & simulation | Stable on `main` (CI) | [demo-phase4.md](docs/demo-phase4.md) |
-| Regulatory reporting | Local-name fixture | `services/reporting-service` checks XML local names. Not part of the running path |
-| Hardening | Smoke-gated overlay | [ADR-012](docs/adr/012-phase6-hardening-foundation.md) |
-| Cutting-edge analytics | Smoke-gated | [ADR-013](docs/adr/013-phase7-cutting-edge-foundation.md); contagion is on-demand, not a scheduled stream |
-| GHCR deploy (12 images) | Stable | Phase 1–4 via `docker-compose.deploy.yml` |
-
-Release history: [CHANGELOG.md](CHANGELOG.md) · [GitHub Releases](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/releases)
-
-## Architecture
-
-```text
-mock core-banking (PostgreSQL)
-        │  CDC (Debezium) — personas + payments
-        ▼
-   Kafka (domain.events.*, twin.state.updated, compliance.audit.*)
-        │
-        ├────────────────────────┬─────────────────────────┐
-        ▼                        ▼                         ▼
-  State Service (Go)     Flink streaming job       Audit Service (Go)
-   ├── twin store               ├── Redis features        ├── immudb (Set/Get hash)
-   ├── outbox                   └── compliance.alerts     └── /api/v1/audit/*
-   └── /api/v1/personas                 │                         ▲
-                                        ▼                         │
-                                Alert Service (Go)                │
-                                 ├── PostgreSQL                   │
-                                 └── /api/v1/alerts ── evidenceRef ┘
-                                        │
-                    ┌───────────────────┼───────────────────┐
-                    ▼                   ▼                   ▼
-            Alert Console      Cedar Service        Decision Service
-            (Next.js)          POST /evaluate       POST /evaluate (Zen)
-                    │
-                    ▼
-            Audit Explorer (Next.js) — chain verify + search
-
-Neo4j + Graph Service (:8093) + Simulation Service (:8094)
-Graph Explorer (:3003) + Simulation Console (:3004) — outside the payment-audit path
-
-Grafana ← Flink / Kafka metrics (Compose)
-```
-
-Details: [docs/architecture.md](docs/architecture.md) · [docs/data-flow.md](docs/data-flow.md) · [docs/adr/](docs/adr/)
-
-## Prerequisites
-
-- [Docker](https://docs.docker.com/get-docker/) and Docker Compose v2
-- [Go 1.25+](https://go.dev/dl/) (`go.mod`; CI/Docker images use 1.25–1.26 per service)
-- [Node 20](https://nodejs.org/) — Next.js app builds (matches CI)
-- Python 3.11+ — `simulation-service` tests (`pytest`; CI uses system `python3`)
-- Java 17 — Flink streaming job (`jobs/compliance-cep`; `WatermarkStrategy.forBoundedOutOfOrderness`, no `flink-cep` artifact; matches CI)
-- CLI tools: `curl`, `jq`, `psql` (PostgreSQL client)
-- **Maven not required** — run Flink job unit tests via Docker (see [CONTRIBUTING.md](CONTRIBUTING.md))
+The GitHub Pages demo has no backend connection. The connected workspace never replaces a failed backend with demo fixtures. Review history is application data in PostgreSQL, separate from the immudb alert evidence ledger. [Integration boundaries](docs/governance-integration.md).
 
 ## Quick start
 
-One job, no Compose: three payments from the same originator inside ten minutes of event time emit one `INT-VEL-10M` alert. Event time follows the dataflow model (Akidau et al., VLDB 2015), not processing time. If this machine has no JDK, the script uses the `maven:3.9-eclipse-temurin-17` image.
+### Explore without installation
+
+Open the **[GitHub Pages demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/)**. Use synthetic notes only; demo reviews remain in your browser. No account, service credentials, or financial data are needed.
+
+### Run the demo locally
+
+Use Node.js 22 for governance tests and builds. From the repository root:
 
 ```bash
-./scripts/velocity-demo.sh
+npm ci --prefix apps/governance-console
+npm run dev --prefix apps/governance-console
 ```
 
-The full platform is a longer cold start (~10–40 minutes depending on image pulls):
-
-### 1. Ingestion & twin
+Use the local URL printed by Next.js. To test and export the static demo:
 
 ```bash
-git clone https://github.com/SafetyMP/Financial-Digital-Twin-Compliance.git
-cd Financial-Digital-Twin-Compliance
-
-cp .env.example .env
-
-docker compose -f docker-compose.dev.yml up -d --wait
-./scripts/seed.sh
-./scripts/register-schemas.sh
-./scripts/register-debezium-connector.sh
-
-# Restart state-service after connector registration (CI does this automatically)
-docker compose -f docker-compose.dev.yml restart state-service
-docker compose -f docker-compose.dev.yml up -d --wait state-service
-
-./scripts/smoke-test.sh
+npm test --prefix apps/governance-console
+NEXT_PUBLIC_BASE_PATH=/Financial-Digital-Twin-Compliance npm run build --prefix apps/governance-console
 ```
 
-### 2. Monitoring & alerts
+### Connect to the services
 
-After ingestion smoke passes, ensure the Flink streaming job is **RUNNING** (Compose `flink-job-submitter` usually handles this; re-submit if needed). The job is per-record streaming (`WatermarkStrategy.forBoundedOutOfOrderness`, no `flink-cep` artifact):
+Follow the **[connected workspace guide](docs/governance-integration.md)** for prerequisites, service configuration, and the Compose overlay. It covers both an existing local service stack and the isolated end-to-end test stack.
 
-```bash
-./scripts/submit-flink-job.sh
-./scripts/smoke-test-phase2.sh
+For the complete mock-banking pipeline and engineering consoles, start with the [documentation index](docs/README.md), [architecture](docs/architecture.md), and [deployment guide](docs/deployment.md). Create Kafka topics **before** starting consumers, as the current [CI workflow](.github/workflows/ci.yml) does.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    Demo[Public synthetic demo] --> Local[Browser-local reviews]
+    Reviewer[Governance professional] --> Workspace[Connected governance workspace]
+    Workspace --> Gateway[Same-origin server routes]
+    Gateway --> Alerts[Alert service]
+    Alerts --> Reviews[(PostgreSQL review history)]
+    Gateway --> Audit[Audit service]
+    Audit --> Ledger[(immudb evidence ledger)]
+    Pipeline[Mock banking / CDC / Kafka / Flink] --> Alerts
 ```
 
-**Gotchas**
+The backend retains Debezium change data capture, Kafka event contracts, per-record Apache Flink streaming, Cedar authorization (`cedar-go`), GoRules Zen decisions, and immudb audit evidence. The Flink job uses `WatermarkStrategy.forBoundedOutOfOrderness` with one minute of event-time tolerance and does not depend on `flink-cep`. Graph and simulation capabilities remain available in the engineering consoles. The reporting service is a local-name XML fixture, not an XBRL or SDMX engine.
 
-- Redis host port is **6380** (Compose maps `6380:6379`); see `REDIS_URL` in `.env.example`.
-- Kafka topics for Phase 2 are created by `./scripts/seed.sh` (via `create-kafka-topics.sh`).
-- Monitoring smoke injects payment bursts and checks INT-M001, INT-M002, and BASEL-M001 alerts end-to-end.
+[Component architecture](docs/architecture.md) · [Event and data contracts](docs/data-flow.md) · [Engineering capability map](docs/phase-journeys.md) · [Architecture decisions](docs/adr/)
 
-### 3. Policy & audit ledger
+## Verification and scope
 
-After monitoring smoke passes:
+The [governance integration workflow](.github/workflows/governance-integration.yml) exercises real Kafka, PostgreSQL, immudb, alert/audit services, the Next.js gateway, and browser review behavior using synthetic events. It checks acknowledgement, escalation, notes, restart persistence, fresh-browser history, export, retry/conflict handling, origin rejection, and backend outages.
 
-```bash
-./scripts/run-policy-ci.sh
-./scripts/smoke-test-phase3.sh
-```
+The separate [full CI workflow](.github/workflows/ci.yml) checks the upstream pipeline, service tests, policy and Kafka contracts, console builds, Phase 1–4 smoke tests, UI proxies, and coverage gates. [Schema compatibility](.github/workflows/schema-compat.yml), [CodeQL](.github/workflows/codeql.yml), [Scorecard](.github/workflows/scorecard.yml), [image publishing](.github/workflows/docker-publish.yml), and [Pages deployment](.github/workflows/governance-pages.yml) provide additional checks.
 
-Walkthrough: [docs/demo-phase3.md](docs/demo-phase3.md).
+A green workflow verifies its stated test boundary. It does not establish production security, regulatory compliance, customer usability, or performance at institutional scale. The connected workspace currently uses a configured development principal; the existing hardening overlay is not integrated end-user authentication for it. [Security posture](SECURITY.md) · [Current limitations and priorities](ROADMAP.md).
 
-**Gotchas**
-
-- UIs proxy Go APIs via Next.js `/api/*` routes — do not `fetch` Cedar/Audit/Alert backends from the browser (no CORS).
-- Cedar bind mounts can appear empty until `docker compose restart cedar-service decision-service` (common when the repo path contains spaces).
-
-### 4. Graph & simulation
-
-```bash
-./scripts/wait-graph-seeded.sh
-./scripts/smoke-test-phase4.sh
-```
-
-Open [Graph Explorer](http://localhost:3003) and [Simulation Console](http://localhost:3004). Demo: [docs/demo-phase4.md](docs/demo-phase4.md).
-
-### 5. Regulatory reporting
-
-```bash
-./scripts/smoke-test-phase5.sh
-```
-
-Open [Report Console](http://localhost:3005). Demo: [docs/demo-phase5.md](docs/demo-phase5.md).
-
-### 6–7. Hardening & cutting-edge analytics
-
-```bash
-# Phase 6 overlay (OIDC / TLS / OTel)
-docker compose -f docker-compose.dev.yml -f docker-compose.hardening.yml up -d --wait
-./scripts/smoke-test-phase6-oidc.sh
-./scripts/smoke-test-phase6-harden.sh
-
-# Phase 7 API journeys + harness
-./scripts/smoke-test-phase7-effectiveness.sh
-./scripts/smoke-test-phase7-contagion.sh
-./scripts/smoke-test-phase7-reg2policy.sh
-./scripts/smoke-test-phase7-graph.sh
-./scripts/harness/verify.sh
-```
-
-### Verify
-
-```bash
-# Ingestion
-cd services/state-service && go test ./...
-curl -s http://localhost:8080/api/v1/health
-curl -s "http://localhost:8080/api/v1/personas?personaType=Institution&limit=5" | jq
-
-# Monitoring
-cd services/alert-service && go test ./...
-curl -s http://localhost:8085/api/v1/health
-curl -s "http://localhost:8085/api/v1/alerts?limit=5" | jq
-open http://localhost:3000   # Alert Console
-open http://localhost:8082   # Flink UI
-open http://localhost:3030   # Grafana (Compose maps 3030:3000)
-
-# Policy & audit
-./scripts/run-policy-ci.sh
-cd services/cedar-service && go test ./...
-curl -s http://localhost:8091/api/v1/health | jq
-curl -s http://localhost:8090/api/v1/audit/verify | jq
-open http://localhost:3000   # Alert Console (switcher → other consoles)
-open http://localhost:3002   # Audit Explorer
-open http://localhost:3003   # Graph Explorer
-open http://localhost:3004   # Simulation Console
-open http://localhost:3005   # Report Console
-```
-
-### Local service URLs
-
-| Service | URL |
-|---------|-----|
-| State Service | `http://localhost:8080` |
-| Alert Service | `http://localhost:8085` |
-| Alert Console | `http://localhost:3000` |
-| Audit Explorer | `http://localhost:3002` |
-| Graph Explorer | `http://localhost:3003` |
-| Simulation Console | `http://localhost:3004` |
-| Report Console | `http://localhost:3005` |
-| Graph Service | `http://localhost:8093` |
-| Simulation Service | `http://localhost:8094` |
-| Reporting Service | `http://localhost:8095` |
-| Cedar Service | `http://localhost:8091` |
-| Decision Service | `http://localhost:8092` |
-| Audit Service | `http://localhost:8090` |
-| Flink JobManager UI | `http://localhost:8082` |
-| Grafana | `http://localhost:3030` |
-| Redis | `localhost:6380` |
-| Debezium Connect | `http://localhost:8083` |
-
-### Tear down
-
-```bash
-docker compose -f docker-compose.dev.yml down -v
-```
-
-## REST API
-
-### State Service
-
-Base URL: `http://localhost:8080/api/v1`
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/health` | Liveness probe |
-| `GET` | `/personas` | List twin personas (`personaType`, `limit`, `offset`) |
-| `GET` | `/personas/{personaId}` | Single persona by ID |
-
-Persona types: `Institution`, `Account`, `Instrument`.
-
-### Alert Service
-
-Base URL: `http://localhost:8085/api/v1`
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/health` | Liveness probe |
-| `GET` | `/alerts` | List alerts (`limit`, `offset`, filters) |
-| `GET` | `/alerts/{alertId}` | Single alert by ID |
-| `POST` | `/alerts/{alertId}/acknowledge` | Acknowledge an alert |
-| `GET` | `/ws/alerts` | WebSocket stream (service-to-service / smoke scripts; alert-console uses `/api/alerts` polling) |
-
-Full contract: [docs/phase2-implementation-spec.md](docs/phase2-implementation-spec.md) · [services/alert-service/AGENTS.md](services/alert-service/AGENTS.md)
-
-### Cedar Service
-
-Base URL: `http://localhost:8091/api/v1`
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/health` | Policy load status (`policiesLoaded`, `ruleCodes`) |
-| `POST` | `/evaluate` | Cedar access/obligation evaluation → `RuleDecision` |
-
-### Decision Service
-
-Base URL: `http://localhost:8092/api/v1`
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/health` | Zen model load status |
-| `GET` | `/rules` | Loaded regulatory models |
-| `POST` | `/evaluate` | Zen decision evaluation → `RuleDecision` |
-
-### Audit Service
-
-Base URL: `http://localhost:8090/api/v1`
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/health` | immudb connectivity |
-| `GET` | `/audit/entries` | Search ledger (`ruleCode`, `from`, `to`, `subjectId`) |
-| `GET` | `/audit/entries/{entryId}` | Single tamper-evident entry |
-| `GET` | `/audit/verify` | Hash-chain integrity check |
-
-Full contract: [docs/phase3-implementation-spec.md](docs/phase3-implementation-spec.md) · [docs/demo-phase3.md](docs/demo-phase3.md)
-
-## Repository layout
+## Repository map
 
 | Path | Purpose |
-|------|---------|
-| [services/state-service/](services/state-service/) | Go REST API, Kafka consumer, transactional outbox |
-| [services/alert-service/](services/alert-service/) | Alerts REST + WebSocket + `compliance.alerts` consumer |
-| [services/cedar-service/](services/cedar-service/) | Cedar decision (`cedar-go`) |
-| [services/decision-service/](services/decision-service/) | GoRules Zen decision engine |
-| [services/audit-service/](services/audit-service/) | immudb application hash via `Set`/`VerifiedGet` |
-| [jobs/compliance-cep/](jobs/compliance-cep/) | Flink streaming job (per-record, `WatermarkStrategy.forBoundedOutOfOrderness`, no `flink-cep` artifact) |
-| [apps/alert-console/](apps/alert-console/) | Next.js alert UI (Monitoring · Phase 2) |
-| [apps/audit-explorer/](apps/audit-explorer/) | Next.js audit explorer (Policy & audit · Phase 3) |
-| [apps/graph-explorer/](apps/graph-explorer/) | Next.js exposure graph (Graph · Phase 4) |
-| [apps/simulation-console/](apps/simulation-console/) | Next.js stress sim (Simulation · Phase 4) |
-| [apps/report-console/](apps/report-console/) | Next.js UI for the local-name reporting fixture (not the running path) |
-| [packages/console-shell/](packages/console-shell/) | Shared console chrome + app switcher |
-| [policies/](policies/) | Cedar (`.cedar`) and Zen (`.zen`) policy bundles |
-| [infra/grafana/](infra/grafana/) | Grafana dashboards and provisioning |
-| [schemas/avro/](schemas/avro/) | Avro event schemas (Schema Registry) |
-| [mocks/core-banking/](mocks/core-banking/) | CDC source database migrations and seed data |
-| [scripts/](scripts/) | Seed, smoke tests, schema/connector registration, Flink submit |
-| [docs/](docs/) | Architecture, domain model, ADRs, phase specs |
-| [docker-compose.deploy.yml](docker-compose.deploy.yml) | Staging deploy stack (GHCR images) |
-| [.github/workflows/](.github/workflows/) | CI, Docker publish, release, staging deploy |
+| --- | --- |
+| [`apps/governance-console/`](apps/governance-console/) | Static demo and shared governance interface |
+| [`apps/governance-live/`](apps/governance-live/) | Connected workspace and server-side service gateway |
+| [`services/alert-service/`](services/alert-service/) | Alerts, durable reviews, notes, and idempotent review writes |
+| [`services/audit-service/`](services/audit-service/) | Audit evidence, immudb ledger, and chain verification |
+| [`services/`](services/) | State, policy, graph, simulation, reporting, and edge services |
+| [`jobs/compliance-cep/`](jobs/compliance-cep/) | Per-record Flink streaming job |
+| [`apps/`](apps/) · [`packages/console-shell/`](packages/console-shell/) | Engineering consoles and shared components |
+| [`policies/`](policies/) · [`contracts/kafka/`](contracts/kafka/) · [`schemas/avro/`](schemas/avro/) | Policy bundles and event contracts |
+| [`scripts/governance-e2e/`](scripts/governance-e2e/) | Reproducible connected review workflow checks |
+| [`docs/`](docs/) | Current guides, architecture, and historical implementation records |
+| [`AGENTS.md`](AGENTS.md) | Coding-agent entry point and scoped instructions |
 
-## Documentation
+## Contribute and get help
 
-### Using & extending the platform
+Start with [CONTRIBUTING.md](CONTRIBUTING.md), the [roadmap](ROADMAP.md), and the [documentation index](docs/README.md). Useful contributions include usability findings from governance workflows, clearer evidence states, accessible interactions, and integration regressions with reproducible tests.
 
-| Document | Description |
-|----------|-------------|
-| [ROADMAP.md](ROADMAP.md) | Public roadmap, stability, planned work |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute |
-| [SUPPORT.md](SUPPORT.md) | Support channels and expectations |
-| [CHANGELOG.md](CHANGELOG.md) | Release history |
-| [docs/architecture.md](docs/architecture.md) | C4 diagrams and component map |
-| [docs/domain-model.md](docs/domain-model.md) | Entities, personas, glossary |
-| [docs/data-flow.md](docs/data-flow.md) | Event envelopes, idempotency, topics |
-| [docs/deployment.md](docs/deployment.md) | GHCR, releases, staging deploy |
-| [docs/phase-journeys.md](docs/phase-journeys.md) | Canonical Phase 1–7 journey map |
-| [docs/demo-phase3.md](docs/demo-phase3.md) | Policy + audit demo runbook |
-| [docs/demo-phase4.md](docs/demo-phase4.md) | Graph + simulation demo runbook |
-| [docs/demo-phase5.md](docs/demo-phase5.md) | Regulatory reporting demo runbook |
-| [docs/adr/](docs/adr/) | Architecture decision records |
+- [Report a bug or propose an improvement](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/issues/new/choose)
+- [Support channels and expectations](SUPPORT.md)
+- [Report a security issue privately](SECURITY.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Changelog](CHANGELOG.md) and [releases](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/releases)
 
-### Maintainer & implementation references
-
-| Document | Description |
-|----------|-------------|
-| [docs/roadmap.md](docs/roadmap.md) | Detailed phased plan (internal engineering) |
-| [docs/phase1-implementation-spec.md](docs/phase1-implementation-spec.md) | Ingestion specification |
-| [docs/phase2-implementation-spec.md](docs/phase2-implementation-spec.md) | Monitoring specification |
-| [docs/phase3-implementation-spec.md](docs/phase3-implementation-spec.md) | Policy & audit specification |
-| [docs/phase4-implementation-spec.md](docs/phase4-implementation-spec.md) | Graph & simulation specification |
-| [docs/phase5-implementation-spec.md](docs/phase5-implementation-spec.md) | Reporting specification |
-| [docs/phase6-implementation-spec.md](docs/phase6-implementation-spec.md) | Hardening specification |
-| [docs/phase7-implementation-spec.md](docs/phase7-implementation-spec.md) | Cutting-edge analytics specification |
-| [AGENTS.md](AGENTS.md) | Coding-agent contract (CI scope, smoke order) |
-| [docs/github-setup.md](docs/github-setup.md) | Branch protection, releases, community settings |
-
-## DevOps and deployment
-
-| Capability | Details |
-|------------|---------|
-| **CI** | Full stack + Phase 1–3 smoke, policy CI, and eval fixtures on every push and PR |
-| **Container registry** | Eight application images on GHCR (`ghcr.io/safetymp/digital-twin-compliance/*`) |
-| **Releases** | Tag `v*.*.*` to publish versioned images and a GitHub Release |
-| **Staging deploy** | Manual workflow — SSH deploy to a host running `docker-compose.deploy.yml` |
-| **Dependabot** | Weekly updates for Go (all services), npm (UIs), Maven (Flink job), GitHub Actions, and Docker |
-| **CodeQL** | Go security analysis on push, PR, and weekly schedule |
-| **OpenSSF Scorecard** | Supply-chain security posture on push and weekly schedule ([`.github/workflows/scorecard.yml`](.github/workflows/scorecard.yml)) |
-| **Issue templates** | Structured bug reports and feature requests |
-
-Quick deploy on a host with Docker (requires repo clone for policy bind mounts):
-
-```bash
-PREFIX=ghcr.io/safetymp/digital-twin-compliance
-TAG=main
-export STATE_SERVICE_IMAGE=${PREFIX}/state-service:${TAG}
-export ALERT_SERVICE_IMAGE=${PREFIX}/alert-service:${TAG}
-export ALERT_CONSOLE_IMAGE=${PREFIX}/alert-console:${TAG}
-export COMPLIANCE_CEP_IMAGE=${PREFIX}/compliance-cep:${TAG}
-export AUDIT_SERVICE_IMAGE=${PREFIX}/audit-service:${TAG}
-export CEDAR_SERVICE_IMAGE=${PREFIX}/cedar-service:${TAG}
-export DECISION_SERVICE_IMAGE=${PREFIX}/decision-service:${TAG}
-export AUDIT_EXPLORER_IMAGE=${PREFIX}/audit-explorer:${TAG}
-./scripts/deploy-stack.sh bootstrap
-```
-
-Full guide: [docs/deployment.md](docs/deployment.md).
-
-## CI
-
-GitHub Actions on every push and pull request ([ci.yml](.github/workflows/ci.yml), job `ci`):
-
-1. `go vet` / `go test ./...` — six Go services including `graph-service`
-2. Python `pytest` — `simulation-service`; Cedar CLI + `./scripts/run-policy-ci.sh`
-3. `mvn test` in `jobs/compliance-cep`; `./scripts/check-kafka-contracts.sh`
-4. Agent worktree / dependency-wave script hygiene (`./scripts/check-agent-worktrees.sh`)
-5. Mechanical live evals (`./scripts/run-live-evals.sh`, `./scripts/run-live-evals-phase2.sh`) and `./scripts/run-eval-fixtures.sh`
-6. Docker Compose stack → seed → Phase 3/4 service bring-up → schema registration → Debezium → outbox drain → twin pipeline verify
-7. `mvn package`, Next.js builds (`alert-console`, `audit-explorer`, `graph-explorer`, `simulation-console`), Flink job submit
-8. `./scripts/smoke-test.sh`, `./scripts/smoke-test-phase2.sh`, `./scripts/smoke-test-phase3.sh`, `./scripts/smoke-test-phase4.sh`
-9. `./scripts/check-coverage-gates.sh`
-
-Separate workflows:
-
-| Workflow | Trigger | Purpose |
-|----------|---------|---------|
-| [schema-compat.yml](.github/workflows/schema-compat.yml) | Push, PR | Avro BACKWARD compatibility |
-| [policy-gates.yml](.github/workflows/policy-gates.yml) | PR (path-filtered) | Policy CI when `policies/**` or policy services change |
-| [codeql.yml](.github/workflows/codeql.yml) | Push, PR, weekly | Go security analysis (`analyze` check) |
-| [docker-publish.yml](.github/workflows/docker-publish.yml) | Push to `main`, version tags | GHCR image publish |
-| [eval-nightly.yml](.github/workflows/eval-nightly.yml) | Daily schedule, manual | Eval fixtures, harness calibration, extended smoke |
-
-Branch protection and environment setup: [docs/github-setup.md](docs/github-setup.md).
-
-## Security
-
-Local stacks use **mock principals only** — no production auth middleware. Default Compose credentials are not production-safe. Do not expose service ports to untrusted networks. See [SECURITY.md](SECURITY.md).
-
-## Community
-
-- **Bugs & features:** [GitHub Issues](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/issues/new/choose)
-- **Security:** [Private advisories](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/security/advisories/new) — see [SECURITY.md](SECURITY.md)
-- **Conduct:** [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-- **Governance:** Maintained by SafetyMP; contributions via PR welcome on `main`
-
-## Contributing
-
-Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [ROADMAP.md](ROADMAP.md) before opening a pull request.
-
-GitHub setup for maintainers: [docs/github-setup.md](docs/github-setup.md).
-
-
-## Documentation map
-
-[docs/README.md](docs/README.md) lists the repository layout. Community policy files are the root `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, and `SECURITY.md`.
+Maintained by [SafetyMP](https://github.com/SafetyMP). Project code is licensed under [Apache License 2.0](LICENSE); bundled IBM Plex Sans fonts retain their [SIL Open Font License](packages/console-shell/assets/fonts/LICENSE.txt).

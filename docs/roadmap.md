@@ -1,15 +1,10 @@
-# Roadmap
+# Engineering roadmap history
 
-> **Running path.** The root [README](../README.md) is the status of record. Diagrams and phase notes below may still say Flink CEP, XBRL, or SDMX. The Flink job is per-record streaming and does not depend on `flink-cep`. Reporting is a local-name fixture and is not on the running path.
+This is the original phase plan, retained for design provenance, risks, and earlier exit criteria. Its schedules, staffing assumptions, performance targets, and completion labels are historical records, not current commitments or measured results.
 
+Use the [product vision](product-vision.md), [current public roadmap](../ROADMAP.md), and [capability map](phase-journeys.md) for today's direction. The primary experience is now the governance workspace; Phase 1–4 engineering tools support it. The [verified baseline](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43646873895) includes Phase 4 smoke checks, so the old Phase 4 “ready for implementation” label below is superseded for current status. Historical behavior-evaluation claims remain scoped to their recorded evidence.
 
-Phased implementation plan, risks, and open decisions for the Financial Digital Twin + Compliance Platform.
-
-> **Status of record for what is shipped on `main`:** [ROADMAP.md](../ROADMAP.md) and [phase-journeys.md](./phase-journeys.md). This file is engineering detail (durations, risks, open decisions); the gantt below is historical planning, not live completion status.
-
-See also: [architecture.md](./architecture.md), [compliance-mapping.md](./compliance-mapping.md), [adr/](./adr/).
-
----
+The implementation uses per-record Flink streaming, `cedar-go`, and immudb. Reporting remains a local-name XML fixture. Original XBRL/SDMX, production scale, and universal audit ambitions below should not be read as shipped capabilities. A completed plan document is not evidence that its targets were achieved.
 
 ## Implementation Phases
 

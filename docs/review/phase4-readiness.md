@@ -1,5 +1,7 @@
 # Phase 4 Readiness Checklist
 
+> Historical engineering review record. Results and open items apply to the revision and scope described here. See the [current capability map](../phase-journeys.md) and [governance verification](../governance-integration.md) for the merged workspace.
+
 Gate before opening Phase 4 implementation work. Maps [roadmap.md § Phase 4](../roadmap.md#phase-4-graph-model-and-simulation).
 
 **Status**: Ready for implementation (2026-06-29)

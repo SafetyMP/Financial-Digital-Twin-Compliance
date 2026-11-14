@@ -1,221 +1,54 @@
-# GitHub repository setup
+# GitHub repository presentation and maintenance
 
-> The repository is [SafetyMP/Financial-Digital-Twin-Compliance](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance). The About description matches the root README: one mock payment, not Flink CEP, XBRL, or SDMX.
-
-One-time configuration for [SafetyMP/Financial-Digital-Twin-Compliance](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance). Most items are repository **Settings** (not files in git).
-
----
+The canonical repository is [SafetyMP/Financial-Digital-Twin-Compliance](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance). Its public identity is **Financial Digital Twin — Governance Workspace**. Keep the repository name and existing URLs stable while aligning metadata and documentation with the [product vision](product-vision.md).
 
 ## Repository metadata
 
-**Settings → General → Repository details**
+Use the repository About panel for a concise, factual description and the public demo URL. Topics should describe the implemented purpose and supporting technology, not roadmap-only capabilities.
 
-### Topic rules (GitHub standard)
+| Field | Canonical content |
+| --- | --- |
+| Description | Open-source governance workspace for financial institutions: review monitored issues, inspect audit evidence, and record decisions. Includes a synthetic demo and connected development stack. |
+| Website | `https://safetymp.github.io/Financial-Digital-Twin-Compliance/` |
+| Topics | `financial-governance`, `digital-twin`, `regtech`, `compliance`, `risk-management`, `audit-trail`, `policy-as-code`, `event-driven`, `kafka`, `flink`, `cedar`, `immudb`, `nextjs`, `postgresql` |
+| Social preview | Use the current governance workspace visual, with meaningful alternate text in repository documentation. Do not use a legacy multi-console screenshot as the primary product image. |
 
-Per [GitHub Docs — Classifying your repository with topics](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics):
+GitHub topics use lowercase letters, numbers, and hyphens, at most 50 characters per topic and 20 topics per repository. See [GitHub's topic guidance](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics). Metadata is configured on GitHub; editing this file alone does not apply it.
 
-- **Format**: lowercase letters, numbers, and hyphens only (no underscores or spaces)
-- **Length**: ≤ 50 characters per topic
-- **Count**: ≤ 20 topics per repository
-- **Mix**: purpose + tech stack + industry/domain (6–15 tags is a practical target)
-- **Skip** the primary language topic (`go`) — GitHub already surfaces language from code
-- **Avoid** meta or version tags (`beta`, `2026`, `wip`, `release-1`)
+## Front door and contribution paths
 
-Align topics with the README, About description, and actual dependencies — not roadmap-only tech.
+- [README](../README.md): audience, review workflow, demo, setup, boundaries, and source map.
+- [Documentation index](README.md): route readers to current guides before phase history.
+- [Contributing](../CONTRIBUTING.md), [Support](../SUPPORT.md), [Security](../SECURITY.md), and [Code of Conduct](../CODE_OF_CONDUCT.md): canonical root community files.
+- [Issue templates](../.github/ISSUE_TEMPLATE/) and [PR template](../.github/PULL_REQUEST_TEMPLATE.md): identify demo versus connected mode, expected outcome, reproduction, and verification.
+- [AGENTS.md](../AGENTS.md) and [.github/copilot-instructions.md](../.github/copilot-instructions.md): concise source and test routing for coding agents. Scoped service contracts still apply.
 
-### Canonical values
+Use natural task language such as financial governance, compliance review, audit evidence, and review history. Accurate descriptions, accessible content, stable links, and useful documentation support discovery; they do not guarantee a search position or agent recommendation.
 
-| Field | Value |
-|-------|-------|
-| Description | One mock payment through Debezium, a per-record Flink streaming job, Cedar, and immudb. Not Flink CEP, XBRL, or SDMX, and not a core-banking system. |
-| Website | `https://github.com/SafetyMP/Financial-Digital-Twin-Compliance#readme` (**applied**) |
-| Topics | See table below (**17 topics**) |
-| Social preview | Upload [docs/assets/social-preview.png](./assets/social-preview.png) (1280×640 PNG; export from SVG if needed) — **Settings → General → Social preview** |
+## GitHub Pages
 
-**Topics** (17 — purpose and stack that are on the running path):
+[governance-pages.yml](../.github/workflows/governance-pages.yml) tests and exports `apps/governance-console` with `/Financial-Digital-Twin-Compliance` as its base path, then publishes the static artifact through the `github-pages` environment. Pages hosts the synthetic demo only. Backend credentials and configured development identities must not appear in its public bundle.
 
-| Category | Topics |
-|----------|--------|
-| Purpose / architecture | `digital-twin`, `compliance`, `event-driven`, `transactional-outbox` |
-| Industry / domain | `regtech`, `fintech` |
-| Tech stack | `kafka`, `debezium`, `flink`, `postgresql`, `avro`, `immudb`, `cedar`, `oidc`, `keycloak`, `opentelemetry`, `minio` |
+Use the deployed commit and terminal workflow result to confirm publication. A passing local build is not deployment evidence. Changing the repository name or domain requires coordinating canonical URLs, the Next.js base path, metadata, and Pages settings.
 
-Apply from a maintainer shell (replaces the full topic list):
+## Checks and branch policy
 
-```bash
-gh repo edit SafetyMP/Financial-Digital-Twin-Compliance \
-  --description "One mock payment through Debezium, a per-record Flink streaming job, Cedar, and immudb. Not Flink CEP, XBRL, or SDMX, and not a core-banking system."
+Preserve existing repository rules and inspect actual check names before changing requirements. Recommended maintenance practices are focused pull requests, review appropriate to the change, required relevant checks, and protection against accidental force-pushes/deletions. A documentation task is not authorization to weaken checks or change access policy.
 
-printf '%s' '{"names":["digital-twin","compliance","event-driven","transactional-outbox","regtech","fintech","kafka","debezium","flink","postgresql","avro","immudb","cedar","oidc","keycloak","opentelemetry","minio"]}' \
-  | gh api -X PUT repos/SafetyMP/Financial-Digital-Twin-Compliance/topics --input -
-```
+| Workflow | Scope |
+| --- | --- |
+| [CI](../.github/workflows/ci.yml) | Service tests, policy and Kafka contracts, engineering console builds, Phase 1–4 smoke, UI proxies, coverage |
+| [Governance integration](../.github/workflows/governance-integration.yml) | Real-service browser review workflow and both governance frontend builds |
+| [Governance Pages](../.github/workflows/governance-pages.yml) | Static demo build and deployment |
+| [Schema compatibility](../.github/workflows/schema-compat.yml) | Published Avro schema compatibility |
+| [CodeQL](../.github/workflows/codeql.yml) | Configured source-code security analysis |
+| [Scorecard](../.github/workflows/scorecard.yml) | Repository security-practice analysis |
+| [Docker Publish](../.github/workflows/docker-publish.yml) | Existing reference-stack images in GHCR |
 
-Enable **Issues** under Features. **Discussions** optional — useful for Q&A if issue volume grows.
+A green workflow is evidence for its checks at its commit, not a blanket security or compliance certification. Report failures and skipped checks accurately. Phase 5–7 scripts and historical evaluation material do not expand the standard CI claim.
 
----
+## Releases and operations
 
-## Evergreen OSS practices
+Keep [CHANGELOG.md](../CHANGELOG.md) current. Use existing semver release automation when a release is explicitly intended; do not create a historical tag again. GHCR's existing `digital-twin-compliance` image namespace remains valid even though the GitHub repository's canonical name includes `Financial-`.
 
-### Issue labels (Settings → Issues → Labels)
-
-Suggested starter set:
-
-| Label | Use |
-|-------|-----|
-| `bug` | Regressions, smoke failures |
-| `enhancement` | Features aligned with [ROADMAP.md](../ROADMAP.md) |
-| `good first issue` | Small, bounded tasks for new contributors |
-| `help wanted` | Maintainer welcomes external PR |
-| `dependencies` | Dependabot PRs (already applied by [dependabot.yml](../.github/dependabot.yml)) |
-
-### Release cadence
-
-- **`main`** — continuous integration; default contribution target
-- **Tags `v*.*.*`** — semver releases with [CHANGELOG.md](../CHANGELOG.md) entry and GHCR images
-- Cut a release when a capability milestone is smoke-stable (no fixed calendar required yet)
-
-### Community health files
-
-| File | Purpose |
-|------|---------|
-| [ROADMAP.md](../ROADMAP.md) | Public roadmap (GitHub storefront) |
-| [SUPPORT.md](../SUPPORT.md) | Support channels and expectations |
-| [CONTRIBUTING.md](../CONTRIBUTING.md) | Human contributor workflow |
-| [CHANGELOG.md](../CHANGELOG.md) | Release history |
-
-Internal engineering specs (`docs/phase*-implementation-spec.md`, [AGENTS.md](../AGENTS.md)) stay in repo but are not the primary GitHub story.
-
----
-
-## Branch protection (main)
-
-**Settings → Branches → Add branch ruleset** (or classic branch protection rule)
-
-Recommended for `main`:
-
-| Rule | Setting |
-|------|---------|
-| Require a pull request before merging | On (1 approval if team grows) |
-| Require status checks to pass | On |
-| Required checks | `ci`, `schema-compat`, `analyze` (CodeQL), `Scorecard analysis` (after first run) |
-| Require branches to be up to date | On |
-| Block force pushes | On |
-| Restrict deletions | On |
-
-After the first CodeQL run completes, the `analyze` check name appears under required checks. After the first OpenSSF Scorecard run, add `Scorecard analysis` from [.github/workflows/scorecard.yml](../.github/workflows/scorecard.yml).
-
-If branch protection still lists `phase1`, replace it with `ci` after merging the CI job rename (Settings → Branches → edit ruleset).
-
-**Agents and direct pushes:** enable **Require a pull request before merging** so coding agents use feature branches (`feat/...`, `chore/...`) instead of pushing to `main`. Bypass only for maintainers when intentionally hotfixing.
-
----
-
-## GitHub Environments
-
-### staging
-
-**Settings → Environments → New environment → `staging`**
-
-| Secret | Description |
-|--------|-------------|
-| `DEPLOY_HOST` | Staging server hostname or IP |
-| `DEPLOY_USER` | SSH user with Docker access |
-| `DEPLOY_SSH_KEY` | Private key (PEM) |
-| `DEPLOY_PATH` | Absolute path to repo clone on host |
-| `DEPLOY_PORT` | Optional SSH port (default 22) |
-
-Optional protection rules: required reviewers before deploy, wait timer.
-
-### production (future)
-
-Defer until Phase 4+ deploy automation; use approval gates and separate secrets. Full Phase 1–3 stack deploy uses GHCR + `docker-compose.deploy.yml` ([deployment.md](./deployment.md)).
-
----
-
-## Container registry (GHCR)
-
-After the first **Docker Publish** workflow succeeds:
-
-1. **Packages** → `digital-twin-compliance/*` (eight application images)
-2. **Package settings → Change visibility** → Public (if staging pulls without auth)
-3. Add a short **description** on the package page linking to [deployment.md](./deployment.md)
-
----
-
-## Security features
-
-**Settings → Code security and analysis**
-
-| Feature | Recommendation |
-|---------|----------------|
-| Dependabot alerts | Enable |
-| Dependabot security updates | Enable |
-| Code scanning (CodeQL) | Enabled via [.github/workflows/codeql.yml](../.github/workflows/codeql.yml) |
-| OpenSSF Scorecard | Enabled via [.github/workflows/scorecard.yml](../.github/workflows/scorecard.yml); badge on [README](../README.md) after first published run |
-| Secret scanning | Enable (GitHub-provided patterns) |
-
----
-
-## First release
-
-Validate release and image pipelines:
-
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-```
-
-Expect:
-
-- **Docker Publish** — tags `0.1.0`, `0.1`, `latest`
-- **Release** — GitHub Release with generated notes
-
-Deploy:
-
-```bash
-TAG=v0.1.0
-PREFIX=ghcr.io/safetymp/digital-twin-compliance
-export STATE_SERVICE_IMAGE=${PREFIX}/state-service:${TAG}
-export ALERT_SERVICE_IMAGE=${PREFIX}/alert-service:${TAG}
-export ALERT_CONSOLE_IMAGE=${PREFIX}/alert-console:${TAG}
-export COMPLIANCE_CEP_IMAGE=${PREFIX}/compliance-cep:${TAG}
-export AUDIT_SERVICE_IMAGE=${PREFIX}/audit-service:${TAG}
-export CEDAR_SERVICE_IMAGE=${PREFIX}/cedar-service:${TAG}
-export DECISION_SERVICE_IMAGE=${PREFIX}/decision-service:${TAG}
-export AUDIT_EXPLORER_IMAGE=${PREFIX}/audit-explorer:${TAG}
-./scripts/deploy-stack.sh pull
-```
-
----
-
-## Automation summary
-
-| File / workflow | Purpose |
-|-----------------|---------|
-| [ci.yml](../.github/workflows/ci.yml) | Unit tests, policy CI, eval fixtures, Compose stack, Phase 1–4 smoke, coverage gates (Phase 5–7 smokes are local/CECT gates; CI wiring follow-up) |
-| [schema-compat.yml](../.github/workflows/schema-compat.yml) | Avro BACKWARD compatibility |
-| [policy-gates.yml](../.github/workflows/policy-gates.yml) | Cedar/Zen policy CI on PRs touching `policies/**` or policy services (also runs inside `ci.yml`) |
-| [codeql.yml](../.github/workflows/codeql.yml) | Go security analysis (`analyze` job) |
-| [eval-nightly.yml](../.github/workflows/eval-nightly.yml) | Nightly eval fixtures, harness calibration, extended smoke |
-| [docker-publish.yml](../.github/workflows/docker-publish.yml) | GHCR images for Phase 1–4 services (reporting-service / oidc-edge / report-console publish is a follow-up) |
-| [release.yml](../.github/workflows/release.yml) | Version releases on `v*.*.*` tags |
-| [deploy-staging.yml](../.github/workflows/deploy-staging.yml) | Manual SSH staging deploy |
-| [dependabot.yml](../.github/dependabot.yml) | Weekly Go, Actions, and Docker dependency PRs |
-| [CODEOWNERS](../.github/CODEOWNERS) | Default reviewers |
-| [PULL_REQUEST_TEMPLATE.md](../.github/PULL_REQUEST_TEMPLATE.md) | PR checklist (smoke, evals, phase scope) |
-| [CHANGELOG.md](../CHANGELOG.md) | Release history |
-| Issue templates | Bug and feature intake |
-
----
-
-## Community files
-
-| File | Purpose |
-|------|---------|
-| [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) | Community standards |
-| [CONTRIBUTING.md](../CONTRIBUTING.md) | Contribution workflow |
-| [SECURITY.md](../SECURITY.md) | Vulnerability reporting |
-| [CHANGELOG.md](../CHANGELOG.md) | Release notes |
-| [ROADMAP.md](../ROADMAP.md) | Public roadmap |
-| [SUPPORT.md](../SUPPORT.md) | Support policy |
-| [NOTICE](../NOTICE) | Apache 2.0 attribution |
+[Deployment notes](deployment.md) distinguish public Pages, trusted connected development, engineering images, and experimental hardening overlays. Staging credentials, environment protection, repository visibility, and package access require their own authorized configuration; a recommendation in documentation does not establish that they are applied.

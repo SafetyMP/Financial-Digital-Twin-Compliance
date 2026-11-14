@@ -1,5 +1,7 @@
 # Handoff — Phase 5 (Reporting)
 
+> Historical engineering handoff. Preserve this task context; it does not authorize new work. Follow current [repository instructions](../AGENTS.md), [agent guide](agent-guide.md), and [product vision](product-vision.md).
+
 ## Done when
 
 - ADR-011 on disk and indexed

@@ -12,6 +12,12 @@ bad() { echo "  FAIL $1: $2"; fail=$((fail + 1)); }
 
 echo "== publish-check ($ROOT) =="
 
+if python3 scripts/check-project-docs.py; then
+  ok "project-doc-links" "Local Markdown link targets exist"
+else
+  bad "project-doc-links" "Broken local Markdown link targets"
+fi
+
 # git remote origin → GitHub
 if origin="$(git remote get-url origin 2>/dev/null || true)" && [[ -n "$origin" ]]; then
   if [[ "$origin" =~ github\.com[:/]([^/]+/[^/.]+) ]]; then

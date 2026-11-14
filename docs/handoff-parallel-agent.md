@@ -1,5 +1,7 @@
 # Handoff: Parallel Implementation Agent
 
+> Historical engineering handoff. Preserve this task context; it does not authorize new work. Follow current [repository instructions](../AGENTS.md), [agent guide](agent-guide.md), and [product vision](product-vision.md).
+
 Use this document when starting Phase 1 implementation in a separate Cursor chat or agent session.
 
 **Created**: 2026-06-13  

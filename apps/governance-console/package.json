@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "prebuild": "node scripts/prepare-discovery.mjs",
+    "build": "next build && npm run check:discovery",
+    "check:discovery": "node ../../scripts/check-governance-discovery.mjs",
     "test": "node --experimental-strip-types --test src/lib/*.test.ts"
   },
   "dependencies": {

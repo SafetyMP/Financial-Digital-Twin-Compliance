@@ -1,5 +1,7 @@
 # Handoff: Parallel parent agent
 
+> Historical engineering handoff. Preserve this task context; it does not authorize new work. Follow current [repository instructions](../AGENTS.md), [agent guide](agent-guide.md), and [product vision](product-vision.md).
+
 Use when **you orchestrate** child agents (worktrees, best-of-N, or in-session subagents). You stay on the **main repo root**.
 
 **Companion**: [handoff-worktree-agent.md](./handoff-worktree-agent.md) · [handoff-parallel-agent.md](./handoff-parallel-agent.md) · [handoff-verification-agent.md](./handoff-verification-agent.md)

@@ -1,6 +1,6 @@
 # ADR Index
 
-Architecture Decision Records for the Financial Digital Twin + Compliance Platform.
+Engineering decision records for Financial Digital Twin. These preserve design rationale and their original acceptance labels; accepted design is not proof that every target capability is deployed or verified. The [product vision](../product-vision.md), [capability map](../phase-journeys.md), and [connected integration](../governance-integration.md) define current scope.
 
 | ADR | Title | Status |
 |-----|-------|--------|

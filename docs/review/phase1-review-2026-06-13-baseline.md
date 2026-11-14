@@ -1,5 +1,7 @@
 # Phase 1 Review — 2026-06-13 (Baseline)
 
+> Historical engineering review record. Results and open items apply to the revision and scope described here. See the [current capability map](../phase-journeys.md) and [governance verification](../governance-integration.md) for the merged workspace.
+
 **Branch/PR**: N/A — planning handoff only, no implementation branch yet  
 **Reviewer**: Planning agent
 

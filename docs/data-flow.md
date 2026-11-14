@@ -1,17 +1,27 @@
-# Data Flow
+# Data flow and review persistence
 
-> **Running path.** The root [README](../README.md) is the status of record. Alerts come from the per-record Flink job. Report examples are the local-name XML fixture, not an XBRL filing or SDMX.
+The [governance workspace](product-vision.md) connects the review task to the existing alert and audit services. This guide preserves the engineering event contracts and distinguishes the newer review API from the Kafka pipeline.
 
+## Governance review path
 
-Kafka topics, event/schema contracts, audit ledger record format, and end-to-end data flows for the Financial Digital Twin + Compliance Platform.
+1. The connected server reads paginated alert records from Alert Service. Search, counts, and exports describe loaded records.
+2. A selected alert's `evidenceRef` identifies an audit entry. Audit Service retrieves its ledger record or exposes an explicitly labeled PostgreSQL index fallback.
+3. An explicit verification request checks the actual audit chain. Retrieval alone does not establish integrity.
+4. A same-origin review request sends `requestId`, `status`, and `note` through the gateway. The configured development principal supplies the actor server-side.
+5. Alert Service locks the alert row and transactionally appends `governance_reviews` plus its current status. Identical retries replay the original review; changed input with the same request ID returns a conflict.
+6. Subsequent reads, fresh browsers, and exports use persisted review history. Reviews are PostgreSQL records, not Kafka events or immudb receipts.
 
-See also: [architecture.md](./architecture.md), [domain-model.md](./domain-model.md), [compliance-mapping.md](./compliance-mapping.md).
+The static Pages demo uses synthetic fixtures and browser storage instead of this path. See [governance-integration.md](governance-integration.md) for endpoints and verification boundaries.
 
----
+## Reference pipeline contracts
+
+The tables and examples below retain the original broader design alongside implemented contracts. Topic counts, retention targets, proposed consumers, and reporting flows are not guarantees of the local runtime. Current local topics are created by [create-kafka-topics.sh](../scripts/create-kafka-topics.sh); published wire fixtures are in [contracts/kafka](../contracts/kafka/README.md). Create topics before starting consumer groups. Reporting examples refer to the local-name XML fixture, not XBRL/SDMX filing.
+
+See [architecture](architecture.md), [domain model](domain-model.md), and [compliance mapping](compliance-mapping.md).
 
 ## 1. Event Envelope
 
-All Kafka events use a standard envelope schema (Avro):
+The original design proposed the standard envelope below and Avro schema registration. Current wire formats include Debezium CDC and JSON event envelopes; the golden fixtures in [contracts/kafka](../contracts/kafka/README.md) and publisher/consumer tests define each implemented boundary. Do not apply this generic example as a replacement contract:
 
 ```json
 {
@@ -354,7 +364,7 @@ Entry[N].previousHash == Entry[N-1].payloadHash
 Entry[N].payloadHash == SHA-256(Entry[N].payload + Entry[N].metadata)
 ```
 
-Client-side verification on every read confirms chain integrity.
+Ledger entry/head reads use immudb `VerifiedGet`, which checks the retrieved key's inclusion proof. Application hash-chain verification is a separate explicit audit API request: it retrieves ledger entries selected by the PostgreSQL index, recomputes hashes, and checks sequence and previous-hash linkage. Ordinary entry retrieval does not establish that result, and a PostgreSQL index fallback is not a verified ledger record. The UI reports the check's actual result and entry count; a valid empty chain is not evidence of a nonempty check.
 
 ### 5.4 Evidence Artifacts (S3 Object Lock)
 
@@ -564,7 +574,7 @@ service AuditService {
 | **Out-of-order events** | Event-time processing in Flink with watermarks; `stateVersion` optimistic concurrency in PostgreSQL |
 | **At-least-once delivery** | Kafka consumer offset commit after processing; idempotent writes |
 | **Outbox publisher (State Service)** | Batch `WriteMessages` then per-row `published_at` — **not** transactional with Kafka. Crash between write and mark redelivers rows; safe because `twin.state.updated` consumers use `idempotencyKey` / `stateVersion` |
-| **Exactly-once (Flink)** | Two-phase commit protocol coordinating Kafka offsets + state + producer transactions |
+| **Flink output delivery** | The implemented Kafka sink configures `DeliveryGuarantee.AT_LEAST_ONCE`; the job does not call `enableCheckpointing`. Exactly-once processing or Kafka two-phase commit is not an implemented guarantee |
 
 ---
 

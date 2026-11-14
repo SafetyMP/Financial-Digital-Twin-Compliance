@@ -1,5 +1,7 @@
 # Phase 1 Implementation Spec
 
+> Historical engineering specification. Original targets and status labels are retained; use the [product vision](product-vision.md) and [current capability map](phase-journeys.md) for present scope and verification.
+
 Executable handoff for the parallel implementation agent. Implements [roadmap.md](./roadmap.md) Phase 1 only.
 
 **Prerequisites**: [ADR-007](./adr/007-phase1-foundation-decisions.md) (D1, D4, D9 decided).

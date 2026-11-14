@@ -1,5 +1,7 @@
 # Handoff: Dependency waves (parent orchestrator)
 
+> Historical engineering handoff. Preserve this task context; it does not authorize new work. Follow current [repository instructions](../AGENTS.md), [agent guide](agent-guide.md), and [product vision](product-vision.md).
+
 Use with [handoff-parallel-parent.md](./handoff-parallel-parent.md) when a task spans **ordered layers** (schemas → services → Flink → integration).
 
 Cursor slash command: `/dependency-waves`

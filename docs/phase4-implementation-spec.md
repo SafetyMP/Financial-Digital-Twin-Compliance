@@ -1,5 +1,7 @@
 # Phase 4 Implementation Spec
 
+> Historical engineering specification. Original targets and status labels are retained; use the [product vision](product-vision.md) and [current capability map](phase-journeys.md) for present scope and verification.
+
 Graph and simulation are in this tree and outside the payment path. That path is one mock payment through Debezium, the per-record Flink streaming job, Cedar (`cedar-go`), and immudb. This file is the original phase 4 plan.
 
 Executable handoff for the implementation agent. Implements [roadmap.md](./roadmap.md) Phase 4 only.

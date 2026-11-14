@@ -1,5 +1,7 @@
 # Handoff: Phase 4 Implementation Agent
 
+> Historical engineering handoff. Preserve this task context; it does not authorize new work. Follow current [repository instructions](../AGENTS.md), [agent guide](agent-guide.md), and [product vision](product-vision.md).
+
 Phase 4 is on main: Neo4j, Graph Service, Simulation Service, and the two consoles. Use this handoff for extensions. Graph and simulation are outside the payment path. The "XBRL" lines below are the original out-of-scope name; reporting that shipped is local-name XML.
 
 Use this document when starting Phase 4 implementation in a **new** Cursor chat.

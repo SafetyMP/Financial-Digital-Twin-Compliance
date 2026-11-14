@@ -1,33 +1,33 @@
 # Support
 
-The Digital Twin Compliance Platform is an **open-source project maintained by [SafetyMP](https://github.com/SafetyMP)** under the [Apache License 2.0](LICENSE).
+Financial Digital Twin is an open-source governance workspace and reference backend maintained by [SafetyMP](https://github.com/SafetyMP). Support is best effort; there is no SLA or guaranteed roadmap date.
 
-## What we support
+## Where to go
 
-| Channel | Use for | Response expectation |
-|---------|---------|----------------------|
-| [GitHub Issues](https://github.com/SafetyMP/Digital-Twin-Compliance/issues) | Bugs, regressions, feature ideas | Best effort; no SLA |
-| [Security advisories](https://github.com/SafetyMP/Digital-Twin-Compliance/security/advisories/new) | Vulnerabilities (private) | Acknowledgement when possible; coordinated disclosure |
-| Pull requests | Fixes and enhancements you can implement | Review when maintainer capacity allows |
+| Need | Channel |
+| --- | --- |
+| Try the review workflow | [Public synthetic demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) |
+| Run connected reviews | [Connected workspace guide](docs/governance-integration.md) |
+| Report a bug or usability problem | [GitHub Issues](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/issues/new/choose) |
+| Propose an improvement | [Roadmap](ROADMAP.md), then a feature request |
+| Report a vulnerability | [Security policy](SECURITY.md); do not post it publicly |
+| Contribute a fix | [Contributing guide](CONTRIBUTING.md) |
 
-## What we do not support
+## Help us reproduce the problem
 
-- **Production deployments** of the dev Compose stack as-is (default credentials, no TLS, mock auth)
-- **Consulting or custom integration** through this repository — use Issues only for project scope
-- **Guaranteed timelines** for roadmap items ([ROADMAP.md](ROADMAP.md))
+State whether you used the Pages demo, connected workspace, an engineering console, or backend CI. Include the commit or release, browser/runtime version, steps, expected result, and actual result. For review problems, describe the issue/evidence state before and after the action. For CI failures, include the run URL and failing step.
 
-## Before opening an issue
+Use synthetic examples. Remove credentials, tokens, customer data, and identifying financial information from screenshots, exports, and logs. Do not upload real banking records to a public issue or the demo.
 
-1. Run on latest `main` (or note your release tag)
-2. Include reproduction commands and smoke script output
-3. Check [README quick start](README.md#quick-start) and [docs/deployment.md](docs/deployment.md)
+## Scope and versions
 
-## Supported versions
+| Version / mode | Support scope |
+| --- | --- |
+| `main` | Active development; check the exact commit's CI results |
+| GitHub Pages demo | Synthetic browser-local exploration; local notes are not backed up by this project |
+| Connected workspace | Trusted development environment with configured reviewer identity; setup and reproducible integration issues |
+| Release tags / GHCR images | Their documented snapshot and published-image scope; older tags may lack the governance redesign |
 
-| Branch / tag | Support |
-|--------------|---------|
-| `main` | Active development; CI must pass before merge |
-| Latest `v*.*.*` release | Recommended for deploy experiments using GHCR images |
-| Older tags | Best effort only |
+The dev stack is not supported as an unchanged production deployment. Institutional onboarding, production authentication and authorization, operational support, custom consulting, and regulatory assurance are not provided through this repository.
 
-Security details: [SECURITY.md](SECURITY.md).
+[Documentation index](docs/README.md) · [Security posture](SECURITY.md) · [Changelog](CHANGELOG.md).

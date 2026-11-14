@@ -1,13 +1,27 @@
 # Architecture
 
-> **Running path.** The root [README](../README.md) is the status of record. Sections 1–5 describe the Compose path: per-record Flink streaming, `cedar-go`, and immudb `Set`/`Get`. Later sections include deployment targets that this repository does not run.
+The primary product is the [governance workspace](product-vision.md): a unified issue queue, explanation, evidence view, and recorded review for governance professionals. The existing financial event pipeline remains its engineering foundation.
 
+## Governance workspace architecture
 
-System architecture for the Financial Digital Twin + Compliance Platform. This document expands the high-level design with C4 context/container/component views and technology assignments per component.
+```mermaid
+flowchart LR
+  Demo[Public Pages demo] --> Browser[Browser-local synthetic records]
+  Reviewer[Governance reviewer] --> Live[Connected Next.js workspace]
+  Live --> Gateway[Same-origin server gateway]
+  Gateway --> Alerts[Alert Service]
+  Gateway --> Audit[Audit Service]
+  Alerts --> Reviews[PostgreSQL alerts and review history]
+  Audit --> Ledger[immudb linked audit entries]
+```
 
-See also: [domain-model.md](./domain-model.md), [data-flow.md](./data-flow.md), [adr/](./adr/).
+`apps/governance-console` statically exports the demo and owns the shared interface. `apps/governance-live` hosts the connected interface and server-only API gateway. The gateway supplies a configured development reviewer identity and fixed upstream URLs. Review writes update alert status and append history in one PostgreSQL transaction. Review history is not written to immudb.
 
----
+The evidence view distinguishes a full ledger record from the audit API's index fallback. Chain verification is an explicit request and reports the checked-entry count. Backend errors remain visible; connected mode does not fall back to synthetic records. The connected Twin explorer is selected-alert context, not a graph-service integration; the Scenario lab is demo-only.
+
+[Quickstart](quickstart.md) · [Integration contract](governance-integration.md) · [Data flow](data-flow.md)
+
+The reference stack below provides ingestion, monitoring, policy, audit, graph, and simulation capabilities. Broader context diagrams retain original design targets; they are not a claim that all external systems, regulatory feeds, deployment targets, or identity integrations are connected. The Flink job is per-record streaming (`flink-streaming-java`, no `flink-cep` artifact). Cedar is `cedar-go`. The audit client atomically writes entry/head with `SetAll` and reads with `VerifiedGet`. Reporting is a local-name XML fixture, not a regulatory filing engine.
 
 ## Implementation status
 
@@ -15,6 +29,7 @@ This document describes the architecture across all phases. **Public status of r
 
 | Component | Phase | Status |
 |-----------|-------|--------|
+| Governance demo and connected review workspace | Current product | Merged; static and real-service browser workflows verified |
 | Kafka, Schema Registry, Debezium CDC | 1 | Implemented (CI smoke) |
 | State Service, outbox, persona REST API | 1 | Implemented (CI smoke) |
 | Per-record Flink streaming (`jobs/compliance-cep`, not `flink-cep`) | 2 | On the running path. Older CEP names in this document are design history |
@@ -23,21 +38,21 @@ This document describes the architecture across all phases. **Public status of r
 | Cedar Policy Service, GoRules Zen / Decision Service | 3 | Implemented (CI smoke) — [phase3-implementation-spec.md](./phase3-implementation-spec.md) |
 | immudb audit ledger, Audit Explorer | 3 | Implemented (CI smoke) |
 | Neo4j, Graph Service, Simulation Service, Graph Explorer, Simulation Console | 4 | Implemented (CI smoke) |
-| Reporting Service, MinIO Object Lock, Report Console | 5 | Smoke-gated (local / harness) — [ADR-011](./adr/011-phase5-reporting-foundation.md) |
-| Keycloak/OIDC edge, TLS nginx, OpenTelemetry | 6 | Smoke-gated overlay — [ADR-012](./adr/012-phase6-hardening-foundation.md) |
-| Effectiveness / contagion→audit / reg→policy / graph analytics | 7 | Smoke-gated — [ADR-013](./adr/013-phase7-cutting-edge-foundation.md) |
+| Reporting Service, MinIO Object Lock, Report Console | 5 | Experimental fixture; Object Lock submit needs a suitable MinIO setup — [ADR-011](./adr/011-phase5-reporting-foundation.md) |
+| Keycloak/OIDC edge, TLS nginx, OpenTelemetry | 6 | Experimental overlay; outside standard CI — [ADR-012](./adr/012-phase6-hardening-foundation.md) |
+| Effectiveness / contagion→audit / reg→policy / graph analytics | 7 | Experimental scripts; outside standard CI — [ADR-013](./adr/013-phase7-cutting-edge-foundation.md) |
 
 ---
 
-## 1. Architectural Principles
+## 1. Reference architecture principles
 
 1. **Intelligence layer, not replacement** — The twin ingests from source systems; it does not become the system of record for transactions or contracts.
-2. **Event-first** — All state changes flow through a durable event log (Kafka) enabling replay, audit, and decoupling.
+2. **Event-first pipeline** — Source and monitoring events use Kafka. Governance review mutations use transactional PostgreSQL history rather than a Kafka event or ledger write.
 3. **Compliance embedded, not bolted on** — Monitoring, rules, audit, and reporting are first-class components, not afterthoughts.
 4. **Polyglot best-of-breed** — Each component uses the language/runtime best suited to its concern (see [ADR-006](./adr/006-polyglot-language-strategy.md)).
 5. **Policy-as-code** — Rules are version-controlled, tested in CI, and traceable to regulatory source.
-6. **Explainability by design** — Every risk score and compliance decision includes rationale suitable for regulator review.
-7. **Tamper-evident audit** — All compliance-relevant actions are recorded in a cryptographically verifiable ledger.
+6. **Explainability by design** — Show the recorded inputs, rule context, and available evidence; suitability for a regulator is not established by this reference implementation.
+7. **Explicit audit boundary** — Linked audit entries have application hash-chain checks and immudb retrieval. Governance review history remains separate PostgreSQL application data.
 
 ---
 
@@ -87,7 +102,7 @@ flowchart TB
 | Maintain digital twins | Entity state, graph model, simulation |
 | Monitor compliance | Per-record Flink streaming plus Java checkers for velocity, exposure, and LCR. Not the `flink-cep` library |
 | Evaluate rules | Cedar (`cedar-go`) and, when configured, GoRules Zen |
-| Record audit evidence | immudb `Set`/`Get` of an application hash |
+| Record audit evidence | Atomic entry/head writes with immudb `SetAll`; inclusion-proof reads with `VerifiedGet`; explicit application hash-chain verification |
 | Generate reports | Local-name XML fixture in `services/reporting-service`. Not an XBRL taxonomy filing or SDMX, and not on the payment path |
 | Provide dashboards | Alerts, graph viz, scenario control, audit explorer |
 
@@ -257,7 +272,9 @@ See [ADR-002](./adr/002-cedar-decision-engine.md).
 
 #### Audit Service (Go + immudb)
 
-`services/audit-service` writes an application hash and the chain head with immudb `Set` and reads them with `Get`. It does not call `VerifiedGet`. S3 Object Lock is not part of this payment path.
+`services/audit-service` appends an audit entry and advances its chain head atomically with immudb `SetAll`. `GetEntry` and `GetHead` use `VerifiedGet`, which verifies the retrieved key's inclusion proof. The separate audit verification API loads indexed ledger entries and checks their application hashes, sequence, and previous-hash linkage; a successful retrieval is not that chain check. When entry retrieval fails, the entry API may return the PostgreSQL index instead, which the governance workspace labels explicitly.
+
+Governance review notes remain separate PostgreSQL records. S3 Object Lock is not part of this alert/audit path. The earlier `Set`/`Get` implementation described in historical Phase 3 records has been superseded.
 
 See [ADR-003](./adr/003-immudb-audit-ledger.md).
 
@@ -285,7 +302,7 @@ See [ADR-003](./adr/003-immudb-audit-ledger.md).
 | Graph Visualization | sigma.js / react-flow | Exposure graph, contagion paths |
 | Alert Console | React components | Live alert feed, acknowledge/escalate |
 | Simulation Control | React forms | Scenario parameters, run/compare |
-| Audit Explorer | React + immudb client | Ledger search, hash verification |
+| Audit Explorer | React + audit-service API | Search indexed entries, retrieve linked ledger records, request explicit chain verification |
 | Report Console | Next.js | Views the local-name XML fixture. Not an XBRL viewer |
 
 ---
@@ -334,15 +351,17 @@ flowchart TB
 
 ### 5.3 Audit & Evidence Pipeline
 
+This is the implemented audit path. Reporting artifact storage is a separate experimental capability; the audit service does not write report files to S3.
+
 ```mermaid
 flowchart LR
-  events[Compliance Events] --> auditSvc[Audit Service]
-  auditSvc --> immudb[(immudb ledger)]
-  auditSvc --> s3[(S3 Object Lock)]
-  immudb --> verify[Verification API]
-  s3 --> reports[Report Artifacts]
-  verify --> ui[Audit Explorer UI]
-  reports --> ui
+  events[Kafka audit intents] --> auditSvc[Audit Service]
+  auditSvc -->|SetAll entry and head| immudb[(immudb ledger)]
+  auditSvc --> index[(PostgreSQL audit index)]
+  ui[Governance workspace or Audit Explorer] --> api[Audit entry and verification APIs]
+  api -->|VerifiedGet inclusion proof| immudb
+  api -->|Lookup and explicit fallback| index
+  api -->|Explicit request| verify[Application hash-chain verification]
 ```
 
 ---
@@ -424,7 +443,7 @@ See [ADR-004](./adr/004-datastore-selection.md) for full rationale.
 | Pattern | Use Case | Implementation |
 |---------|----------|----------------|
 | Event Carried State Transfer | Twin state updates | Domain events carry full entity snapshot |
-| Event Sourcing (partial) | Audit trail | immudb stores all compliance events; PostgreSQL stores current state |
+| Event Sourcing (partial) | Audit trail | immudb stores recorded audit entries; PostgreSQL holds the audit index and separate governance review history |
 | CQRS | Read-heavy dashboards | ClickHouse for analytics reads; PostgreSQL for transactional writes |
 | Saga | Multi-step report submission | Kafka choreography with compensating events |
 | Outbox | Reliable event publishing | PostgreSQL outbox table → Debezium → Kafka |

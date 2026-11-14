@@ -1,5 +1,7 @@
 # Phase 1 Review Checklist
 
+> Historical engineering review record. Results and open items apply to the revision and scope described here. See the [current capability map](../phase-journeys.md) and [governance verification](../governance-integration.md) for the merged workspace.
+
 Use this checklist when reviewing implementation agent output against [roadmap.md](../roadmap.md) Phase 1 and [phase1-implementation-spec.md](../phase1-implementation-spec.md).
 
 **Reviewer**: Planning agent or human  

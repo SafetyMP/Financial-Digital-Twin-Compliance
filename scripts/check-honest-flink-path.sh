@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Documents the current Flink job: per-record streaming, no flink-cep artifact,
-# WatermarkStrategy.noWatermarks(). Fails if pom.xml gains a flink-cep dependency,
-# or if ComplianceCepJob enables event-time watermarks without a README change.
+# Requires README documentation for the watermark strategy in the job. Fails if
+# pom.xml gains a flink-cep dependency or the README omits an enabled strategy.
 # HONEST_FLINK_ROOT overrides the repo root (used to exercise the failure cases).
 set -euo pipefail
 
@@ -30,7 +30,7 @@ if re.search(r"<artifactId>\s*flink-cep[^<]*</artifactId>", text):
     sys.exit("honest-flink-path: FAIL: jobs/compliance-cep/pom.xml depends on flink-cep")
 PY
 
-# Event-time watermark APIs. noWatermarks() is the honest current behavior.
+# Event-time watermark APIs must be documented when enabled.
 EVENT_TIME_MARKERS=(
   forMonotonousTimestamps
   forBoundedOutOfOrderness
@@ -64,4 +64,4 @@ if ! grep -q 'flink-cep' <<<"$readme_text"; then
   fail "README must state that the job has no flink-cep artifact"
 fi
 
-echo "honest-flink-path: ok (per-record streaming, WatermarkStrategy.noWatermarks, no flink-cep artifact)"
+echo "honest-flink-path: ok (per-record streaming, documented watermark strategy, no flink-cep artifact)"

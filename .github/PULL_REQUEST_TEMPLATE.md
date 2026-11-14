@@ -1,58 +1,44 @@
-## Summary
+## Problem and resulting behavior
 
-<!-- 1–3 bullets: what changed and why -->
+<!-- Explain the governance task or engineering problem, what changes, and why. Include a concrete before/after example when useful. -->
 
--
+## Scope
 
-## Component
+<!-- Select affected areas. State any deliberate limits. -->
 
-<!-- Which area does this PR touch? -->
+- [ ] Public synthetic governance demo
+- [ ] Connected governance workspace / server gateway
+- [ ] Alert review persistence, actor attribution, or history
+- [ ] Audit evidence / chain verification
+- [ ] Ingestion / Kafka / Flink / schemas
+- [ ] Policy services or bundles
+- [ ] Graph / simulation / reporting / hardening reference capabilities
+- [ ] Engineering consoles / shared components
+- [ ] Documentation / discovery metadata / CI
 
-- [ ] state-service / ingestion
-- [ ] alert-service / alert-console
-- [ ] compliance-cep (Flink)
-- [ ] cedar-service / decision-service / policies
-- [ ] audit-service / audit-explorer
-- [ ] schemas / Kafka contracts
-- [ ] infra / CI / docs only
+## Validation
 
-## Test plan
+<!-- Report actual results and exact CI links. Mark checks N/A when they do not apply; do not imply unchecked items passed. -->
 
-<!-- Minimum for human contributors; CI runs the full matrix on merge -->
+| Check | Result / evidence |
+| --- | --- |
+| Tests and builds for touched packages | |
+| Governance demo and connected-mode behavior, if affected | |
+| Relevant integration / phase smoke checks | |
+| Kafka contracts / schema compatibility, if affected | |
+| Policy checks, if affected | |
+| Keyboard / mobile / failure states, if UI changed | |
+| Documentation links and claim accuracy | |
 
-- [ ] Unit tests for touched packages (`go test`, `mvn test`, or `npm run build` as applicable)
-- [ ] `./scripts/check-kafka-contracts.sh` (if cross-service Kafka payloads changed)
-- [ ] `./scripts/run-policy-ci.sh` (if `policies/**` or policy services changed)
-- [ ] `./scripts/smoke-test.sh` (ingestion paths)
-- [ ] `./scripts/smoke-test-phase2.sh` (monitoring paths; subset: `SMOKE_PHASE2_ONLY=M002`)
-- [ ] `./scripts/smoke-test-phase3.sh` (policy/audit paths)
-- [ ] Schema compat / Avro BACKWARD compatibility considered
-
-**Commands run locally (paste or summarize):**
-
-```
-<!-- e.g. cd services/audit-service && go test ./... -->
-```
+**Remaining limitations or checks not run:**
 
 ## Review
 
-- [ ] Self-reviewed against the relevant checklist in `docs/review/` for touched areas
-- [ ] [CHANGELOG.md](../CHANGELOG.md) updated under `[Unreleased]` (if user-visible)
-- [ ] No scope creep into [ROADMAP.md planned work](../ROADMAP.md#planned-not-built-yet) without issue discussion
+- [ ] Demo fixtures and connected service data remain distinct.
+- [ ] Evidence retrieval, verification, and review persistence are described accurately.
+- [ ] No real customer data, credentials, or sensitive logs are included.
+- [ ] Existing test assertions and service contracts are preserved.
+- [ ] Relevant scoped instructions and component review checklists were followed.
+- [ ] Documentation and `[Unreleased]` changelog entries reflect user-visible changes, where applicable.
 
----
-
-<details>
-<summary>Maintainer / agent eval checklist (optional)</summary>
-
-### Mechanical evals
-
-- [ ] `./scripts/run-live-evals.sh` and `./scripts/run-live-evals-phase2.sh`
-- [ ] `./scripts/run-eval-fixtures.sh`
-- [ ] `./scripts/check-coverage-gates.sh` or `./scripts/run-live-evals.sh --full`
-
-### Behavior & efficiency (fresh agent session)
-
-- [ ] `./scripts/token-efficiency.sh --strict` — paste output if applicable
-
-</details>
+<!-- Substantial new work should link the agreed issue/design. Historical plans or reference documents are not approval to expand scope. -->

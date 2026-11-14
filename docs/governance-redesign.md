@@ -1,5 +1,7 @@
 # Governance workspace redesign
 
+The static redesign and [connected governance workflow](governance-integration.md) are merged into `main`. This document retains the original design rationale and demo verification record; [product vision](product-vision.md) and [quickstart](quickstart.md) describe the current product and setup.
+
 ## Problem and audience
 
 The primary audience is financial-institution governance professionals. The user
@@ -8,8 +10,7 @@ understanding a monitored financial event, the policy that flagged it, and its
 supporting evidence. It makes that investigation accessible without requiring the
 reviewer to understand the service topology.
 
-The original [README](../README.md#who-this-is-for) describes an engineering
-reference for tracing mock payments through monitoring, policy, and audit. Source
+The original project focused on an engineering reference for tracing mock payments through monitoring, policy, and audit. Source
 inspection identified these friction points; these are observations about the
 implementation, not measured causes of low customer engagement:
 
@@ -43,9 +44,9 @@ the demo does not change a policy decision or resolve the underlying risk.
 
 The existing service stack, consoles, policies, runtime versions, and archives are
 retained. Their running path remains CDC → Kafka → per-record Flink streaming →
-Cedar (`cedar-go`) → immudb. The demo is not evidence that those services have been
-integrated into the new interface. That integration requires its own contract and
-end-to-end verification.
+Cedar (`cedar-go`) → immudb. The static demo does not exercise those services. The subsequent
+[connected integration](governance-integration.md) has its own contract and real-service
+end-to-end verification, while preserving this synthetic demo.
 
 ## Acceptance checks
 
@@ -102,9 +103,8 @@ Ctrl-C when finished. No Compose services are needed for this static demo.
 ## GitHub Pages delivery
 
 The [governance Pages workflow](../.github/workflows/governance-pages.yml) tests and
-builds changes to this app on pull requests. Pushes to `codex/governance-redesign`
-and `main`, plus manual workflow dispatch, can deploy the static artifact after a
-successful build. Pull requests cannot deploy through this workflow. Build jobs
+builds changes to this app on pull requests. Pushes to `main` and manual workflow dispatch on `main` can deploy the
+static artifact after a successful build. Pull requests cannot deploy through this workflow. Build jobs
 have read-only repository access; only the deployment job receives Pages and OIDC
 write permissions.
 
@@ -145,12 +145,12 @@ observed customer evidence.
 - Production static export and TypeScript validation passed using the repository subpath. The pinned Next.js 15.5.24 / React 19.2.7 versions are unchanged. Node 22 runs native TypeScript model tests.
 - Browser checks at desktop (1440 px) and mobile (390 px): search and severity/status filtering, empty result recovery, explanation/evidence/review navigation, empty-note acknowledgement, keyboard escalation with a note, reload persistence, JSON export contents, reset/reload, twin selection continuity, and keyboard scenario sensitivity. Browser error/warning log was empty.
 - Independent source review caught and resolved CI Node incompatibility, unsupported static start command, filter/detail mismatch, cross-view selection mismatch, and low-contrast explanation/metadata. Rechecked core text contrast measured 6.31:1 for explanations and 5.35:1 for selected queue metadata. This is targeted accessibility verification, not a full WCAG audit.
-- No live backend integration or customer usability study was run. Existing service consoles are retained; their historical issues have not been fixed by the new frontend.
+- No backend integration or customer usability study was run during these initial demo checks. Backend verification followed in the [connected integration record](governance-integration.md). Existing diagnostic consoles are retained; their historical issues have not been fixed by the new frontend.
 
-### Published demo
+### Initial published demo
 
 - Live URL: https://safetymp.github.io/Financial-Digital-Twin-Compliance/
 - Application commit: `3e2bc876c49c5a3f080eca95b663597eda375002` on `codex/governance-redesign`.
 - [GitHub Actions run 43641164022](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43641164022): build and deploy both succeeded. Model tests and production export passed on the hosted runner.
 - Live-browser verification: the repository-subpath page rendered the six-issue queue, assets loaded, Review this issue opened the evidence timeline, and browser error/warning logs were empty.
-- Pages uses GitHub Actions. The newly created Pages environment allows `main` and `codex/governance-redesign`; no reviewer rule was removed. The redesign remains on its branch and has not been merged into `main`.
+- Pages uses GitHub Actions. The newly created Pages environment allows `main` and `codex/governance-redesign`; no reviewer rule was removed. The redesign was later merged into `main`. The [merged baseline Pages run](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43646902557) succeeded for `4003b94`; current workflow deployment is restricted to `main`.
