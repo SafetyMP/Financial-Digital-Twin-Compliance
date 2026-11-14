@@ -18,6 +18,8 @@ __pycache__/
 # Node / Next.js
 **/node_modules/
 **/.next/
+apps/governance-console/out/
+**/tsconfig.tsbuildinfo
 
 # Java build output
 jobs/compliance-cep/target/

@@ -1,0 +1,71 @@
+name: Governance demo Pages
+
+on:
+  push:
+    branches: [main, codex/governance-redesign]
+    paths:
+      - 'apps/governance-console/**'
+      - '.github/workflows/governance-pages.yml'
+  pull_request:
+    paths:
+      - 'apps/governance-console/**'
+      - '.github/workflows/governance-pages.yml'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: governance-pages-checks-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: apps/governance-console
+    env:
+      NEXT_PUBLIC_BASE_PATH: /Financial-Digital-Twin-Compliance
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/governance-console/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Test demo behavior
+        run: npm test
+      - name: Export static site
+        run: npm run build
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/governance-console/out
+
+  deploy:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: governance-pages-deployment
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Deploy static demo
+        id: deployment
+        uses: actions/deploy-pages@v4
