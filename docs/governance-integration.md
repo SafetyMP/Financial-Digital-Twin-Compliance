@@ -75,8 +75,16 @@ node scripts/governance-e2e/review-workflow.mjs
 
 The isolated test uses synthetic data and its own service names, project, and ports. Its cleanup command removes only that test project's resources; preserve any existing development stack.
 
-## Local verification before remote execution
+## Verification results — 2026-11-14
 
 Both static and connected production builds and TypeScript checks passed. All six demo model tests, nine connected-adapter tests, and seven gateway tests passed. The seven non-database alert-service package suites and store validation tests passed. Independent review findings about Docker origin handling and in-flight issue switching were fixed and rechecked.
 
-This host has no Docker. PostgreSQL integration and the full browser workflow must pass in the remote workflow before this integration is reported as verified. A broader local Kafka contract command could not start its Go toolchain download under the filesystem sandbox; no pass is claimed for that separate command.
+The [backend integration workflow](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43642475311) passed for commit `f80c286a24ef9d11476904b7d5d864ddf402def3`. It passed the complete alert-service Go test suite with PostgreSQL, both frontend test suites and production builds, and the real-service browser workflow described above. The recorded audit result was `valid: true`, `checkedCount: 2`. Browser checks confirmed persisted acknowledgement and escalation notes, configured actor attribution, history after a backend restart in a fresh mobile browser context, export, idempotent retry/conflict handling, origin rejection, locked controls during a pending save, and an explicit outage state without demo fallback. No uncaught browser JavaScript errors were recorded.
+
+The workflow artifact `governance-review-evidence-f80c286a24ef9d11476904b7d5d864ddf402def3` contains `review-workflow.json`, `service-evidence.json`, the exported history, desktop/mobile screenshots, and service logs (14-day retention). The isolated test stack was removed after verification. This was verification of a development stack in CI, not deployment of a public connected backend.
+
+The [first integration attempt](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43642322005) failed because container runtime authentication settings leaked into unit-test configuration. The passing commit isolates those settings to the containers without weakening the checks.
+
+The [GitHub Pages deployment](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43642321941) succeeded for shared-interface commit `9ec0a6eef6bcbb1debcf44a92e2ced2647df8e56`. The [public synthetic demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) was separately opened and exercised after deployment, with no browser errors or warnings. The later passing integration commit changes only test environment isolation; its static export also passed. Implementation remains on `codex/governance-redesign`, not merged into `main`.
+
+This host has no Docker, so the service-backed verification ran in GitHub Actions. A broader local Kafka contract command could not start its Go toolchain download under the filesystem sandbox; no pass is claimed for that separate command. Upstream CDC/Flink execution and production end-user authentication remain outside this review-workflow verification.
