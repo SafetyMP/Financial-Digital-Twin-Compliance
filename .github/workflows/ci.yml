@@ -113,6 +113,13 @@ jobs:
       - name: Invariant library unit tests
         run: python3 -m pytest evals/lib/test_invariants.py -q
 
+      - name: Create Kafka topics before starting consumers
+        run: |
+          # A consumer group that joins before its topic exists can stay unassigned.
+          # HTTP health alone does not establish that it is consuming messages.
+          docker compose -f docker-compose.dev.yml up -d --wait kafka
+          ./scripts/create-kafka-topics.sh
+
       - name: Start stack
         run: docker compose -f docker-compose.dev.yml up -d --wait
 
@@ -238,3 +245,9 @@ jobs:
 
       - name: Coverage gates
         run: ./scripts/check-coverage-gates.sh
+
+      - name: Diagnose failed stack checks
+        if: failure()
+        run: |
+          docker compose -f docker-compose.dev.yml ps -a
+          docker compose -f docker-compose.dev.yml logs --no-color --tail 200 alert-service audit-service kafka immudb
