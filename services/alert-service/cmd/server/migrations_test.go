@@ -46,3 +46,18 @@ func TestMigrationSearchPaths(t *testing.T) {
 		t.Fatalf("paths = %v", paths)
 	}
 }
+
+func TestGovernanceMigrationIncludedForLocalAndContainer(t *testing.T) {
+	paths := migrationSearchPaths()
+	for _, want := range []string{"migrations/003_governance_reviews.sql", "/app/migrations/003_governance_reviews.sql"} {
+		found := false
+		for _, path := range paths {
+			if path == want {
+				found = true
+			}
+		}
+		if !found {
+			t.Fatalf("missing migration path %s", want)
+		}
+	}
+}

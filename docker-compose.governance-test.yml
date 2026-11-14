@@ -1,0 +1,117 @@
+# Isolated review-workflow verification only. Inputs are synthetic Kafka alert events.
+# No CDC/Flink execution is implied by this test; the real alert and audit services run.
+services:
+  alert-db:
+    image: postgres:16@sha256:be01cf82fc7dbba824acf0a82e150b4b360f3ff93c6631d7844af431e841a95c
+    environment:
+      POSTGRES_USER: alert
+      POSTGRES_PASSWORD: alert
+      POSTGRES_DB: alerts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alert -d alerts"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  audit-db:
+    image: postgres:16@sha256:be01cf82fc7dbba824acf0a82e150b4b360f3ff93c6631d7844af431e841a95c
+    environment:
+      POSTGRES_USER: audit
+      POSTGRES_PASSWORD: audit
+      POSTGRES_DB: audit
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U audit -d audit"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  kafka:
+    image: apache/kafka:3.7.0@sha256:41c20d65b0a2180b9deca056d47540771752e69fe9225d5748dd65a25a9675d7
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 >/dev/null"]
+      interval: 5s
+      timeout: 10s
+      retries: 30
+      start_period: 15s
+  immudb:
+    image: codenotary/immudb@sha256:1053c2c254473670412b6f7257f61b6c09469b9b53b50c02bc7378ba775dc429
+    environment:
+      IMMUDB_ADDRESS: 0.0.0.0
+      IMMUDB_PORT: 3322
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/immuadmin", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+  alert-service:
+    build:
+      context: ./services/alert-service
+    depends_on:
+      alert-db: {condition: service_healthy}
+      kafka: {condition: service_healthy}
+    ports: ["127.0.0.1:18085:8085"]
+    environment:
+      ALERT_DB_URL: postgres://alert:alert@alert-db:5432/alerts?sslmode=disable
+      KAFKA_BROKERS: kafka:9092
+      DEFAULT_TENANT_ID: 00000000-0000-0000-0000-000000000001
+      INTERNAL_API_TOKEN: governance-e2e-synthetic-internal-token
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8085/api/v1/health >/dev/null"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  audit-service:
+    build:
+      context: ./services/audit-service
+    depends_on:
+      audit-db: {condition: service_healthy}
+      kafka: {condition: service_healthy}
+      immudb: {condition: service_healthy}
+    ports: ["127.0.0.1:18090:8090"]
+    environment:
+      AUDIT_DB_URL: postgres://audit:audit@audit-db:5432/audit?sslmode=disable
+      KAFKA_BROKERS: kafka:9092
+      DEFAULT_TENANT_ID: 00000000-0000-0000-0000-000000000001
+      IMMUDB_HOST: immudb
+      IMMUDB_PORT: '3322'
+      IMMUDB_DATABASE: governance_e2e
+      IMMUDB_USER: immudb
+      IMMUDB_PASSWORD: immudb
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8090/api/v1/health >/dev/null"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+  governance-console:
+    build:
+      context: .
+      dockerfile: apps/governance-live/Dockerfile
+    depends_on:
+      alert-service: {condition: service_healthy}
+      audit-service: {condition: service_healthy}
+    ports: ["127.0.0.1:3006:3006"]
+    environment:
+      ALERT_SERVICE_URL: http://alert-service:8085
+      AUDIT_SERVICE_URL: http://audit-service:8090
+      GOVERNANCE_PRINCIPAL: governance-e2e
+      INTERNAL_API_TOKEN: governance-e2e-synthetic-internal-token
+      GOVERNANCE_ORIGIN: http://127.0.0.1:3006
+      HOSTNAME: 0.0.0.0
+      PORT: '3006'
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3006/ >/dev/null"]
+      interval: 3s
+      timeout: 5s
+      retries: 30

@@ -18,6 +18,8 @@ __pycache__/
 # Node / Next.js
 **/node_modules/
 **/.next/
+apps/governance-console/out/
+**/tsconfig.tsbuildinfo
 
 # Java build output
 jobs/compliance-cep/target/
@@ -38,3 +40,5 @@ infra/tls/*.key
 evidence/*.txt
 evidence/*.json
 !evidence/cutting-edge-claims-allowed.marker
+
+scripts/governance-e2e/artifacts/

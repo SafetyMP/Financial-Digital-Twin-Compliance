@@ -13,9 +13,11 @@ import (
 )
 
 type fakeAlertStore struct {
-	listAlerts  func(ctx context.Context, status, severity string, limit, offset int) ([]store.Alert, error)
-	getAlert    func(ctx context.Context, alertID string) (store.Alert, error)
-	acknowledge func(ctx context.Context, alertID, acknowledgedBy string) (store.Alert, error)
+	recordReview func(context.Context, store.ReviewInput) (store.ReviewResult, error)
+	listReviews  func(context.Context, string, int, int) ([]store.Review, error)
+	listAlerts   func(ctx context.Context, status, severity string, limit, offset int) ([]store.Alert, error)
+	getAlert     func(ctx context.Context, alertID string) (store.Alert, error)
+	acknowledge  func(ctx context.Context, alertID, acknowledgedBy string) (store.Alert, error)
 }
 
 func (f *fakeAlertStore) ListAlerts(ctx context.Context, status, severity string, limit, offset int) ([]store.Alert, error) {
@@ -150,4 +152,17 @@ func TestListAlertsCapsLimit(t *testing.T) {
 	if gotLimit != 200 {
 		t.Fatalf("limit = %d", gotLimit)
 	}
+}
+
+func (f *fakeAlertStore) RecordReview(ctx context.Context, input store.ReviewInput) (store.ReviewResult, error) {
+	if f.recordReview != nil {
+		return f.recordReview(ctx, input)
+	}
+	return store.ReviewResult{}, nil
+}
+func (f *fakeAlertStore) ListReviews(ctx context.Context, id string, limit, offset int) ([]store.Review, error) {
+	if f.listReviews != nil {
+		return f.listReviews(ctx, id, limit, offset)
+	}
+	return nil, nil
 }

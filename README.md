@@ -24,6 +24,14 @@ The Flink job (`jobs/compliance-cep`) is per-record streaming. Each Kafka source
   <img src="docs/assets/demo.gif" alt="Digital Twin demo — Alert, Audit, Graph, Simulation, and Report consoles with shared app switcher" width="900" />
 </p>
 
+## Governance workspace demo
+
+Designed for governance professionals at financial institutions: prioritize an issue, understand the trigger, inspect illustrative evidence, and record a local review in one workspace.
+
+**[Open the interactive demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/)** · [Redesign scope and validation](docs/governance-redesign.md) · [Frontend source](apps/governance-console/)
+
+The GitHub Pages demo uses synthetic fixtures and browser-local review notes. It does not connect to the services below, evaluate live policies, verify a ledger, or submit reports. The original engineering consoles and backend reference remain available. A separate **[connected governance workspace](docs/governance-integration.md)** uses the real alert and audit services, with persisted review notes and escalation; it runs locally on port 3006.
+
 ## Screenshots
 
 | Alert Console | Audit Explorer | Graph Explorer |

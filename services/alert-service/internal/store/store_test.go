@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
@@ -136,13 +137,32 @@ func newTestStore(t *testing.T, ctx context.Context) *Store {
 	t.Helper()
 
 	if url := os.Getenv("ALERT_TEST_DB_URL"); url != "" {
-		pool, err := pgxpool.New(ctx, url)
+		// Each parallel test owns its schema; never reset a shared service database.
+		admin, err := pgxpool.New(ctx, url)
 		if err != nil {
 			t.Fatalf("connect ALERT_TEST_DB_URL: %v", err)
 		}
-		if err := resetSchema(ctx, pool); err != nil {
+		schema := "review_test_" + strings.ReplaceAll(uuid.NewString(), "-", "")
+		if _, err := admin.Exec(ctx, "CREATE SCHEMA "+schema); err != nil {
+			admin.Close()
+			t.Fatal(err)
+		}
+		cfg, err := pgxpool.ParseConfig(url)
+		if err != nil {
+			t.Fatal(err)
+		}
+		cfg.ConnConfig.RuntimeParams["search_path"] = schema
+		pool, err := pgxpool.NewWithConfig(ctx, cfg)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
 			pool.Close()
-			t.Fatalf("reset schema: %v", err)
+			_, _ = admin.Exec(context.Background(), "DROP SCHEMA "+schema+" CASCADE")
+			admin.Close()
+		})
+		if err := applyMigrations(ctx, pool); err != nil {
+			t.Fatalf("migrate isolated schema: %v", err)
 		}
 		return New(pool, testTenantID)
 	}
@@ -193,7 +213,7 @@ func applyMigrations(ctx context.Context, pool *pgxpool.Pool) error {
 	}
 	migDir := filepath.Join(filepath.Dir(filename), "..", "..", "migrations")
 	var sql strings.Builder
-	for _, name := range []string{"001_alerts.sql", "002_evidence_ref.sql"} {
+	for _, name := range []string{"001_alerts.sql", "002_evidence_ref.sql", "003_governance_reviews.sql"} {
 		sqlBytes, err := os.ReadFile(filepath.Join(migDir, name))
 		if err != nil {
 			return err
@@ -202,14 +222,6 @@ func applyMigrations(ctx context.Context, pool *pgxpool.Pool) error {
 		sql.WriteString("\n")
 	}
 	return RunMigrations(ctx, pool, sql.String())
-}
-
-func resetSchema(ctx context.Context, pool *pgxpool.Pool) error {
-	_, err := pool.Exec(ctx, `DROP TABLE IF EXISTS compliance_alerts`)
-	if err != nil {
-		return err
-	}
-	return applyMigrations(ctx, pool)
 }
 
 func isDockerUnavailable(err error) bool {
