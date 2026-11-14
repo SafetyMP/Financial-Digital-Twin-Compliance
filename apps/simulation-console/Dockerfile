@@ -30,6 +30,7 @@ ENV NODE_ENV=production
 COPY --from=builder /repo/apps/simulation-console/.next/standalone ./
 COPY --from=builder /repo/apps/simulation-console/.next/static ./apps/simulation-console/.next/static
 COPY --from=builder /repo/apps/simulation-console/public ./apps/simulation-console/public
+COPY packages/console-shell/assets/fonts/LICENSE.txt ./apps/simulation-console/public/licenses/IBM-Plex-Sans.txt
 EXPOSE 3000
 ENV PORT=3000
 CMD ["node", "apps/simulation-console/server.js"]

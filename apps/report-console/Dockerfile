@@ -30,6 +30,7 @@ ENV NODE_ENV=production
 COPY --from=builder /repo/apps/report-console/.next/standalone ./
 COPY --from=builder /repo/apps/report-console/.next/static ./apps/report-console/.next/static
 COPY --from=builder /repo/apps/report-console/public ./apps/report-console/public
+COPY packages/console-shell/assets/fonts/LICENSE.txt ./apps/report-console/public/licenses/IBM-Plex-Sans.txt
 EXPOSE 3000
 ENV PORT=3000
 CMD ["node", "apps/report-console/server.js"]

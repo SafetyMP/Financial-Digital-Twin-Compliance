@@ -30,6 +30,7 @@ ENV NODE_ENV=production
 COPY --from=builder /repo/apps/alert-console/.next/standalone ./
 COPY --from=builder /repo/apps/alert-console/.next/static ./apps/alert-console/.next/static
 COPY --from=builder /repo/apps/alert-console/public ./apps/alert-console/public
+COPY packages/console-shell/assets/fonts/LICENSE.txt ./apps/alert-console/public/licenses/IBM-Plex-Sans.txt
 EXPOSE 3000
 ENV PORT=3000
 CMD ["node", "apps/alert-console/server.js"]
