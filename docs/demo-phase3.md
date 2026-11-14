@@ -172,7 +172,7 @@ Note the printed URLs (alert detail + audit entry), then capture at ~1280px widt
 | `docs/assets/alert-console.png` | `http://localhost:3000/alerts/{alertId}` — INT-M001 detail with **View in Audit Explorer** link |
 | `docs/assets/audit-explorer.png` | `http://localhost:3002/entries/{entryId}` — entry with **integrity OK** badge and payload JSON |
 
-Optional: export `docs/assets/social-preview.png` from [social-preview.svg](./assets/social-preview.svg) (1280×640) for GitHub Settings → Social preview.
+For the current governance identity, use the prepared [social card PNG](../apps/governance-console/public/social-card.png) (1200×630) in GitHub Settings → Social preview. The [SVG source](./assets/social-preview.svg) also reflects the current workspace.
 
 **Demo GIF:** after capturing PNGs above, run `npm run screenshots` (live stack) or `npm run screenshots:rebuild-gif` (from existing PNGs). Output: `docs/assets/demo.gif` (2s per frame, same timing as PSA).
 
