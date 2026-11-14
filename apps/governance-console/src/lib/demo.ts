@@ -1,11 +1,11 @@
 /** Synthetic fixtures for the browser demo. No services or financial accounts are connected. */
-export type Category = "Liquidity" | "Exposure" | "Payments";
+export type Category = "Liquidity" | "Exposure" | "Payments" | "Other";
 export type Issue = {
   id: string;
   title: string;
   entity: string;
   entityType: string;
-  severity: "Critical" | "Warning";
+  severity: "Critical" | "Warning" | "Unknown";
   rule: string;
   category: Category;
   observed: string;
@@ -14,6 +14,8 @@ export type Issue = {
   impact: string;
   owner: string;
   detectedAt: string;
+  backendStatus?: string;
+  evidenceRef?: string;
   evidence: { id: string; title: string; detail: string; time: string; source: string }[];
 };
 
@@ -76,7 +78,7 @@ export const issues: Issue[] = [
   },
 ];
 
-export type Review = { issueId: string; status: "Acknowledged" | "Escalated"; note: string; at: string };
+export type Review = { reviewId?: string; reviewedBy?: string; issueId: string; status: "Acknowledged" | "Escalated"; note: string; at: string };
 export type StatusFilter = "All" | "Open" | Review["status"];
 export type SeverityFilter = "All" | Issue["severity"];
 

@@ -40,3 +40,5 @@ infra/tls/*.key
 evidence/*.txt
 evidence/*.json
 !evidence/cutting-edge-claims-allowed.marker
+
+scripts/governance-e2e/artifacts/

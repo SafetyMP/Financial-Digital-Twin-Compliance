@@ -89,8 +89,10 @@ func migrationSearchPaths() []string {
 	return []string{
 		"migrations/001_alerts.sql",
 		"migrations/002_evidence_ref.sql",
+		"migrations/003_governance_reviews.sql",
 		"/app/migrations/001_alerts.sql",
 		"/app/migrations/002_evidence_ref.sql",
+		"/app/migrations/003_governance_reviews.sql",
 	}
 }
 

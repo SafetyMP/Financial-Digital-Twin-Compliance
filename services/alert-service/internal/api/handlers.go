@@ -15,6 +15,8 @@ type AlertStore interface {
 	ListAlerts(ctx context.Context, status, severity string, limit, offset int) ([]store.Alert, error)
 	GetAlert(ctx context.Context, alertID string) (store.Alert, error)
 	Acknowledge(ctx context.Context, alertID, acknowledgedBy string) (store.Alert, error)
+	RecordReview(ctx context.Context, input store.ReviewInput) (store.ReviewResult, error)
+	ListReviews(ctx context.Context, alertID string, limit, offset int) ([]store.Review, error)
 }
 
 type AlertBroadcaster interface {
@@ -38,6 +40,8 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /api/v1/alerts", s.listAlerts)
 	mux.HandleFunc("GET /api/v1/alerts/{alertId}", s.getAlert)
 	mux.HandleFunc("POST /api/v1/alerts/{alertId}/acknowledge", s.acknowledge)
+	mux.HandleFunc("GET /api/v1/alerts/{alertId}/reviews", s.listReviews)
+	mux.HandleFunc("POST /api/v1/alerts/{alertId}/reviews", s.recordReview)
 	mux.HandleFunc("GET "+s.wsPath, s.wsAlerts)
 	return withOptionalInternalToken(mux)
 }

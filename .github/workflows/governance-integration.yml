@@ -1,0 +1,89 @@
+name: Governance backend integration
+on:
+  push:
+    branches: [main, codex/governance-redesign]
+    paths:
+      - 'apps/governance-console/**'
+      - 'apps/governance-live/**'
+      - 'services/alert-service/**'
+      - 'services/audit-service/**'
+      - 'scripts/governance-e2e/**'
+      - 'docker-compose.governance-test.yml'
+      - '.github/workflows/governance-integration.yml'
+  pull_request:
+    paths:
+      - 'apps/governance-console/**'
+      - 'apps/governance-live/**'
+      - 'services/alert-service/**'
+      - 'services/audit-service/**'
+      - 'scripts/governance-e2e/**'
+      - 'docker-compose.governance-test.yml'
+      - '.github/workflows/governance-integration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: governance-integration-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  review-workflow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      COMPOSE_PROJECT_NAME: governance-e2e-${{ github.run_id }}-${{ github.run_attempt }}
+      NEXT_TELEMETRY_DISABLED: '1'
+      ALERT_SERVICE_URL: http://127.0.0.1:18085
+      AUDIT_SERVICE_URL: http://127.0.0.1:18090
+      GOVERNANCE_PRINCIPAL: governance-e2e
+      GOVERNANCE_ORIGIN: http://127.0.0.1:3006
+      INTERNAL_API_TOKEN: governance-e2e-synthetic-internal-token
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            apps/governance-console/package-lock.json
+            apps/governance-live/package-lock.json
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: services/alert-service/go.sum
+      - name: Test alert backend including PostgreSQL store
+        working-directory: services/alert-service
+        run: go test ./... -count=1 -timeout=8m
+      - name: Install frontend and browser test dependencies
+        run: |
+          npm ci
+          npm ci --prefix apps/governance-console
+          npm ci --prefix apps/governance-live
+          npx playwright install --with-deps chromium
+      - name: Verify preserved Pages demo
+        run: |
+          npm test --prefix apps/governance-console
+          NEXT_PUBLIC_BASE_PATH=/Financial-Digital-Twin-Compliance npm run build --prefix apps/governance-console
+      - name: Test and build connected workspace
+        run: |
+          npm test --prefix apps/governance-live
+          npm run build --prefix apps/governance-live
+      - name: Start isolated real service stack and inject synthetic alert events
+        run: scripts/governance-e2e/start-stack.sh
+      - name: Verify browser review workflow and durable backend state
+        run: node scripts/governance-e2e/review-workflow.mjs
+      - name: Collect service logs
+        if: always()
+        run: |
+          mkdir -p scripts/governance-e2e/artifacts
+          docker compose -p "$COMPOSE_PROJECT_NAME" -f docker-compose.governance-test.yml logs --no-color > scripts/governance-e2e/artifacts/services.log 2>&1 || true
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: governance-review-evidence-${{ github.sha }}
+          path: scripts/governance-e2e/artifacts
+          retention-days: 14
+      - name: Remove isolated test stack
+        if: always()
+        run: docker compose -p "$COMPOSE_PROJECT_NAME" -f docker-compose.governance-test.yml down --volumes --remove-orphans

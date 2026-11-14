@@ -30,7 +30,7 @@ Designed for governance professionals at financial institutions: prioritize an i
 
 **[Open the interactive demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/)** · [Redesign scope and validation](docs/governance-redesign.md) · [Frontend source](apps/governance-console/)
 
-The GitHub Pages demo uses synthetic fixtures and browser-local review notes. It does not connect to the services below, evaluate live policies, verify a ledger, or submit reports. The original engineering consoles and backend reference remain available.
+The GitHub Pages demo uses synthetic fixtures and browser-local review notes. It does not connect to the services below, evaluate live policies, verify a ledger, or submit reports. The original engineering consoles and backend reference remain available. A separate **[connected governance workspace](docs/governance-integration.md)** uses the real alert and audit services, with persisted review notes and escalation; it runs locally on port 3006.
 
 ## Screenshots
 

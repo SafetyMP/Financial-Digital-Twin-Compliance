@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -151,19 +152,8 @@ func (s *Store) ListAlerts(ctx context.Context, status, severity string, limit, 
 }
 
 func (s *Store) Acknowledge(ctx context.Context, alertID, acknowledgedBy string) (Alert, error) {
-	row := s.pool.QueryRow(ctx, `
-		UPDATE compliance_alerts
-		SET status = 'Acknowledged', acknowledged_at = now(), acknowledged_by = $3, updated_at = now()
-		WHERE tenant_id = $1 AND alert_id = $2
-		RETURNING alert_id, tenant_id, rule_code, regime, severity, status,
-		          persona_id, persona_type, summary, details, detected_at,
-		          acknowledged_at, acknowledged_by, idempotency_key, evidence_ref
-	`, s.tenantID, alertID, acknowledgedBy)
-	alert, err := scanAlert(row)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return Alert{}, ErrNotFound
-	}
-	return alert, err
+	result, err := s.RecordReview(ctx, ReviewInput{AlertID: alertID, RequestID: uuid.NewString(), Status: "Acknowledged", ReviewedBy: acknowledgedBy})
+	return result.Alert, err
 }
 
 type scannable interface {

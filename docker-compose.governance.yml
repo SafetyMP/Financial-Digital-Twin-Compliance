@@ -1,0 +1,25 @@
+# Add to docker-compose.dev.yml for the service-backed governance workspace.
+# Keep this development interface on loopback; it uses a configured reviewer, not user authentication.
+services:
+  alert-service:
+    environment:
+      INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:-}
+  governance-console:
+    build:
+      context: .
+      dockerfile: apps/governance-live/Dockerfile
+    depends_on:
+      alert-service:
+        condition: service_healthy
+      audit-service:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:3006:3006'
+    environment:
+      ALERT_SERVICE_URL: http://alert-service:8085
+      AUDIT_SERVICE_URL: http://audit-service:8090
+      GOVERNANCE_ORIGIN: http://127.0.0.1:3006
+      GOVERNANCE_PRINCIPAL: ${GOVERNANCE_PRINCIPAL:?Set a development reviewer identity}
+      INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:-}
+      PORT: '3006'
+      HOSTNAME: 0.0.0.0
