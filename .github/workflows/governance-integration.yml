@@ -32,11 +32,6 @@ jobs:
     env:
       COMPOSE_PROJECT_NAME: governance-e2e-${{ github.run_id }}-${{ github.run_attempt }}
       NEXT_TELEMETRY_DISABLED: '1'
-      ALERT_SERVICE_URL: http://127.0.0.1:18085
-      AUDIT_SERVICE_URL: http://127.0.0.1:18090
-      GOVERNANCE_PRINCIPAL: governance-e2e
-      GOVERNANCE_ORIGIN: http://127.0.0.1:3006
-      INTERNAL_API_TOKEN: governance-e2e-synthetic-internal-token
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
