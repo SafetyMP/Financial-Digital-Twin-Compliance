@@ -1,9 +1,10 @@
-# Explainability pack (regulator-facing)
+# Evidence and explainability reference
 
 ## Scope
 
-This pack describes how risk scores and policy decisions are produced and how
-they link to the immudb audit chain for the Digital Twin reference deploy.
+This engineering reference describes monitoring signals, policy decisions, and their audit linkage. It is not a regulator-approved assurance pack. In the [governance workspace](product-vision.md), reviewers see available observations and thresholds, then inspect evidence and request an explicit chain check. Missing context stays missing; neither a retrieved record nor a recorded review establishes regulatory compliance.
+
+Connected review history is PostgreSQL application data, separate from immudb audit entries. The public demo uses synthetic evidence and browser-local history. See [connected review behavior](governance-integration.md#review-behavior) for these distinctions.
 
 ## Risk scores (Phase 2+)
 
@@ -22,8 +23,7 @@ they link to the immudb audit chain for the Digital Twin reference deploy.
 
 ## Audit linkage
 
-Every material alert, simulation run, and submitted regulatory report carries an
-`evidenceRef` (or subject id) verifiable with:
+The reference services can publish audit intents for alerts, simulations, and report operations. For a recorded subject, inspect its `evidenceRef` (or subject ID) and explicitly verify the chain. Missing references and failed retrieval are not successful checks:
 
 ```bash
 ./scripts/verify-audit-chain.sh
@@ -32,5 +32,4 @@ curl -s "$AUDIT_SERVICE_URL/api/v1/audit/entries?subjectId=<id>"
 
 ## AI / reg→policy (Phase 7)
 
-Draft stubs are **proposals only**. Cedar/Zen engines remain authoritative; CI
-reject/accept gates apply. No auto-promote to production (CR-3).
+These experimental engineering paths are outside the core review workflow. Draft stubs are **proposals only**; they do not change governance decisions or establish legal interpretation. Cedar/Zen evaluate the configured rules. No auto-promotion to production is implied (CR-3).

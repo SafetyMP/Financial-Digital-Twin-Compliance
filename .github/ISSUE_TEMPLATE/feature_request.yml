@@ -1,71 +1,61 @@
-name: Feature Request
-description: Propose a capability aligned with the roadmap
+name: Improvement proposal
+description: Propose a clearer governance workflow or supporting capability
 title: "[feature]: "
 labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        Check [ROADMAP.md](https://github.com/SafetyMP/Digital-Twin-Compliance/blob/main/ROADMAP.md) before filing.
-        Large features not on the roadmap need discussion before implementation.
-
+        Start with the user's task and the friction, not only a feature name. Check the [roadmap](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/ROADMAP.md) and use synthetic examples.
   - type: dropdown
-    id: component
+    id: mode
     attributes:
-      label: Component
+      label: Area
       options:
-        - state-service (ingestion / twin)
-        - alert-service / alert-console
-        - compliance-cep (Flink CEP)
-        - cedar-service / decision-service / policies
-        - audit-service / audit-explorer
-        - schemas / Kafka contracts
-        - deployment / GHCR / CI
-        - graph / simulation / reporting (planned)
-        - Unsure / needs triage
+        - Governance review workflow / ease of use
+        - Connected identity, ownership, or follow-up
+        - Evidence explanations or verification
+        - Public synthetic demo
+        - Backend / policy / Kafka integration
+        - Graph / simulation / reporting reference capability
+        - Accessibility
+        - Documentation / discovery / setup
+        - CI / deployment
+        - Other / unsure
     validations:
       required: true
-
-  - type: dropdown
-    id: roadmap
-    attributes:
-      label: Roadmap alignment
-      options:
-        - Extends a capability already on main
-        - Matches planned work in ROADMAP.md
-        - New idea — not on roadmap yet
-        - Unsure / needs triage
-    validations:
-      required: true
-
   - type: textarea
     id: problem
     attributes:
-      label: Problem or use case
-      description: What problem does this solve?
+      label: Who needs this, and what task is difficult today?
+      description: Describe the audience, current workflow, and concrete friction. Do not include customer information.
     validations:
       required: true
-
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: What would the person be able to understand or do more easily?
+    validations:
+      required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Proposed solution
-      description: High-level approach; link an ADR or issue if applicable
+      label: Proposed approach and alternatives
+      description: Optional design or implementation idea, existing workaround, and relevant issue/design links.
+  - type: textarea
+    id: verification
+    attributes:
+      label: How could we verify the improvement?
+      description: Examples include an observed user task, an accessibility check, or a reproducible integration scenario.
+  - type: dropdown
+    id: roadmap
+    attributes:
+      label: Roadmap relationship
+      options:
+        - Improves a capability available now
+        - Matches a next priority in ROADMAP.md
+        - New proposal for discussion
+        - Unsure
     validations:
       required: true
-
-  - type: textarea
-    id: alternatives
-    attributes:
-      label: Alternatives considered
-      description: Optional
-
-  - type: checkboxes
-    id: scope
-    attributes:
-      label: Scope checklist
-      options:
-        - label: I checked ROADMAP.md and this fits current or planned scope
-          required: true
-        - label: I am willing to include tests or smoke-test updates if applicable
-          required: false

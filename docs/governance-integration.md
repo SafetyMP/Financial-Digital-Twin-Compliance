@@ -5,6 +5,8 @@ The governance workspace now has two entry points with a shared interface:
 - `apps/governance-console`: the synthetic, browser-local static demo, still exported and published by the existing GitHub Pages workflow.
 - `apps/governance-live`: a Next.js server on port 3006. It reads the existing alert service and linked audit evidence through same-origin routes. It never substitutes demo fixtures when a backend fails.
 
+The redesign is merged into `main`. On 14 November 2026, baseline [`4003b94`](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/commit/4003b94487ebc59bbd63fbdf93b316572e4b093d) passed [full CI](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43646873895), [governance integration](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43646897572), and [Pages deployment](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43646902557). Use the [quickstart](quickstart.md) for Kafka-first setup and the [product vision](product-vision.md) for scope.
+
 ## Run with existing services
 
 Use Node 22 for the test commands. Keep the repository's existing pinned Next.js/React versions.
@@ -16,11 +18,12 @@ npm test --prefix apps/governance-live
 npm run build --prefix apps/governance-live
 ALERT_SERVICE_URL=http://127.0.0.1:8085 \
 AUDIT_SERVICE_URL=http://127.0.0.1:8090 \
+GOVERNANCE_ORIGIN=http://127.0.0.1:3006 \
 GOVERNANCE_PRINCIPAL=governance-reviewer-dev \
 npm start --prefix apps/governance-live
 ```
 
-Open `http://127.0.0.1:3006`. The alert service must be rebuilt from this branch so its review API and migration003 are present. The Docker overlay sets `GOVERNANCE_ORIGIN=http://127.0.0.1:3006` so browser-origin checks use the external loopback URL rather than the container bind address. For a different development hostname, set that server-only canonical origin explicitly. Configure the same `INTERNAL_API_TOKEN` on the alert service and workspace when that existing protection is enabled. No backend token or actor is accepted from the browser; the proxy supplies its configured development principal.
+Open `http://127.0.0.1:3006`. The alert service must be built from the current source so its review API and migration `003` are present. The Docker overlay sets `GOVERNANCE_ORIGIN=http://127.0.0.1:3006` so browser-origin checks use the external loopback URL rather than the container bind address. For a different development hostname, set that server-only canonical origin explicitly. Configure the same `INTERNAL_API_TOKEN` on the alert service and workspace when that existing protection is enabled. No backend token or actor is accepted from the browser; the proxy supplies its configured development principal.
 
 For an existing local Compose stack, the optional overlay builds the connected console, updates alert-service, and publishes only the new UI's loopback port:
 
@@ -49,7 +52,7 @@ Twin explorer in connected mode visualizes the selected alert's entity and signa
 
 - `GET /api/v1/alerts/{alertId}/reviews?limit=200&offset=0` returns persisted reviews, newest first.
 - `POST /api/v1/alerts/{alertId}/reviews` accepts `{requestId, status, note}` and requires `X-Principal` from the gateway. Allowed statuses are `Acknowledged` and `Escalated`.
-- The successful response is `{review, alert, replayed}`. A repeated request ID with identical input returns the original review and current alert without undoing later reviews; changed input with that ID returns409.
+- The successful response is `{review, alert, replayed}`. A repeated request ID with identical input returns the original review and current alert without undoing later reviews; changed input with that ID returns HTTP 409.
 - Mutation gateway routes require same-origin requests. Actor fields supplied by the browser are rejected. Fixed server-configured upstream URLs, request timeouts, sanitized errors, and no-store responses keep service access behind the server.
 - Migration `003_governance_reviews.sql` creates the review history table and tenant-scoped request uniqueness. Existing alert and audit data are retained. The application runs this migration with the existing startup migrations.
 
@@ -61,7 +64,7 @@ It does **not** rerun upstream CDC, Flink detection, Cedar evaluation, graph sim
 
 The test covers browser acknowledgement and escalation with notes; backend restart and a fresh mobile browser context; history export; duplicate retry and conflict handling; foreign-origin rejection; and an unavailable backend without synthetic fallback. Evidence JSON, screenshots, and service logs are uploaded as workflow artifacts. The static Pages tests and export build also run in this workflow.
 
-To reproduce on a machine with Docker and Node22:
+To reproduce on a machine with Docker and Node 22:
 
 ```bash
 npm ci
@@ -69,13 +72,23 @@ npm ci --prefix apps/governance-console
 npm ci --prefix apps/governance-live
 npx playwright install chromium
 npm run build --prefix apps/governance-live
-scripts/governance-e2e/start-stack.sh
-node scripts/governance-e2e/review-workflow.mjs
+(
+  export COMPOSE_PROJECT_NAME=governance-e2e-local
+  export ALERT_SERVICE_URL=http://127.0.0.1:18085
+  export AUDIT_SERVICE_URL=http://127.0.0.1:18090
+  export INTERNAL_API_TOKEN=governance-e2e-synthetic-internal-token
+  export GOVERNANCE_PRINCIPAL=governance-e2e
+  export GOVERNANCE_ORIGIN=http://127.0.0.1:3006
+  scripts/governance-e2e/start-stack.sh
+  node scripts/governance-e2e/review-workflow.mjs
+)
 ```
 
-The isolated test uses synthetic data and its own service names, project, and ports. Its cleanup command removes only that test project's resources; preserve any existing development stack.
+The isolated test uses synthetic data and its own service names, project, and ports. Port `3006` must be free; stop an existing connected workspace first. The subshell prevents these settings from replacing your development environment. Use a fresh test project or explicitly clean up its previous fixture state. Its cleanup command removes only that test project's resources; preserve any existing development stack.
 
-## Verification results — 2026-11-14
+## Initial implementation evidence — 2026-11-14
+
+The following records preserve the pre-merge checks. The merged baseline runs above supersede their branch/deployment status; artifact links may expire under workflow retention.
 
 Both static and connected production builds and TypeScript checks passed. All six demo model tests, nine connected-adapter tests, and seven gateway tests passed. The seven non-database alert-service package suites and store validation tests passed. Independent review findings about Docker origin handling and in-flight issue switching were fixed and rechecked.
 
@@ -85,6 +98,6 @@ The workflow artifact `governance-review-evidence-f80c286a24ef9d11476904b7d5d864
 
 The [first integration attempt](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43642322005) failed because container runtime authentication settings leaked into unit-test configuration. The passing commit isolates those settings to the containers without weakening the checks.
 
-The [GitHub Pages deployment](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43642321941) succeeded for shared-interface commit `9ec0a6eef6bcbb1debcf44a92e2ced2647df8e56`. The [public synthetic demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) was separately opened and exercised after deployment, with no browser errors or warnings. The later passing integration commit changes only test environment isolation; its static export also passed. Implementation remains on `codex/governance-redesign`, not merged into `main`.
+The [GitHub Pages deployment](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43642321941) succeeded for shared-interface commit `9ec0a6eef6bcbb1debcf44a92e2ced2647df8e56`. The [public synthetic demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) was separately opened and exercised after deployment, with no browser errors or warnings. The later passing integration commit changes only test environment isolation; its static export also passed. The redesign and integration were subsequently merged into `main`; the current baseline runs are linked above.
 
-This host has no Docker, so the service-backed verification ran in GitHub Actions. A broader local Kafka contract command could not start its Go toolchain download under the filesystem sandbox; no pass is claimed for that separate command. Upstream CDC/Flink execution and production end-user authentication remain outside this review-workflow verification.
+The initial local host had no Docker, so service-backed verification ran in GitHub Actions. A local Kafka contract attempt was also blocked by toolchain download restrictions. Subsequent full CI on baseline `4003b94` passed its Kafka contracts, upstream CDC/Flink smoke checks, UI proxy checks, and coverage gates. Those checks are separate from the governance workflow above; production end-user authentication and customer usability validation remain unestablished.

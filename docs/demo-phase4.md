@@ -1,5 +1,7 @@
 # Phase 4 local demo runbook
 
+> Engineering capability walkthrough. For the primary governance review journey, start with the [public demo or connected quickstart](quickstart.md). These commands exercise separate reference-stack tools.
+
 Warm-stack walkthrough for **Graph & simulation · Phase 4**: Neo4j exposure graph + deterministic stress simulation.
 
 **Prerequisites**: Docker, `curl`, `jq`. Phases 1–3 stack healthy (Compose up, seed, Debezium, Flink optional for this demo).
@@ -31,7 +33,7 @@ docker compose -f docker-compose.dev.yml up -d --wait
 SMOKE_PHASE4_SKIP_PREREQS=1 ./scripts/smoke-test-phase4.sh
 ```
 
-Cold start: follow [README Quick start](../README.md#quick-start) steps 1–3 first, then the commands above.
+Cold start: follow [full-stack quickstart](quickstart.md#3-start-the-full-engineering-reference-stack) first, then the commands above.
 
 ---
 

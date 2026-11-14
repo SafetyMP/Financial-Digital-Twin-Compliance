@@ -1,5 +1,7 @@
 # Phase 6 Implementation Spec (CECT)
 
+> Historical engineering specification. Original targets and status labels are retained; use the [product vision](product-vision.md) and [current capability map](phase-journeys.md) for present scope and verification.
+
 **Status**: Planning → implementation under CECT site delivery  
 **Authority**: [ADR-012](adr/012-phase6-hardening-foundation.md) + corporate acceptance `AC-A-P6-*`
 

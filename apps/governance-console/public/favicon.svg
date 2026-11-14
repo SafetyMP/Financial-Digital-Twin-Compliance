@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Financial Digital Twin</title>
+  <rect width="64" height="64" rx="16" fill="#101d31"/>
+  <path d="M18 32 43 18M18 32l25 14M43 18v28" fill="none" stroke="#92b6ff" stroke-width="3"/>
+  <g fill="#101d31" stroke="#b8cdff" stroke-width="3"><circle cx="18" cy="32" r="6"/><circle cx="43" cy="18" r="6"/><circle cx="43" cy="46" r="6"/></g>
+</svg>

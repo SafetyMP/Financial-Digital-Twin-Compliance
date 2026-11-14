@@ -1,69 +1,37 @@
 ---
-description: Repo context budget — doc boundaries and skill filter for Digital Twin (Phase 4)
+description: Portable scope and context routing for the Financial Digital Twin governance workspace
 alwaysApply: true
 ---
 
-# Repo context budget
+# Governance workspace context
 
-Follow [AGENTS.md](../AGENTS.md) § Context loading. Do not preload planning docs.
+Read root `AGENTS.md` once, then the nearest scoped `AGENTS.md` for changed files.
+The current product serves financial-institution governance professionals through
+issue context, evidence, review decisions, and history. Do not assume an old phase
+handoff or this editor configuration authorizes new work.
 
-## Doc boundaries
+Load context progressively:
 
-| Load | When |
-|------|------|
-| `AGENTS.md`, `docs/phase4-implementation-spec.md` | Always (once per session) |
-| `docs/phase3-implementation-spec.md` | Phase 3 maintenance only |
-| `docs/phase2-implementation-spec.md` | Phase 2 maintenance only |
-| `services/state-service/AGENTS.md` | Go State Service work |
-| `services/alert-service/AGENTS.md` | Go Alert Service work |
-| `services/graph-service/AGENTS.md`, `services/simulation-service/AGENTS.md` | Phase 4 graph/simulation work |
-| `docs/data-flow.md` | Envelope, idempotency, or outbox tasks only |
-| `docs/architecture.md`, `domain-model.md`, `compliance-mapping.md`, `roadmap.md`, ADRs (except ADR-007) | Only when task explicitly requires |
+- Governance demo/shared UI: `apps/governance-console/AGENTS.md` and
+  `docs/governance-redesign.md`.
+- Connected runtime/gateway: `apps/governance-live/AGENTS.md` and
+  `docs/governance-integration.md`.
+- Backend: `services/<service>/AGENTS.md`, then the relevant phase spec.
+- Envelopes, idempotency, CDC, outbox: `docs/data-flow.md` and `contracts/kafka/`.
+- Setup: `docs/quickstart.md`; operational gotchas and historical gates:
+  `docs/agent-guide.md`.
 
-## Verification mode
+Preserve synthetic/demo versus connected-development labels, PostgreSQL review
+history versus ledger evidence, and explicit verification. Run the checks for the
+changed path; do not describe a build as a running-service or browser check.
 
-If the task is smoke test, integration verify, or `/verify-phase2`:
+Do not read private session transcripts, other agents' terminal history, or live
+evaluation answer keys as implementation context. Run the requested eval tools
+instead of reading their answer material. Avoid rereading unchanged instructions.
+Use available native tools; do not install or reactivate a harness, change global
+plugins, or write personal memory based on a repository rule.
 
-1. Run `./scripts/smoke-test.sh` and `./scripts/smoke-test-phase2.sh` before any Read of prior sessions
-2. Load only `AGENTS.md` + relevant service `AGENTS.md`
-3. See [docs/handoff-verification-agent.md](../docs/handoff-verification-agent.md)
-
-Phase 4 integration: `./scripts/smoke-test-phase4.sh` when graph/simulation stack is in scope.
-
-## Do not read (implementation / verification)
-
-Unless the user pasted a path for scoring:
-
-- `~/.cursor/projects/**/agent-transcripts/**`
-- `~/.cursor/projects/**/terminals/**` (use `Await` once; no double-Read)
-- `evals/harness/`, `evals/fixtures/` — scoring answer keys during live evals
-- `evals/live-model/README.md`, `evals/live-model/manifest.json` — run scripts instead
-
-## Do not re-read (same session)
-
-Unless the user edited the file, you StrReplace'd it, or the task is harness/meta work:
-
-- **Global:** `~/.cursor/HARNESS.md`, `~/.cursor/TOOLING.md`, `~/.cursor/memory/MEMORY.md`, `~/.cursor/rules/`, `~/.cursor/skills/**/SKILL.md`
-- **Repo contract:** `AGENTS.md`, phase specs, `docs/handoff-parallel-agent.md`, `docs/handoff-verification-agent.md`
-- **Eval harness:** `scripts/score-agent-transcript.py`, eval README/manifest — run scripts instead of reading source
-
-For `/token-efficiency`, `/live-eval`, and `/live-eval-phase2`: one Shell call to `./scripts/token-efficiency.sh`, `./scripts/run-live-evals.sh`, or `./scripts/run-live-evals-phase2.sh`; no Read of scorer/eval files.
-
-## Relevant skills (prefer these)
-
-- `verifying-changes`, `systematic-debugging`, `planning-implementations`
-- `agent-worktrees` (global — worktree / best-of-N patterns; repo scripts under `scripts/agent-worktree*.sh`)
-- `docker-expert` (Compose/stack tasks)
-- `capturing-learnings` (repo gotchas → AGENTS.md, not global memory)
-
-Skip `dispatching-parallel-agents` unless the user asks about parallelization effectiveness.
-
-## Parallel / worktree rules (load on demand)
-
-- Global: `22-parallel-agents.mdc` when orchestrating parallel agents or best-of-N
-- Repo: `worktrees-repo.mdc` when creating worktrees or acting as parent/child in this stack
-- Parent merge/smoke: `/parallel-parent` or [handoff-parallel-parent.md](../docs/handoff-parallel-parent.md)
-
-## Ignore unless asked
-
-Prisma, Vercel, Encore, Neon, and other full-stack plugin skills unrelated to this stack. UI-only skills unless working on `apps/alert-console/`, `apps/audit-explorer/`, `apps/graph-explorer/`, or `apps/simulation-console/`.
+Parallel work needs disjoint ownership and independent review; keep shared-state
+mutations ordered. Use worktree/Compose rules only when relevant. For an explicitly
+active corporate site program, preserve its scoped handoff and evidence gates;
+historical program records do not expand authority.

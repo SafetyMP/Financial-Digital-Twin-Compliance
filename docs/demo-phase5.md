@@ -1,5 +1,7 @@
 # Phase 5 local demo runbook
 
+> Engineering capability walkthrough. For the primary governance review journey, start with the [public demo or connected quickstart](quickstart.md). These commands exercise separate reference-stack tools.
+
 Walkthrough for Report Console. `services/reporting-service/reporting_service/generators.py` string-builds local-name XML. FINREP uses an `xbrl` root and the namespace `http://digitaltwin.local/finrep/f01/`. AnaCredit and DORA use their own local namespaces. `validate.py` checks those local names. This is not an Arelle or EBA filing, not SDMX, and not the payment path.
 
 The dropdown labels say local-name XML. That matches `generators.py`. It is not an EBA or ECB filing.

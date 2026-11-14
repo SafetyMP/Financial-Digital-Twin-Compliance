@@ -1,6 +1,8 @@
 # Phase 3 Implementation Spec
 
-Cedar on main is `cedar-go` in `services/cedar-service` (`POST /api/v1/evaluate`). immudb writes use `Set` and reads use `Get`, not `VerifiedGet`. The sections below are the original plan.
+> Historical engineering specification. Original targets and status labels are retained; use the [product vision](product-vision.md) and [current capability map](phase-journeys.md) for present scope and verification.
+
+Cedar on main is `cedar-go` in `services/cedar-service` (`POST /api/v1/evaluate`). The current audit client atomically appends entry/head with `SetAll` and reads with `VerifiedGet`; application hash-chain verification remains an explicit operation. The sections below are the original plan.
 
 Executable handoff for the implementation agent. Implements [roadmap.md](./roadmap.md) Phase 3 only.
 

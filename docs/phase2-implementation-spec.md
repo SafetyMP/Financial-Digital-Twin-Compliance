@@ -1,5 +1,7 @@
 # Phase 2 Implementation Spec
 
+> Historical engineering specification. Original targets and status labels are retained; use the [product vision](product-vision.md) and [current capability map](phase-journeys.md) for present scope and verification.
+
 The job on main is per-record streaming in `jobs/compliance-cep`. `pom.xml` depends on `flink-streaming-java` and has no `flink-cep` artifact. Section 8 describes that job. A CEP library, a Schema Registry deserializer, and an exactly-once Kafka sink were the original plan and did not ship.
 
 Executable handoff for the implementation agent. Implements [roadmap.md](./roadmap.md) Phase 2 only.

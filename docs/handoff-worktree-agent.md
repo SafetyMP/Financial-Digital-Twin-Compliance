@@ -1,5 +1,7 @@
 # Handoff: Git worktree agent session
 
+> Historical engineering handoff. Preserve this task context; it does not authorize new work. Follow current [repository instructions](../AGENTS.md), [agent guide](agent-guide.md), and [product vision](product-vision.md).
+
 Use when parallel work needs **filesystem isolation** (separate branch + directory) instead of only a separate chat on the same root.
 
 **Companion**: [handoff-parallel-agent.md](./handoff-parallel-agent.md) (separate-chat, same root) · [handoff-continuation.md](./handoff-continuation.md) · [AGENTS.md](../AGENTS.md) § Parallel work

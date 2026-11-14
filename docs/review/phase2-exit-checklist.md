@@ -1,5 +1,7 @@
 # Phase 2 Exit Criteria Checklist
 
+> Historical engineering review record. Results and open items apply to the revision and scope described here. See the [current capability map](../phase-journeys.md) and [governance verification](../governance-integration.md) for the merged workspace.
+
 **Mechanical exit** — smoke tests, unit tests, and stack checklist below. **Formal Phase 2 completion** also requires mechanical nightly evals and the behavior eval pillar ([AGENTS.md](../../AGENTS.md#behavior-evals-phase-2)).
 
 Verified: 2026-06-14 (local stack, branch `feat/phase2-monitoring`)

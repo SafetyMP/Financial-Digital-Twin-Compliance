@@ -1,35 +1,44 @@
-# Documentation map
+# Financial Digital Twin documentation
 
-Start at the root [README](../README.md). That file is the status of record for what runs.
+Start with the governance review journey: **issue → context → evidence → recorded review**. The audience is governance professionals at financial institutions; the engineering reference stack supports that experience.
 
-The running path is one mock payment through Debezium, a per-record Flink streaming job, Cedar (`cedar-go`), and immudb. The job directory is `jobs/compliance-cep`. It does not depend on `flink-cep`. `services/reporting-service` checks XML local names. It is not XBRL or SDMX and it is not on the payment path.
+## Choose a path
 
-Phase specs, ADRs, and diagrams may still use the older names. Read them as design history after the README.
-
-## Read these with the README
-
-- [architecture.md](./architecture.md)
-- [data-flow.md](./data-flow.md)
-- [deployment.md](./deployment.md)
-- [domain-model.md](./domain-model.md)
-- [../ROADMAP.md](../ROADMAP.md)
-
-## Repository layout
-
-| Path | What it is |
+| Goal | Start here |
 | --- | --- |
-| `services/` | Compose services, including Cedar, audit, and the reporting fixture |
-| `jobs/compliance-cep/` | Per-record Flink streaming job |
-| `apps/` | Consoles |
-| `policies/` | Cedar and Zen policies |
-| `infra/` | Local infra |
-| `scripts/` | Smokes and verify |
-| `docs/` | Design history and this map |
-| `_archives/` | Not the running path |
+| Try the experience without installing anything | [Public synthetic demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) |
+| Understand the audience, scope, and direction | [Product vision](product-vision.md) and [public roadmap](../ROADMAP.md) |
+| Run the demo or connected workspace | [Quickstart](quickstart.md) |
+| Understand review persistence and service boundaries | [Connected integration](governance-integration.md) |
+| Develop or diagnose the backend | [Architecture](architecture.md), [data flow](data-flow.md), [capability map](phase-journeys.md) |
+| Contribute a change | [Contributing](../CONTRIBUTING.md) and [agent instructions](../AGENTS.md) |
+| Publish or operate the project | [Deployment](deployment.md) and [GitHub setup](github-setup.md) |
+| Understand the redesign rationale | [Redesign record](governance-redesign.md) |
 
-Community files: root [CONTRIBUTING.md](../CONTRIBUTING.md), [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md), [SECURITY.md](../SECURITY.md).
+## Three experiences, explicit boundaries
 
+- **Public Pages demo:** synthetic fixtures and browser-local review notes. It does not connect to backend services or verify a live ledger.
+- **Connected development workspace:** real alert and audit APIs, persisted PostgreSQL review history, and explicit audit-chain verification. Its configured reviewer principal is not end-user authentication.
+- **Engineering reference:** mock banking data through Debezium, Kafka, per-record Flink processing, Cedar/Zen, and immudb, with separate graph and simulation tools. Reporting is a local-name XML fixture.
 
-## Canonical community files
+## Reference library
 
-`CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, and `SECURITY.md` are at the repository root. This repository does not keep a second copy under `.github/`, because GitHub would show that copy instead of the root file.
+[Domain model](domain-model.md) · [Compliance mapping](compliance-mapping.md) · [Explainability](explainability.md) · [ADRs](adr/README.md) · [Runbooks](runbooks/)
+
+Phase specifications, review checklists, earlier demos, handoffs, and the [engineering roadmap](roadmap.md) retain historical plans and evidence. Their phase labels and original targets are not current product promises. Consult the product vision, public roadmap, and linked verification runs for current scope. Do not edit retained test/evaluation evidence to make a claim appear current.
+
+## Repository map
+
+| Path | Role |
+| --- | --- |
+| `apps/governance-console` | Static demo and shared governance interface |
+| `apps/governance-live` | Connected Next.js server and same-origin service gateway |
+| `services/alert-service` | Alerts, acknowledgements/escalations, durable review history |
+| `services/audit-service` | Linked audit records and chain verification |
+| `apps/alert-console`, `apps/audit-explorer`, other consoles | Engineering tools retained alongside the governance workspace |
+| `services/`, `jobs/`, `policies/`, `infra/` | Reference backend and infrastructure |
+| `scripts/governance-e2e` | Isolated real-service browser verification |
+| `contracts/kafka` | Published event contract fixtures |
+| `docs/` | Current guides and explicitly identified design history |
+
+Community policies are maintained once at the repository root: [Contributing](../CONTRIBUTING.md), [Support](../SUPPORT.md), [Security](../SECURITY.md), and [Code of Conduct](../CODE_OF_CONDUCT.md).

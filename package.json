@@ -15,5 +15,11 @@
     "gifenc": "^1.0.3",
     "playwright": "^1.60.0",
     "pngjs": "^7.0.0"
+  },
+  "description": "Financial Digital Twin governance workspace for reviewing financial issues, audit evidence, and persisted review history.",
+  "homepage": "https://safetymp.github.io/Financial-Digital-Twin-Compliance/",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/issues"
   }
 }

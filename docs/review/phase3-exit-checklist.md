@@ -1,6 +1,8 @@
 # Phase 3 Exit Criteria Checklist
 
-**Phase 3: COMPLETE** — release [v0.1.0](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/releases/tag/v0.1.0) on `main` (2026-06-29). Cedar on that path is `cedar-go`. immudb uses `Set` and `Get`, not `VerifiedGet`.
+> Historical engineering review record. Results and open items apply to the revision and scope described here. See the [current capability map](../phase-journeys.md) and [governance verification](../governance-integration.md) for the merged workspace.
+
+**Phase 3: COMPLETE** — release [v0.1.0](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/releases/tag/v0.1.0) on `main` (2026-06-29). Cedar on that path is `cedar-go`. At that historical revision, immudb used `Set` and `Get`, not `VerifiedGet`. The current client uses atomic `SetAll` appends and `VerifiedGet` reads; see [architecture](../architecture.md#audit-service-go--immudb).
 
 Maps [phase3-implementation-spec.md §13](../phase3-implementation-spec.md#13-phase-3-exit-criteria-checklist) to fresh local evidence.
 

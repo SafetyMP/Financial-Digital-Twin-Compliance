@@ -62,6 +62,6 @@ jobs:
             ./scripts/deploy-stack.sh pull
             ```
 
-            Full guide: [docs/deployment.md](https://github.com/SafetyMP/Digital-Twin-Compliance/blob/main/docs/deployment.md).
+            Full guide: [docs/deployment.md](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/docs/deployment.md).
 
-            See [CHANGELOG.md](https://github.com/SafetyMP/Digital-Twin-Compliance/blob/main/CHANGELOG.md) for release notes.
+            See [CHANGELOG.md](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/CHANGELOG.md) for release notes.

@@ -1,14 +1,26 @@
 # Domain Model
 
-> **Running path.** The root [README](../README.md) is the status of record. Monitoring is three in-process checkers on the per-record Flink job, not a CEP library. Reporting emits local-name XML for `FINREP_F01`, `ANACREDIT_T2`, and `DORA_ICT`.
+Financial Digital Twin is a governance workspace for financial institutions, backed by an engineering reference stack. The [product vision](product-vision.md) defines the current experience; the detailed entities below retain the broader reference domain and do not imply every entity is exposed in the workspace.
 
-This document defines the bounded contexts, core entities, digital twin personas, relationships, and ubiquitous language for the Financial Digital Twin + Compliance Platform.
+## Governance review concepts
 
-## Purpose
+| Concept | Meaning in the current workspace |
+| --- | --- |
+| Issue / alert | A monitored condition presented for review; its observed value and threshold are distinct from the review state |
+| Review | An acknowledgement or escalation, optional note, actor, timestamp, and request identity persisted by the alert service |
+| Review history | PostgreSQL application records, retained across connected sessions; not immudb entries or signed receipts |
+| Audit evidence | The entry referenced by an alert; the UI distinguishes ledger retrieval from PostgreSQL index fallback |
+| Audit-chain check | An explicit audit-service operation with its own result and checked-entry count |
+| Development principal | Server-configured actor attribution, not authenticated end-user identity |
+| Synthetic demo | Illustrative issues and evidence, with review state stored in the browser |
 
-The platform models financial institutions, their operational processes, and interconnections as **living digital twins** — always-on representations that mirror real-world state and behavior. A **compliance overlay** continuously evaluates twin state against codified regulatory obligations and produces auditable evidence.
+An acknowledgement or escalation does not resolve an issue, approve a policy exception, or send a notification. The connected Twin explorer shows selected-alert context; it does not query the graph service. See [API and persistence](governance-integration.md#api-and-persistence) for the review contract.
 
-The twin is an **intelligence layer** over source systems. It does not replace core banking, payment rails, ERP, or contract management systems.
+## Reference domain purpose
+
+The engineering model explores representations of financial institutions, their processes, and interconnections. It supports investigation of monitored conditions and linked evidence over synthetic source systems. It does not replace core banking, payment rails, ERP, or contract management systems.
+
+Monitoring uses per-record Flink processing and Java checkers, not a CEP library. Reporting emits local-name XML fixtures for `FINREP_F01`, `ANACREDIT_T2`, and `DORA_ICT`; this is not certified reporting or XBRL/SDMX filing support.
 
 ---
 
@@ -16,6 +28,7 @@ The twin is an **intelligence layer** over source systems. It does not replace c
 
 | Context | Responsibility | Owns |
 |---------|----------------|------|
+| **Governance Review** | Acknowledge/escalate issues and retain notes | Alert status and PostgreSQL review history |
 | **Twin Core** | Entity state, graph topology, simulation | Personas, exposures, liquidity flows |
 | **Ingestion** | Event capture, CDC, schema validation | Connectors, topic contracts |
 | **Compliance Monitoring** | Per-record thresholds on the Flink job | Alerts for `INT-M001`, `INT-M002`, and `BASEL-M001` |

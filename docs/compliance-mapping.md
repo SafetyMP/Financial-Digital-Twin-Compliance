@@ -1,9 +1,8 @@
 # Compliance Mapping
 
-> **Running path.** The root [README](../README.md) is the status of record. Monitoring and report sections below are the original plan. The shipped Flink job is per-record streaming and does not depend on `flink-cep`. Reporting is a local-name fixture and is not on the running path.
+This is an illustrative engineering mapping retained from the original reference design. Regime names, thresholds, reporting frequencies, and proposed obligations below are not a current legal interpretation, compliance certification, or claim of filing support. Validate any institution-specific interpretation independently before extending the product.
 
-
-Maps target regulatory regimes to platform rules, real-time monitoring checks, audit requirements, and regulatory reports.
+The current [governance workspace](product-vision.md) presents monitored issues and evidence for human review. Its acknowledgement and escalation actions do not establish compliance. The shipped Flink job uses per-record streaming and Java checkers, not `flink-cep`. Reporting remains a local-name XML fixture. See the [capability map](phase-journeys.md) for implemented and experimental paths.
 
 See also: [domain-model.md](./domain-model.md), [architecture.md](./architecture.md), [data-flow.md](./data-flow.md).
 
@@ -17,7 +16,7 @@ Each regime is decomposed into four platform capabilities:
 |------------|-------------------|--------|
 | **Rules** | Cedar policies + Zen decision models | `RuleDecision` |
 | **Monitoring** | Per-record Flink job and Java checkers (`INT-M001`, `INT-M002`, `BASEL-M001`) | `ComplianceAlert` |
-| **Audit** | immudb `Set`/`Get` of an application hash | `AuditEntry` |
+| **Audit** | immudb `SetAll` / `VerifiedGet` with application hash-chain checks | `AuditEntry` |
 | **Reporting** | Local-name XML fixture | Not an XBRL or SDMX filing |
 
 ```mermaid

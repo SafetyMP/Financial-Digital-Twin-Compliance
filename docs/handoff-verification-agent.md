@@ -1,5 +1,7 @@
 # Handoff: Verification Agent (Phase 2)
 
+> Historical engineering handoff. Preserve this task context; it does not authorize new work. Follow current [repository instructions](../AGENTS.md), [agent guide](agent-guide.md), and [product vision](product-vision.md).
+
 Use this document when verifying Phase 2 integration in a **fresh** Cursor chat — especially after analysis or implementation in another session.
 
 **Created**: 2026-06-13  

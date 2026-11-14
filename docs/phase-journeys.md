@@ -1,45 +1,35 @@
-# Phase journeys
+# Governance workflow and engineering capability map
 
-Canonical public map of **journey name + Phase N** for the Digital Twin Compliance Platform. Prefer these names in README, demos, and UI chrome — never Phase alone as the headline.
+The product entry point is the **governance workspace**. Phase numbers identify the reference stack's engineering history; they are not product tiers or the navigation a governance reviewer needs to learn.
 
-**CECT** (mentioned in changelog/ADRs) is the corporate delivery program that landed Phases 5–7 on this site. It is not a user-facing product tier.
+## Current review workflow
 
-**CI vs local:** Phases 1–4 smokes run in GitHub Actions CI. Phases 5–7 smokes and `./scripts/harness/verify.sh` are local/harness gates until CI wiring lands.
+| Task | Public demo | Connected development workspace |
+| --- | --- | --- |
+| Prioritize issues | Search/filter six synthetic fixtures | Search/filter loaded alerts; load additional pages |
+| Understand a trigger | Illustrative entity, observation, and threshold | Reported backend values; missing values remain explicit |
+| Inspect evidence | Clearly labeled sample context | Linked audit entry or explicitly identified index fallback |
+| Check integrity | No live ledger check | Explicit audit-service chain check with checked-entry count |
+| Record review | Browser-local acknowledgement/escalation and notes | Transactional status update and PostgreSQL review history |
+| Return to history/export | Records in the same browser | Persisted service records; export scoped to loaded issues |
+| Explore scenarios | Synthetic sensitivity calculation | Not available; no simulation-service integration implied |
 
-```mermaid
-flowchart LR
-  P1[P1 Twin API] --> P2[P2 Alerts]
-  P2 --> P3[P3 Audit]
-  P3 --> P4[P4 GraphSim]
-  P4 --> P5[P5 Reports]
-  P5 --> P6[P6 Harden]
-  P6 --> P7[P7 Analytics]
-```
+[Try the demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) · [Quickstart](quickstart.md) · [Integration contract](governance-integration.md)
 
-| Phase | Journey name | What you prove | UI(s) | Smoke | Demo |
-|-------|--------------|----------------|-------|-------|------|
-| 1 | Ingestion & twin | CDC → persona API | (API `:8080`) | `./scripts/smoke-test.sh` | — |
-| 2 | Monitoring & alerts | Per-record Flink streaming → open alert (not `flink-cep`) | [Alert Console](http://localhost:3000) `:3000` | `./scripts/smoke-test-phase2.sh` | — |
-| 3 | Policy & audit | Cedar/Zen + immudb proof | [Audit Explorer](http://localhost:3002) `:3002` | `./scripts/smoke-test-phase3.sh` | [demo-phase3.md](demo-phase3.md) |
-| 4 | Graph & simulation | Exposure + stress | [Graph Explorer](http://localhost:3003) `:3003`, [Simulation Console](http://localhost:3004) `:3004` | `./scripts/smoke-test-phase4.sh` | [demo-phase4.md](demo-phase4.md) |
-| 5 | Regulatory reporting | Local-name XML fixture. Not XBRL, SDMX, or the payment path | [Report Console](http://localhost:3005) `:3005` | `./scripts/smoke-test-phase5.sh` cannot pass here: submit requires `objectLock == true` and MinIO is one drive | [demo-phase5.md](demo-phase5.md) |
-| 6 | Hardening | OIDC / TLS / OTel | via edge `:8180` / `:8443` | `./scripts/smoke-test-phase6-*.sh` | [deployment.md](deployment.md) |
-| 7 | Cutting-edge analytics | Effectiveness / contagion / reg→policy / graph | APIs (no dedicated UI) | `./scripts/smoke-test-phase7-*.sh` | [ADR-013](adr/013-phase7-cutting-edge-foundation.md) |
+## Engineering capabilities retained
 
-## Consoles
+| Phase | Capability | Tool | Verification boundary |
+| --- | --- | --- | --- |
+| 1 | Ingestion and twin state | State API `:8080` | `scripts/smoke-test.sh` |
+| 2 | Monitoring and alerts | Alert Console `:3000` | Per-record Flink monitoring; `scripts/smoke-test-phase2.sh` |
+| 3 | Policy and audit | Audit Explorer `:3002` | Cedar/Zen evaluation, linked audit entries, chain check; `scripts/smoke-test-phase3.sh` |
+| 4 | Graph and simulation | Graph Explorer `:3003`, Simulation Console `:3004` | Reference exposure/stress workflow; `scripts/smoke-test-phase4.sh` |
+| 5 | Reporting fixture | Report Console `:3005` | Local-name XML; not XBRL/SDMX filing. Default one-drive MinIO cannot satisfy the submit smoke's Object Lock requirement |
+| 6 | Hardening experiments | OIDC/TLS edge `:8180` / `:8443` | Separate overlay; does not authenticate users in the governance workspace |
+| 7 | Additional analytical experiments | Individual APIs | Local phase scripts; not included in the standard Phase 1–4 CI claim |
 
-All five Next.js consoles share product chrome and an app switcher (`packages/console-shell`). Open any console, then jump across journeys without memorizing ports.
+The five engineering consoles share `packages/console-shell`. They are retained diagnostic tools alongside the new unified interface. The connected governance workspace runs at `:3006` and has its own shared interface with the Pages demo.
 
-| Console | Port | Journey |
-|---------|------|---------|
-| Alert Console | 3000 | Monitoring & alerts · Phase 2 |
-| Audit Explorer | 3002 | Policy & audit · Phase 3 |
-| Graph Explorer | 3003 | Graph & simulation · Phase 4 |
-| Simulation Console | 3004 | Graph & simulation · Phase 4 |
-| Report Console | 3005 | Regulatory reporting · Phase 5 |
+The [full CI baseline](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43646873895) passed Phase 1–4 smoke tests on `4003b94`. The [governance integration baseline](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43646897572) independently passed the browser review workflow from Kafka alert input through persisted history. Neither result establishes a customer usability outcome or production readiness.
 
-## Related
-
-- Public status: [ROADMAP.md](../ROADMAP.md)
-- Architecture status table: [architecture.md](architecture.md)
-- Engineering detail: [roadmap.md](roadmap.md) (status of record for shipped capability is still [ROADMAP.md](../ROADMAP.md))
+Historical CECT references name a delivery program, not a product tier. [Public roadmap](../ROADMAP.md) governs current priorities; [engineering phase history](roadmap.md) preserves earlier plans and targets.
