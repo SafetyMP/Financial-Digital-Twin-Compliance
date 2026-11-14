@@ -30,6 +30,7 @@ ENV NODE_ENV=production
 COPY --from=builder /repo/apps/audit-explorer/.next/standalone ./
 COPY --from=builder /repo/apps/audit-explorer/.next/static ./apps/audit-explorer/.next/static
 COPY --from=builder /repo/apps/audit-explorer/public ./apps/audit-explorer/public
+COPY packages/console-shell/assets/fonts/LICENSE.txt ./apps/audit-explorer/public/licenses/IBM-Plex-Sans.txt
 EXPOSE 3000
 ENV PORT=3000
 CMD ["node", "apps/audit-explorer/server.js"]
