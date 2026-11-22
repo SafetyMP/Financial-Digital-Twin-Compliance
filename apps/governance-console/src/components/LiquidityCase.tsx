@@ -10,9 +10,9 @@ import styles from './LiquidityCase.module.css';
 const issue = issues.find((item) => item.id === 'GOV-1042')!;
 const euros = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
 const options = [
-  { amount: 100, label: 'Original estimate', note: 'Reconcile the asset and outflow records with Treasury. Record who will explain the €8m gap.' },
-  { amount: 92, label: 'Lower outflows', note: 'The estimate reaches the monitoring line exactly. Keep the original alert and ask for the evidence behind the revised outflow estimate.' },
-  { amount: 110, label: 'Higher outflows', note: 'The gap widens to €18m. Ask Treasury to reconcile the larger outflow assumption and document the funding assessment.' },
+  { amount: 100, label: 'Original estimate' },
+  { amount: 92, label: 'Lower outflows' },
+  { amount: 110, label: 'Higher outflows' },
 ];
 
 export default function LiquidityCase() {
@@ -21,7 +21,8 @@ export default function LiquidityCase() {
   const [action, setAction] = useState<ReviewAction | null>(null);
   const [reviews, setReviews] = useState(100);
   const [minutes, setMinutes] = useState(12);
-  const { amount, note } = options[choice];
+  const { amount } = options[choice];
+  const outflowGap = amount - 92;
   const result = scenarioImpact('Liquidity', amount - 100);
   const handoff = action && liquidityHandoff(action, period, result.breached);
   const yearCost = 12000;
@@ -71,7 +72,9 @@ export default function LiquidityCase() {
         </figure>
         <div className={styles.result} aria-live="polite" aria-atomic="true">
           <strong>{Number(result.projected.toFixed(1))}%</strong>
-          <div><b>{result.breached ? 'Below the monitoring line' : 'At the monitoring line'}</b><p>{note}</p></div>
+          <div><b>{result.breached ? 'Below the monitoring line' : 'At the monitoring line'}</b>
+            <p>{outflowGap === 0 ? 'The two amounts are equal. The modeled buffer has no headroom.' : `Projected outflows exceed the asset balance by €${outflowGap}m.`}</p>
+          </div>
         </div>
         <p>Open the original case to inspect its source observation, rule match and review history. <Link className={styles.textLink} href="/workspace/">Inspect {issue.id} in the review queue</Link></p>
       </div>
