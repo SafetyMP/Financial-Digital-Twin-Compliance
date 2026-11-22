@@ -38,7 +38,7 @@ const source = schema['@graph'].find((item) => item['@type'] === 'SoftwareSource
 assert.equal(source.codeRepository, 'https://github.com/SafetyMP/Financial-Digital-Twin-Compliance');
 
 const sitemap = await readFile(new URL('sitemap.xml', output), 'utf8');
-assert.deepEqual([...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]), [canonical]);
+assert.deepEqual([...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]), [canonical, `${canonical}workspace/`]);
 assert.equal(await readFile(new URL('llms.txt', output), 'utf8'), await readFile(new URL('llms.txt', root), 'utf8'), 'Published index must exactly match the repository source');
 const png = await readFile(new URL('social-card.png', output));
 assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');

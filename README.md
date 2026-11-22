@@ -49,7 +49,9 @@ The GitHub Pages demo has no backend connection. The connected workspace never r
 
 ### Explore without installation
 
-Open the **[GitHub Pages demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/)**. Use synthetic notes only; demo reviews remain in your browser. No account, service credentials, or financial data are needed.
+In the [Northstar liquidity case](https://safetymp.github.io/Financial-Digital-Twin-Compliance/), a Treasury analyst owns the estimated 30-day net outflows, an independent liquidity-risk reviewer challenges the 92% result, and the fictional CFO decides whether to fund a shared review file. Change the outflow estimate, inspect the original alert, then test how much review time a shared evidence file would need to save to cover its first-year costs. The worksheet lets you vary review volume and time saved and links the Basel Committee research behind the case.
+
+The [full synthetic review queue](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/) includes liquidity, exposure and payment issues. Use synthetic notes only. Demo reviews stay in your browser.
 
 ### Run the demo locally
 
