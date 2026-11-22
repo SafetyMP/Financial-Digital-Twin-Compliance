@@ -37,12 +37,17 @@ assert.ok(!app.offers && !app.aggregateRating, 'No invented offers or ratings');
 const source = schema['@graph'].find((item) => item['@type'] === 'SoftwareSourceCode');
 assert.equal(source.codeRepository, 'https://github.com/SafetyMP/Financial-Digital-Twin-Compliance');
 
+const brief = html.indexOf('Before the funding meeting');
+const release = html.indexOf('Release at 09:10');
+assert.ok(brief >= 0 && release > brief, 'Introduce the funding problem before the payment instruction');
+assert.doesNotMatch(html, /cutoffs missed/, 'The initial case must leave the payment outcome open');
 assert.match(html, /What is behind Northstar’s liquidity alert/);
 const reference = await readFile(new URL('workspace/index.html', output), 'utf8');
 assert.match(reference, /Liquidity evidence inspector/);
 assert.match(reference, /Source snapshot/);
 assert.match(reference, /Coverage check/);
 assert.match(reference, /Receipt check/);
+assert.match(reference, /Settlement replay/);
 assert.doesNotMatch(reference, /class="workspace"/, 'Legacy review queue must stay off the public technical entry');
 
 const sitemap = await readFile(new URL('sitemap.xml', output), 'utf8');

@@ -37,7 +37,7 @@ Ease of use is the redesign's priority. The interface and workflow are implement
 | | Public demo | Connected development workspace |
 | --- | --- | --- |
 | Start | [Open in a browser](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) | [Setup guide](docs/governance-integration.md), port `3006` |
-| Data | Northstar 30-day liquidity case | Alerts from the existing backend services |
+| Data | Northstar dollar settlement replay and euro 30-day liquidity case | Alerts from the existing backend services |
 | Reviews | Selected challenge and pilot assumptions carried in the case link | Stored transactionally by the alert service in PostgreSQL |
 | Evidence | Source schedules, illustrative posting trials and a browser checksum | Linked audit entries and an explicit audit-chain verification action |
 | Identity | Browser-local demonstration | Server-configured development reviewer; not end-user authentication |
@@ -49,9 +49,9 @@ The GitHub Pages demo has no backend connection. The connected workspace never r
 
 ### Explore without installation
 
-In the [Northstar liquidity case](https://safetymp.github.io/Financial-Digital-Twin-Compliance/), Treasury reports €92m of liquid assets against €100m in projected 30-day outflows. Challenge the amount or source date as independent risk, choose the next handoff, then compare the linked review file with the current process and a checklist for the CFO.
+In the [Northstar liquidity case](https://safetymp.github.io/Financial-Digital-Twin-Compliance/), the dollar desk must decide whether to release a customer batch before an expected transfer arrives. Try both instructions and compare settlement against each deadline. In a separate euro review, Treasury reports €92m of liquid assets against €100m in projected 30-day outflows. Challenge the amount or source date as independent risk, choose the next handoff, then compare the linked review file with the current process and a checklist for the CFO.
 
-The [GOV-1042 technical inspector](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/) follows that same selection through the source snapshot, coverage calculation and fixture checksum. Compare packets posted either side of the meeting cutoff. An intraday arrival time determines whether a packet can be inspected; the 30-day horizon determines what the coverage ratio measures.
+The [GOV-1042 technical inspector](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/) carries the dollar instruction into the payment replay and the euro review into the source snapshot, coverage calculation and fixture checksum. Compare packets posted either side of the meeting cutoff. An intraday arrival time determines whether a packet can be inspected; the 30-day horizon determines what the coverage ratio measures.
 
 ### Run the demo locally
 

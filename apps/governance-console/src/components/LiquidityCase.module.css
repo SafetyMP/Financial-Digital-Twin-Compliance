@@ -1,20 +1,28 @@
 .case { padding: 0; background: #fff; color: #18273f; font-size: 1rem; line-height: 1.55; }
 .mast, .lead, .section, .technical { padding-inline: max(5vw, calc((100vw - 1120px) / 2)); }
 .mast { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-block: 1.1rem; background: #101c32; color: white; }
-.mast a, .returnBar a, .method a { text-decoration: underline; text-underline-offset: .2em; }
+.mast a, .method a { text-decoration: underline; text-underline-offset: .2em; }
 .mast a { font-size: .9rem; }
 .lead, .section { display: grid; gap: clamp(2rem, 5vw, 5rem); align-items: start; }
 .lead { grid-template-columns: 1.25fr 1fr; align-items: center; background: #f2f5fa; padding-block: clamp(2.2rem, 5vw, 5rem); }
 .lead h1, .section h2 { font-family: Georgia, serif; font-weight: 500; line-height: 1.05; letter-spacing: -.035em; }
 .lead h1 { max-width: 17ch; margin: .7rem 0 1.2rem; font-size: clamp(2.6rem, 5vw, 4.5rem); }
-.eyebrow, .recordLabel { color: #834b2d; font-size: .83rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.eyebrow { color: #834b2d; font-size: .83rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .lead .provenance { margin-top: 1rem; font-size: .9rem; color: #4c5a70; }
-.record { padding: clamp(1.35rem, 3vw, 2.6rem); border-radius: .6rem; background: #192e4f; color: #fff; border-top: .25rem solid #b5774d; }
-.recordLabel { color: #f0c6a6; }
-.record > strong { display: block; font: 500 clamp(4.5rem, 7vw, 6.5rem)/1.1 Georgia, serif; margin-top: 1.2rem; letter-spacing: -.045em; }
-.meter { height: .65rem; background: #495a71; margin: 1.8rem 0 .55rem; }
-.meter span { display: block; height: 100%; background: #e6af82; }
-.recordFoot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .35rem; color: #e1e7f0; font-size: .85rem; }
+.lead p + p { margin-top: .85rem; }
+.brief { margin: 0; padding: clamp(1.25rem, 2.8vw, 2rem); background: #192e4f; color: #fff; border-top: .25rem solid #b5774d; border-radius: .4rem; }
+.brief figcaption { font: 500 1.5rem/1.2 Georgia, serif; }
+.brief dl { display: grid; gap: .85rem; margin: 1.15rem 0 0; }
+.brief dl > div { padding-left: .9rem; border-left: 2px solid #ab856b; }
+.brief dt { font-weight: 650; }
+.brief small { display: inline-block; margin-left: .5rem; color: #f0c6a6; font-size: .8rem; }
+.brief dd { margin: .2rem 0 0; font-size: .92rem; color: #e4eaf1; }
+.desk { min-width: 0; }
+.desk > p, .inspectLink { margin-top: .9rem; }
+.coverage { margin: 1.25rem 0; }
+.coverage figcaption { font-weight: 650; margin-bottom: .65rem; }
+.calculator summary { cursor: pointer; font-weight: 650; }
+.calculator[open] summary, .calculator { margin-bottom: .8rem; }
 .section { grid-template-columns: .8fr 1.2fr; padding-block: 2.8rem; border-bottom: 1px solid #cdd5e1; }
 .section h2 { font-size: clamp(2rem, 3vw, 3rem); margin: .55rem 0 .9rem; }
 .case :is(a, button, input, select, summary):focus-visible { outline: 3px solid #a35225; outline-offset: 3px; }
@@ -42,19 +50,8 @@
 .method summary { cursor: pointer; font-weight: 700; padding: .5rem 0; }
 .method details p { margin-top: .6rem; }
 .method a { color: #784027; }
-.returnBar { background: white; text-align: right; padding: .65rem 1.5rem; font-size: .9rem; }
-
-.trail, .chart { margin: 1.25rem 0; }
-.trail figcaption, .chart figcaption { margin-bottom: .7rem; font-weight: 700; }
-.trail ol { display: grid; grid-template-columns: repeat(3, 1fr); padding: 0; margin: 0; list-style: none; }
-.trail li { position: relative; padding: 1.1rem .65rem 0 0; }
-.trail li::before { content: ''; position: absolute; top: .3rem; left: 0; width: 100%; border-top: 2px solid #8c98a8; }
-.trail li:last-child::before { width: 0; }
-.trail li::after { content: ''; position: absolute; left: 0; top: 0; width: .7rem; height: .7rem; border-radius: 50%; background: #854b2b; }
-.trail li b, .trail li span, .trail li small { display: block; }
-.trail li b, .trail li small { font-size: .84rem; }
-.trail li span { font-variant-numeric: tabular-nums; }
-.trail li small { color: #46556b; }
+.chart { margin: 1.25rem 0; }
+.chart figcaption { margin-bottom: .7rem; font-weight: 700; }
 .chart { padding: 1rem; border: 1px solid #c8d1df; background: white; }
 .barLabel { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; font-size: .92rem; }
 .track { height: .65rem; margin: .25rem 0 .85rem; background: #d7dfe9; }
@@ -66,30 +63,22 @@
 .technical .method details { padding-bottom: .4rem; margin: 0 0 .5rem; border-bottom: 1px solid #b6c2d2; }
 @media (max-width: 760px) {
   .technical { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
-  .trail ol { grid-template-columns: 1fr; }
-  .trail li { padding: 0 0 .8rem 1.3rem; }
-  .trail li::before { height: 100%; width: 0; left: .3rem; border-top: 0; border-left: 2px solid #8c98a8; }
-  .trail li:last-child::before { height: 0; }
-  .trail li::after { top: .32rem; }
-
   .lead, .section { grid-template-columns: minmax(0,1fr); gap: 1.5rem; }
   .choices label { align-items: flex-start; flex-direction: column; }
   .result { flex-direction: column; gap: .4rem; }
 }
 
-.textLink, .reopen { color: #784027; text-decoration: underline; text-underline-offset: .2em; }
+.textLink { color: #784027; text-decoration: underline; text-underline-offset: .2em; }
 .handoff { min-width: 0; padding: 1.2rem; background: #f5f7fa; border: 1px solid #c8d1df; border-radius: .5rem; }
 .handoff label, .handoff legend { font-weight: 700; }
 .handoff select { font-size: 1rem; line-height: 1.4; display: block; width: 100%; padding: .55rem; margin: .4rem 0; color: #18273f; background: #fff; border: 1px solid #7d8a9e; border-radius: .3rem; }
 .handoff fieldset { border: 0; padding: 0; margin: 1rem 0; min-width: 0; }
-.evidenceState, .intro .provenance { font-size: .9rem; color: #46556b; }
 .actions { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .4rem; }
 .actions button { padding: .55rem .7rem; background: white; color: #192e4f; border: 1px solid #718198; border-radius: .3rem; }
 .actions button[aria-pressed="true"] { background: #192e4f; color: white; }
 .queue { background: #fff; border-left: .25rem solid #854b2b; padding: .8rem; }
 .queue small { font-size: .85rem; color: #69503f; }
 .queue h3 { font-size: 1.12rem; margin: .2rem 0; }
-.reopen { background: transparent; border: 0; padding: .4rem 0; margin-top: .5rem; }
 
 .sourceCard { margin: 0 0 .9rem; padding: .65rem .85rem; border-left: .2rem solid #506992; background: white; }
 .sourceCard dt { color: #46556b; font-size: .9rem; }

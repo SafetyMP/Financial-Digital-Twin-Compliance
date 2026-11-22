@@ -1,0 +1,75 @@
+.desk {
+  min-width: 0;
+  border: 1px solid #bbc8d5;
+  border-radius: .5rem;
+  color: #18273f;
+  background: #fff;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+.brief, .decision, .conditions, .results, .terms, .deadlines {
+  padding-inline: clamp(.85rem, 2.2vw, 1.45rem);
+}
+.brief {
+  padding-block: 1rem;
+  color: #f2f5fa;
+  background: #192e4f;
+}
+.brief strong { color: #f3c49f; font-size: .93rem; }
+.brief p { margin-top: .35rem; }
+.deadlines {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .65rem;
+  margin: 1rem 0;
+}
+.deadlines li { display: grid; align-content: start; border-top: 2px solid #7890a6; padding-top: .45rem; }
+.deadlines time, .ends, .clock small, .terms, .conditions p { font-size: .83rem; color: #47576b; }
+.deadlines span { font-size: .9rem; }
+.decision { min-width: 0; border: 0; margin: 0; padding-block: 0; }
+.decision legend { padding: 0; font-size: 1rem; font-weight: 700; }
+.choices { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .45rem; }
+.choices button {
+  flex: 1 1 10rem;
+  padding: .58rem .8rem;
+  border: 1px solid #58718c;
+  border-radius: .3rem;
+  background: #fff;
+  color: #1a3450;
+  font-weight: 650;
+}
+.choices button:hover { border-color: #18273f; background: #eef3f7; }
+.choices button[aria-pressed="true"] { color: #fff; background: #233c57; }
+.conditions { margin-block: .65rem; }
+.conditions summary { color: #714222; cursor: pointer; width: fit-content; font-size: .9rem; padding-block: .25rem; }
+.parameters { display: flex; flex-wrap: wrap; gap: .6rem; padding-block: .5rem; }
+.parameters label { flex: 1 1 10rem; font-size: .9rem; font-weight: 650; }
+.parameters select { width: 100%; display: block; color: #18273f; font-size: .9rem; margin-top: .2rem; border-color: #8190a1; }
+.results { padding-block: .95rem; background: #f2f5f7; border-top: 1px solid #ccd6e1; }
+.totals h3, .clock label { font-size: 1rem; font-weight: 700; }
+.totals p, .takeaway, .trade { font-size: .91rem; }
+.register { border-collapse: collapse; width: 100%; margin: .8rem 0; font-size: .9rem; }
+.register caption { text-align: left; color: #46576c; font-size: .82rem; margin-bottom: .3rem; }
+.register th, .register td { text-align: left; padding: .38rem .25rem .38rem 0; border-bottom: 1px solid #c3cfd9; }
+.register thead th { color: #4e5b6d; font-size: .81rem; }
+.register .late { color: #8a4025; font-weight: 700; }
+.clock { display: grid; align-items: center; grid-template-columns: 1.45fr 1fr; gap: 1.2rem; margin-top: .9rem; }
+.clock label { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .3rem; }
+.clock label b { color: #714222; }
+.clock input { margin: .4rem 0; accent-color: #714222; width: 100%; }
+.ends { display: flex; justify-content: space-between; }
+.clock figure { margin: 0; border-left: 1px solid #bfccd6; padding-left: .75rem; }
+.clock figcaption { font-size: .85rem; font-weight: 650; }
+.trace { display: block; width: 100%; }
+.trace line { stroke: #8593a0; stroke-dasharray: 4 3; }
+.trace path { fill: none; stroke: #2a5f68; stroke-width: 2.5; }
+.trace circle { fill: #2a5f68; }
+.trade { margin-top: .5rem; color: #415165; }
+.terms { margin: 0; border-top: 1px solid #ccd6e1; padding-block: .6rem; }
+@media (max-width: 480px) {
+  .clock { grid-template-columns: 1fr; gap: .7rem; }
+  .clock figure { border-left: 0; padding: 0; }
+  .clock .trace { width: min(100%, 18rem); }
+  .choices button { flex-basis: 100%; }
+}
