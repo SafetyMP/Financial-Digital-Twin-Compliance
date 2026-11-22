@@ -1,2 +1,5 @@
-import Workspace from '../components/Workspace';
-export default function Page() { return <Workspace />; }
+import LiquidityCase from '../components/LiquidityCase';
+
+export default function Page() {
+  return <LiquidityCase />;
+}

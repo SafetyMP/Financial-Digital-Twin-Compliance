@@ -1,0 +1,50 @@
+.case { padding: 0; background: #fff; color: #18273f; font-size: 1rem; line-height: 1.55; }
+.mast, .lead, .section { padding-inline: max(5vw, calc((100vw - 1120px) / 2)); }
+.mast { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-block: 1.1rem; background: #101c32; color: white; }
+.mast a, .returnBar a, .method a { text-decoration: underline; text-underline-offset: .2em; }
+.mast a { font-size: .9rem; }
+.lead, .section { display: grid; gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+.lead { grid-template-columns: 1.25fr 1fr; align-items: center; background: #f2f5fa; padding-block: clamp(2.2rem, 5vw, 5rem); }
+.lead h1, .section h2 { font-family: Georgia, serif; font-weight: 500; line-height: 1.05; letter-spacing: -.035em; }
+.lead h1 { max-width: 17ch; margin: .7rem 0 1.2rem; font-size: clamp(2.6rem, 5vw, 4.5rem); }
+.eyebrow, .recordLabel { color: #834b2d; font-size: .83rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.lead .provenance { margin-top: 1rem; font-size: .9rem; color: #4c5a70; }
+.record { padding: clamp(1.35rem, 3vw, 2.6rem); border-radius: .6rem; background: #192e4f; color: #fff; border-top: .25rem solid #b5774d; }
+.recordLabel { color: #f0c6a6; }
+.record > strong { display: block; font: 500 clamp(4.5rem, 7vw, 6.5rem)/1.1 Georgia, serif; margin-top: 1.2rem; letter-spacing: -.045em; }
+.meter { height: .65rem; background: #495a71; margin: 1.8rem 0 .55rem; }
+.meter span { display: block; height: 100%; background: #e6af82; }
+.recordFoot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .35rem; color: #e1e7f0; font-size: .85rem; }
+.section { grid-template-columns: .8fr 1.2fr; padding-block: 2.8rem; border-bottom: 1px solid #cdd5e1; }
+.section h2 { font-size: clamp(2rem, 3vw, 3rem); margin: .55rem 0 .9rem; }
+.case :is(a, input, summary):focus-visible { outline: 3px solid #a35225; outline-offset: 3px; }
+.mast a:focus-visible { outline-color: #f0c6a6; }
+.section p + p, .method details { margin-top: .9rem; }
+.scenario fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.scenario legend, .calculator h3 { font-size: 1.15rem; line-height: 1.35; font-weight: 700; margin-bottom: .6rem; }
+.choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+.choices label { display: flex; align-items: center; gap: .45rem; padding: .65rem; border: 1px solid #7d8a9e; border-radius: .35rem; cursor: pointer; }
+.choices strong, .choices small { display: block; }
+.choices small { font-size: .8rem; }
+.choices input, .range input { accent-color: #854b2b; }
+.choices .chosen { background: #fbf2eb; border-color: #854b2b; }
+.result { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; margin: 1rem 0; background: #eef2f8; border-left: .25rem solid #506992; }
+.result > strong { font-size: 1.8rem; line-height: 1.15; }
+.action { display: inline-block; padding: .7rem 1rem; margin-top: 1rem; background: #192e4f; color: white; border-radius: .3rem; font-weight: 600; }
+.calculator { padding: 1.4rem; border: 1px solid #c8d1df; background: #f5f7fa; border-radius: .5rem; }
+.range { margin-block: 1rem; }
+.range label { display: flex; justify-content: space-between; align-items: baseline; }
+.range input { width: 100%; margin: .4rem 0 0; }
+.economics { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.4rem 0 .8rem; padding-top: .8rem; border-top: 1px solid #c8d1df; }
+.economics strong, .economics span { display: block; }
+.economics strong { font: 500 2rem/1.2 Georgia, serif; }
+.economics span, .calculator > p { color: #46556b; font-size: .9rem; }
+.method summary { cursor: pointer; font-weight: 700; padding: .5rem 0; }
+.method details p { margin-top: .6rem; }
+.method a { color: #784027; }
+.returnBar { background: white; text-align: right; padding: .65rem 1.5rem; font-size: .9rem; }
+@media (max-width: 760px) {
+  .lead, .section { grid-template-columns: minmax(0,1fr); gap: 1.5rem; }
+  .choices label { align-items: flex-start; flex-direction: column; }
+  .result { flex-direction: column; gap: .4rem; }
+}
