@@ -37,10 +37,12 @@ assert.ok(!app.offers && !app.aggregateRating, 'No invented offers or ratings');
 const source = schema['@graph'].find((item) => item['@type'] === 'SoftwareSourceCode');
 assert.equal(source.codeRepository, 'https://github.com/SafetyMP/Financial-Digital-Twin-Compliance');
 
-assert.match(html, /Intraday liquidity desk/);
+assert.match(html, /What is behind Northstar’s liquidity alert/);
 const reference = await readFile(new URL('workspace/index.html', output), 'utf8');
-assert.match(reference, /How the twin works/);
-assert.match(reference, /TypeScript settlement model/);
+assert.match(reference, /Liquidity evidence inspector/);
+assert.match(reference, /Source snapshot/);
+assert.match(reference, /Coverage check/);
+assert.match(reference, /Receipt check/);
 assert.doesNotMatch(reference, /class="workspace"/, 'Legacy review queue must stay off the public technical entry');
 
 const sitemap = await readFile(new URL('sitemap.xml', output), 'utf8');

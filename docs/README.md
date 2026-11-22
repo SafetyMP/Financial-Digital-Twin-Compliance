@@ -17,7 +17,7 @@ Start with the governance review journey: **issue → context → evidence → r
 
 ## Three experiences, explicit boundaries
 
-- **Public Pages demo:** synthetic fixtures and browser-local review notes. It does not connect to backend services or verify a live ledger.
+- **Public Pages demo:** a synthetic 30-day liquidity challenge, selectable evidence trials and case links that preserve the review assumptions. It does not connect to backend services or verify a live ledger.
 - **Connected development workspace:** real alert and audit APIs, persisted PostgreSQL review history, and explicit audit-chain verification. Its configured reviewer principal is not end-user authentication.
 - **Engineering reference:** mock banking data through Debezium, Kafka, per-record Flink processing, Cedar/Zen, and immudb, with separate graph and simulation tools. Reporting is a local-name XML fixture.
 

@@ -16,11 +16,11 @@ Acknowledgement records that a review happened. Escalation records a follow-up s
 
 | Experience | Audience and purpose | Data and persistence |
 | --- | --- | --- |
-| [Public interactive demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) | Explore the review journey without setup | Synthetic fixtures; notes stay in the browser; no backend or live ledger |
-| [Connected development workspace](governance-integration.md) | Exercise the same interface against the alert and audit services | Actual service records from a development stack; review history in PostgreSQL; linked audit entries in immudb |
+| [Public interactive demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) | Challenge Northstar’s 30-day liquidity estimate and inspect its evidence | Synthetic fixtures; selected assumptions and handoff travel in the case URL |
+| [Connected development workspace](governance-integration.md) | Exercise the connected review queue against the alert and audit services | Actual service records from a development stack; review history in PostgreSQL; linked audit entries in immudb |
 | [Engineering reference stack](architecture.md) | Develop and verify ingestion, monitoring, policy, and audit capabilities | Mock banking sources, Debezium, Kafka, per-record Flink processing, Cedar/Zen, and backing stores |
 
-The shared interface lives in `apps/governance-console/src/components/Workspace.tsx`. The static demo is `apps/governance-console`; the connected server is `apps/governance-live`. The established engineering consoles remain available for deeper diagnostics.
+The public case and evidence inspector live in `apps/governance-console`. The connected server in `apps/governance-live` uses the review interface in `apps/governance-console/src/components/Workspace.tsx`. The established engineering consoles remain available for deeper diagnostics.
 
 ## Design commitments
 
@@ -35,7 +35,7 @@ The shared interface lives in `apps/governance-console/src/components/Workspace.
 
 The redesign and connected workflow are merged into `main`. The [verified baseline at `4003b94`](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/commit/4003b94487ebc59bbd63fbdf93b316572e4b093d) passed the [governance browser workflow](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43646897572) and the [full CI Phase 1–4 smoke and coverage checks](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/runs/43646873895) on 14 November 2026. These are implementation checks, not evidence of improved customer engagement or a usability study.
 
-Connected access currently uses a configured development reviewer identity, not authenticated end-user identity. Multi-user production access, operational readiness, and usability validation need further work. The connected Twin explorer shows the selected alert's entity and signal; it does not query the graph service. Scenario lab is a synthetic demo feature. Regulatory reporting remains a local-name XML fixture, not certified filing capability.
+Connected access currently uses a configured development reviewer identity, not authenticated end-user identity. Multi-user production access, operational readiness, and usability validation need further work. The connected Twin explorer shows the selected alert's entity and signal; it does not query the graph service. The public case uses a synthetic 30-day projection. Regulatory reporting remains a local-name XML fixture, not certified filing capability.
 
 ## Direction
 

@@ -6,7 +6,7 @@ Choose the public demo to evaluate the workflow, the connected development works
 
 [Open Financial Digital Twin](https://safetymp.github.io/Financial-Digital-Twin-Compliance/). No account or backend is required.
 
-Choose a receipt time, customer batch release and credit limit. Advance the settlement clock, inspect the posting tape, then save a shift handoff to compare with another run. The account, amounts and cutoffs are fictional. The [technical reference](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/) links to the browser model and connected components.
+Compare Treasury’s original and revised 30-day cash outflows. Select an as-of date and handoff, then test the CFO’s pilot assumptions. Open the [case inspector](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/) from the case to carry your selection into the timing and evidence trials. The inspector can reproduce a synthetic packet checksum in the browser. The connected service separately handles ledger verification.
 
 To run that same demo locally, use Node 22:
 
