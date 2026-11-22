@@ -7,7 +7,7 @@ import { defaults, options, posting, queryFor, readSelection, receiptText } from
 
 test('a full inspector link preserves business and technical selections; invalid inputs use defaults', () => {
   const selected = {...defaults, outflows:110, period:'matched', action:'escalate', reviews:70,
-    minutes:16, sponsor:'linked', batch:'reserve', receipt:'scheduled', line:40, tick:0, orderId:'batch', stage:'settlement', trial:'late', checkpoint:'10:10'} as const;
+    minutes:16, sponsor:'linked', batch:'reserve', receipt:'scheduled', line:40, tick:0, orderId:'batch', stage:'review', trial:'late', checkpoint:'10:10'} as const;
   assert.deepEqual(readSelection(queryFor(selected)), selected);
   assert.deepEqual(readSelection('?outflows=300&period=13&reviews=13&minutes=-2&action=notify&stage=payments&sponsor=Y&checkpoint=x&trial=x&batch=hold&receipt=9&line=80&tick=8&orderId=missing'), defaults);
   assert.deepEqual(readSelection(''), defaults);

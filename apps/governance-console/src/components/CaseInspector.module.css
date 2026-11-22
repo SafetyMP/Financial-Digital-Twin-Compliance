@@ -20,7 +20,7 @@
 .label { color: #814b2c; font-weight: 700; text-transform: uppercase; font-size: .78rem; letter-spacing: .08em; }
 .body h1 { font: 500 clamp(2.05rem, 4.5vw, 3.25rem)/1.08 Georgia, serif; letter-spacing: -.035em; margin: .3rem 0 .6rem; }
 .intro { max-width: 75ch; color: #47586a; }
-.flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: .35rem; margin: 1.4rem 0 .5rem; }
+.flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: .35rem; margin: 1.4rem 0 .5rem; }
 .flow button, .verify {
   min-height: 2.7rem;
   padding: .5rem .7rem;
@@ -66,3 +66,5 @@
   .trials { gap: .6rem; }
   .trials label { align-items: flex-start; flex-direction: column; }
 }
+
+.panel button[aria-pressed] { transition-property: border-color; }

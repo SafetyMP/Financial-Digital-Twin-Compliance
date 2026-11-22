@@ -6,7 +6,7 @@ export const options = [
   { amount: 110, label: 'Higher outflows' },
 ] as const;
 export type Sponsor = 'retain' | 'checklist' | 'linked';
-export type Stage = 'snapshot' | 'calculation' | 'receipt' | 'settlement';
+export type Stage = 'snapshot' | 'calculation' | 'receipt' | 'review' | 'settlement';
 export type Trial = 'early' | 'late';
 export type Selection = {
   batch: 'release' | 'reserve' | null;
@@ -51,7 +51,7 @@ export function readSelection(query: string): Selection {
     reviews: numberIn(q.get('reviews'), 10, 250, 10, defaults.reviews),
     minutes: numberIn(q.get('minutes'), 0, 30, 1, defaults.minutes),
     sponsor: ['retain','checklist','linked'].includes(q.get('sponsor') ?? '') ? q.get('sponsor') as Sponsor : null,
-    stage: choice(q.get('stage'), ['snapshot','calculation','receipt','settlement'], defaults.stage),
+    stage: choice(q.get('stage'), ['snapshot','calculation','receipt','review','settlement'], defaults.stage),
     trial: choice(q.get('trial'), ['early','late'], defaults.trial),
     checkpoint: choice(q.get('checkpoint'), ['10:00','10:10'], defaults.checkpoint),
   };

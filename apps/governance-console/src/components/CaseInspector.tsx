@@ -18,6 +18,7 @@ const stages: { key: Stage; name: string }[] = [
   { key: 'snapshot', name: 'Source snapshot' },
   { key: 'calculation', name: 'Coverage check' },
   { key: 'receipt', name: 'Receipt check' },
+  { key: 'review', name: 'Review record' },
   { key: 'settlement', name: 'Settlement replay' },
 ];
 
@@ -56,7 +57,7 @@ export default function CaseInspector() {
     <article className={styles.body}>
       <p className={styles.label}>Northstar Bank · Technical guide</p>
       <h1>Liquidity evidence inspector</h1>
-      <p className={styles.intro}>Follow GOV-1042 from a reported ratio to a review another analyst can reproduce. The settlement replay traces the separate USD payments exercise. Both use synthetic data in your browser.</p>
+      <p className={styles.intro}>Follow the twin from Northstar’s reported position to the rule, the audit entry and the reviewer’s note. Inspect a step below, or trace an individual dollar payment in the separate settlement replay. All records here are synthetic.</p>
 
       <div className={styles.flow} role="group" aria-label="Choose an inspection">
         {stages.map(item => <button key={item.key} type="button" aria-pressed={stage === item.key} onClick={() => update({ stage: item.key })}>{item.name}</button>)}
@@ -77,7 +78,7 @@ export default function CaseInspector() {
             <li><time>{checkpoint}</time><div><strong>{available ? 'Source packet available' : 'Waiting for the source packet'}</strong>
               <p>{available ? `Posted at ${recorded}. The selected worksheet pairs the 14 November asset register with a €${outflows}m outflow schedule dated ${schedules[period].date}.` : `The alert identifies the case. The supporting packet arrives at ${recorded}, after this review.`}</p></div></li>
           </ol>
-          <p className={styles.implementation}>In the connected system, the audit service returns an entry identifier. The alert service attaches it to the alert as <code>evidenceRef</code> so the reviewer can retrieve the supporting record. <a href={source + 'services/alert-service/internal/audit/recorded.go'}>Evidence link handler</a></p>
+          <p className={styles.implementation}>The State Service groups the reported ratio, liquid assets, projected outflows and currency in one institution snapshot. It queues a versioned update for monitoring. The dates above come from Treasury’s case documents. <a href={source + 'services/state-service/internal/consumer/enrichment.go'}>Liquidity fields</a> · <a href={source + 'services/state-service/internal/store/store.go'}>Versioned update</a></p>
         </>}
 
         {stage === 'calculation' && <>
@@ -98,7 +99,20 @@ export default function CaseInspector() {
             ? checked.message + (comparable ? ' Both source dates match.' : ' The source dates still differ.')
             : available ? 'Ready to check.' : 'Verification unavailable at this checkpoint.'}</p>
           {available && <details className={styles.bytes}><summary>Receipt bytes and reference digest</summary><code>{payload}</code><code>{reference[payload]}</code><a href={modelSource + 'northstar-receipts.json'}>Published fixture fingerprints</a></details>}
-          <p className={styles.implementation}>In the connected system, an explicit chain check recomputes ledger hashes and checks their sequence. Recording an acknowledgement or escalation writes a separate review to PostgreSQL for the next reviewer. <a href={source + 'services/audit-service/internal/chain/chain.go'}>Chain check</a> · <a href={source + 'services/alert-service/internal/store/reviews.go'}>Review transaction</a></p>
+          <p className={styles.implementation}>In the connected system, <code>evidenceRef</code> links the alert to its ledger entry with the rule, summary and ID of the event that raised the alert. A separate chain check verifies ledger history. Treasury supplies the forecast documents used to challenge the figures. <a href={source + 'services/alert-service/internal/audit/publisher.go'}>Audit payload</a> · <a href={source + 'services/alert-service/internal/audit/recorded.go'}>Evidence link</a> · <a href={source + 'services/audit-service/internal/chain/chain.go'}>Chain check</a></p>
+        </>}
+
+        {stage === 'review' && <>
+          <h2 id="inspection-title">What can the next reviewer pick up?</h2>
+          <dl className={styles.record}>
+            <div><dt>Original alert</dt><dd>GOV-1042 · 92% reported against a 100% monitoring line</dd></div>
+            <div><dt>Working estimate</dt><dd>{percent} using €{outflows}m outflows as of {schedules[period].date} and €92m assets as of 14 November</dd></div>
+            <div><dt>Evidence at {checkpoint}</dt><dd>{!available
+              ? `The packet posts at ${recorded}. At this checkpoint risk can cite the alert only. The worksheet handoff below assumes the records have arrived.`
+              : comparable ? 'The packet is available and both source dates match.' : 'The packet is available. Its outflow schedule predates the asset register.'}</dd></div>
+            <div><dt>Worksheet handoff</dt><dd>{handoff ? <><strong>{handoff.owner}</strong> · {handoff.task}</> : <Link href={returnHref}>Choose a follow-up at the funding meeting</Link>}</dd></div>
+          </dl>
+          <p className={styles.implementation}>In the connected workspace a reviewer acknowledges or escalates an alert with a note. The Alert Service saves the reviewer, time, status and note in PostgreSQL and updates the alert in the same transaction. The next reviewer can reopen that history. The named follow-up above is part of the case exercise. <a href={source + 'services/alert-service/internal/store/reviews.go'}>Review transaction and history</a></p>
         </>}
 
         {stage === 'settlement' && <>

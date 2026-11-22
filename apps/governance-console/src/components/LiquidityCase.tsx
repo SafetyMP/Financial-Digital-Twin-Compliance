@@ -40,11 +40,12 @@ export default function LiquidityCase() {
         <p className={styles.provenance}>All financial data is synthetic. You can replay every choice.</p>
       </div>
       <figure className={styles.brief}>
-        <figcaption>Inside the morning briefing</figcaption>
+        <figcaption>How the financial digital twin helps</figcaption>
+        <p className={styles.definition}>The twin keeps the latest version of the liquidity figures Northstar reports. Each alert preserves the reading that triggered it.</p>
         <dl>
-          <div><dt>Payments desk <small>Today · US dollars</small></dt><dd>Which transfers must clear before the incoming money posts?</dd></div>
-          <div><dt>Treasury <small>Next 30 days · Euros</small></dt><dd>Which asset balance and outflow forecast produced the alert?</dd></div>
-          <div><dt>Independent risk <small>Funding meeting</small></dt><dd>What can we substantiate, and who owns the open question?</dd></div>
+          <div><dt>Capture the position <small>Treasury</small></dt><dd>Keep the reported assets, outflows and coverage ratio together as the bank’s figures change.</dd></div>
+          <div><dt>Flag the observation <small>Monitoring</small></dt><dd>When the reported ratio falls below the rule’s threshold, an alert identifies the bank, the reading and the rule.</dd></div>
+          <div><dt>Carry the review forward <small>Independent risk</small></dt><dd>Open the alert’s audit record, challenge the figures against Treasury’s sources and leave a note the next reviewer can revisit.</dd></div>
         </dl>
       </figure>
     </section>
@@ -52,7 +53,7 @@ export default function LiquidityCase() {
       <div className={styles.intro}>
         <p className={styles.eyebrow}>Payments desk · US dollars</p>
         <h2 id="desk-title">Who gets paid on time?</h2>
-        <p>The customer payment file is ready early. A clearinghouse will soon collect cash to cover Northstar’s open trades. Both need dollars from the same account. Step into the desk’s morning and decide when to release the customer file.</p>
+        <p>The customer payment file is ready early. A clearinghouse will soon collect cash to cover Northstar’s open trades. Both need dollars from the same account. Rehearse a release instruction in the browser model. It records when each payment settles so you can explain the outcome to the funding lead.</p>
       </div>
       <div className={styles.desk}>
         <IntradayReplay selection={selection} update={update} />
@@ -64,7 +65,7 @@ export default function LiquidityCase() {
         <p className={styles.eyebrow}>Independent risk · Euros</p>
         <h2 id="scenario-title">What is behind Northstar’s liquidity alert?</h2>
         <p>The funding meeting has a second question. The bank monitors the liquid assets it can draw on during 30 days of stress. Treasury reported €92m against €100m of expected net cash outflows. That triggered alert {issue.id}.</p>
-        <p>As the independent reviewer, first check how sensitive the coverage figure is to Treasury’s forecast. Then compare the dates on the supporting records before assigning the follow-up.</p>
+        <p>The twin retains the reported reading. You can change the outflow assumption on the worksheet and see how much of the concern depends on that estimate.</p>
       </div>
       <div className={styles.scenario}>
         <fieldset><legend>Which outflow estimate will you test?</legend><div className={styles.choices}>
@@ -80,16 +81,17 @@ export default function LiquidityCase() {
           <div className={styles.barLabel}><span>30-day outflows</span><b>€{amount}m</b></div>
           <div className={styles.track} aria-hidden="true"><span className={styles.valueBar} style={{width: (amount/110 * 100) + '%'}} /></div>
         </figure>
+        <p className={styles.original}><strong>Original alert · {issue.id}</strong><span>{issue.observed} reported · {issue.threshold}</span></p>
         <div className={styles.result} aria-live="polite" aria-atomic="true">
           <strong>{Number(result.projected.toFixed(1))}%</strong>
-          <p><b>Illustrative liquidity coverage</b><br/>{outflowGap === 0 ? 'Assets just cover the estimate at the 100% monitoring line.' : `The estimate exceeds assets by €${outflowGap}m, putting coverage below the 100% monitoring line.`}</p>
+          <p><b>Your worksheet coverage</b><br/>{outflowGap === 0 ? 'Assets just cover the estimate at the 100% monitoring line.' : `The estimate exceeds assets by €${outflowGap}m, putting coverage below the 100% monitoring line.`}</p>
         </div>
       </div>
     </section>
     <section className={styles.section} aria-labelledby="handoff-title">
       <div className={styles.intro}><p className={styles.eyebrow}>Funding meeting · {issue.id}</p>
         <h2 id="handoff-title">What can you put on the record?</h2>
-        <p>The digital twin keeps the original observation, its evidence reference and the reviewer’s response together. Treasury can see exactly which figure risk challenged. The funding lead can see what still needs work before acting.</p>
+        <p>The audit entry tells risk which observation raised the alert. Treasury supplies a dated asset register and a separate outflow schedule to substantiate it. Your note gives the funding lead a reason to act or a question to send back.</p>
         <p>Compare the two source dates. Choose what you would pass to the next person, then try the other schedule to see how the handoff changes.</p>
       </div>
       <div className={styles.handoff}>
@@ -110,7 +112,9 @@ export default function LiquidityCase() {
             <button type="button" aria-pressed={action === 'escalate'} onClick={() => update({action: 'escalate'})}>Escalate for assessment</button>
           </div>
         </fieldset>
-        {handoff && <div className={styles.queue} role="status"><small>Next owner · {handoff.owner}</small><h3>{handoff.task}</h3><p>{schedules[period].feedback} {handoff.next}</p></div>}
+        {handoff && <div className={styles.queue} role="status"><small>Next owner · {handoff.owner}</small><h3>{handoff.task}</h3><p>{schedules[period].feedback} {handoff.next}</p>
+          <Link className={styles.textLink} href={'/workspace/' + queryFor({...selection, stage: 'review'})}>Inspect this review record</Link>
+        </div>}
         <p className={styles.inspectLink}><Link className={styles.textLink} href={riskInspector}>Inspect the source packet for this handoff</Link></p>
       </div>
     </section>
@@ -144,7 +148,7 @@ export default function LiquidityCase() {
         <p>Monthly reviews × 12 × hours saved per review × hourly cost gives the annual capacity value.</p>
       </details>
       <div className={styles.method}>
-        <p>For the pilot, give Treasury and independent risk comparable historical cases. Time both people through corrections and handoff. Track whether reviewers catch every unsupported estimate under each approach.</p>
+        <p>For the pilot, give Treasury and independent risk comparable historical cases. Time both people through corrections and handoff. For each approach, check whether the next reviewer can find the original alert, catch an unsupported estimate and explain the follow-up without asking Treasury to reconstruct the meeting.</p>
         <label className={styles.sponsor}>CFO’s next step
           <select value={sponsor || ''} onChange={e => update({sponsor: (e.target.value as Sponsor) || null})}>
             <option value="">Select an alternative</option><option value="retain">Retain the current handoff</option>
