@@ -10,6 +10,7 @@ import { useNorthstarCase } from './useNorthstarCase';
 import styles from './CaseInspector.module.css';
 
 const source = REPOSITORY_URL + '/blob/main/';
+const trialSource = REPOSITORY_URL + '/blob/49f5ed37c974477cb1f81fffd87ee78d752b29ca/apps/governance-console/src/lib/';
 const stages: { key: Stage; name: string }[] = [
   {key: 'snapshot', name: 'Source snapshot'}, {key: 'calculation', name: 'Coverage check'}, {key: 'receipt', name: 'Receipt check'},
 ];
@@ -66,7 +67,7 @@ export default function CaseInspector() {
         {stage === 'receipt' && <>
           <h2>Can the packet be checked?</h2>
           <p>{available ? 'The selected fixture is available. Recompute the fingerprint of these exact bytes in your browser.' : 'The case locator identifies GOV-1042, but the packet has not posted. A locator alone cannot reproduce the receipt.'}</p>
-          {available && <details><summary>Receipt bytes and reference digest</summary><code>{payload}</code><code>{reference[payload]}</code></details>}
+          {available && <details><summary>Receipt bytes and reference digest</summary><code>{payload}</code><code>{reference[payload]}</code><a href={trialSource+'northstar-receipts.json'}>Published fixture fingerprints</a></details>}
           <button className={styles.verify} disabled={!available} type="button" onClick={verify}>Verify fixture checksum</button>
           <p role="status">{checked?.key === checkKey && available ? checked.message + (comparable ? ' Both records carry 14 November.' : ' The source dates still differ.') : available ? 'Checksum awaiting verification.' : 'Verification unavailable at this checkpoint.'}</p>
           <p>The browser checks fixture integrity. Connected ledger-chain verification is a separate service operation. <a href={source+'services/audit-service/internal/chain/chain.go'}>Chain implementation</a> · <a href={source+'services/audit-service/internal/api/handlers.go'}>Evidence retrieval and verification</a></p>
@@ -75,7 +76,7 @@ export default function CaseInspector() {
       <div className={styles.bottom}><Link href={returnHref}>Return to the funding meeting</Link><a href={'./' + queryFor(selection)}>Permalink to this inspection</a></div>
       <details><summary>Connected components and reproduction</summary>
         <p>The <a href={REPOSITORY_URL+'/tree/main/jobs/compliance-cep'}>Flink job</a> processes Kafka records. In the connected workspace, the alert service stores review actions in PostgreSQL and the audit service requests ledger evidence. The browser issues no service requests.</p>
-        <p>Run <code>npm test --prefix apps/governance-console</code> for the case models. <a href={source+'docs/governance-integration.md'}>Connected integration and verification guide</a></p>
+        <p>Run <code>npm test --prefix apps/governance-console</code> for the <a href={trialSource+'northstar-case.test.ts'}>case and receipt tests</a>. <a href={source+'docs/governance-integration.md'}>Connected integration and verification guide</a></p>
       </details>
     </article>
   </main>;
