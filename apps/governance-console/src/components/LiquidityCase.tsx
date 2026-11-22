@@ -55,7 +55,7 @@ export default function LiquidityCase() {
     <header className={styles.bar}><strong>Financial Digital Twin</strong><Link href="/workspace/">Technical reference ↗</Link></header>
     <div className={styles.inner}>
       <div className={styles.hero}><div><p className={styles.label}>Northstar Bank / Treasury operations</p>
-        <h1>Intraday liquidity desk</h1><p>Three payment cutoffs. One incoming transfer. Work the settlement clock with Payments Operations, then give independent risk a record of where cash ran short.</p></div>
+        <h1>Intraday liquidity desk</h1><p>Three payment cutoffs. Two expected receipts. Work the settlement clock with Payments Operations, then give independent risk a record of where cash ran short.</p></div>
         <div className={styles.clock}><span>Settlement clock</span><b>{frame.time}</b><small>Synthetic morning · USD</small></div>
       </div>
       <div className={styles.console}>
