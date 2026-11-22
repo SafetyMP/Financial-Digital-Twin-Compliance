@@ -37,6 +37,12 @@ assert.ok(!app.offers && !app.aggregateRating, 'No invented offers or ratings');
 const source = schema['@graph'].find((item) => item['@type'] === 'SoftwareSourceCode');
 assert.equal(source.codeRepository, 'https://github.com/SafetyMP/Financial-Digital-Twin-Compliance');
 
+assert.match(html, /Intraday liquidity desk/);
+const reference = await readFile(new URL('workspace/index.html', output), 'utf8');
+assert.match(reference, /How the twin works/);
+assert.match(reference, /TypeScript settlement model/);
+assert.doesNotMatch(reference, /class="workspace"/, 'Legacy review queue must stay off the public technical entry');
+
 const sitemap = await readFile(new URL('sitemap.xml', output), 'utf8');
 assert.deepEqual([...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]), [canonical, `${canonical}workspace/`]);
 assert.equal(await readFile(new URL('llms.txt', output), 'utf8'), await readFile(new URL('llms.txt', root), 'utf8'), 'Published index must exactly match the repository source');

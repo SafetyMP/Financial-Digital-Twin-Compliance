@@ -22,7 +22,7 @@ Connected development workspace with synthetic integration-test data and real al
 
 The repository combines a governance application with a runnable financial digital twin reference backend. It uses synthetic banking data for development and demonstrations. It is not a production banking system, a certified compliance engine, or a regulatory filing product.
 
-## The review workflow
+## The connected review workflow
 
 1. **Find an issue.** Search and filter the review queue by severity and review status.
 2. **Understand the trigger.** See the observation, threshold, monitoring rule, and available context together.
@@ -37,11 +37,11 @@ Ease of use is the redesign's priority. The interface and workflow are implement
 | | Public demo | Connected development workspace |
 | --- | --- | --- |
 | Start | [Open in a browser](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) | [Setup guide](docs/governance-integration.md), port `3006` |
-| Data | Six synthetic issue fixtures | Alerts from the existing backend services |
+| Data | One synthetic USD settlement account | Alerts from the existing backend services |
 | Reviews | Saved in this browser | Stored transactionally by the alert service in PostgreSQL |
-| Evidence | Illustrative evidence; no live ledger check | Linked audit entries and an explicit audit-chain verification action |
+| Evidence | Time-stamped posting tape and cash trace | Linked audit entries and an explicit audit-chain verification action |
 | Identity | Browser-local demonstration | Server-configured development reviewer; not end-user authentication |
-| Extra exploration | Synthetic twin view and scenario sensitivity lab | Selected-alert context; no live graph query or scenario lab |
+| Extra exploration | Receipt timing, customer batch release and a secured line | Selected-alert context; no live graph query or scenario lab |
 
 The GitHub Pages demo has no backend connection. The connected workspace never replaces a failed backend with demo fixtures. Review history is application data in PostgreSQL, separate from the immudb alert evidence ledger. [Integration boundaries](docs/governance-integration.md).
 
@@ -49,9 +49,9 @@ The GitHub Pages demo has no backend connection. The connected workspace never r
 
 ### Explore without installation
 
-In the [Northstar liquidity case](https://safetymp.github.io/Financial-Digital-Twin-Compliance/), a Treasury analyst owns the estimated 30-day net outflows, an independent liquidity-risk reviewer challenges the 92% result, and the fictional CFO decides whether to fund a shared review file. Change the outflow estimate, inspect the original alert, then test how much review time a shared evidence file would need to save to cover its first-year costs. The worksheet lets you vary review volume and time saved and links the Basel Committee research behind the case.
+On the [intraday liquidity desk](https://safetymp.github.io/Financial-Digital-Twin-Compliance/), a treasury operator replays a morning of customer and market payments. Move a correspondent receipt past the margin cutoff, change when to release the customer batch, or pledge collateral for a secured line. Follow actual settlements on the posting tape. Save a shift handoff and rerun the morning to compare which obligations missed their cutoffs and how much credit was used. The fictional account has no connection to payment rails.
 
-The [full synthetic review queue](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/) includes liquidity, exposure and payment issues. Use synthetic notes only. Demo reviews stay in your browser.
+The [technical reference](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/) maps the browser model, streaming pipeline, review storage and audit evidence to repository components.
 
 ### Run the demo locally
 

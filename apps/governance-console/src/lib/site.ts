@@ -2,7 +2,7 @@ export const SITE_NAME = 'Financial Digital Twin';
 export const SITE_TITLE = 'Financial Digital Twin | Financial Governance Workspace';
 export const DEMO_URL = 'https://safetymp.github.io/Financial-Digital-Twin-Compliance/';
 export const REPOSITORY_URL = 'https://github.com/SafetyMP/Financial-Digital-Twin-Compliance';
-export const SITE_DESCRIPTION = 'A synthetic governance workspace for financial institutions. Prioritize issues, inspect evidence, and record reviews in an interactive browser demo.';
+export const SITE_DESCRIPTION = 'A synthetic governance workspace for financial institutions. Explore payment timing, collateral and settlement cutoffs on an intraday treasury desk.';
 
 export const structuredData = {
   '@context': 'https://schema.org',
@@ -18,10 +18,10 @@ export const structuredData = {
       isAccessibleForFree: true,
       inLanguage: 'en',
       featureList: [
-        'Synthetic financial issue review queue',
-        'Illustrative evidence and issue context',
-        'Browser-local acknowledgements, escalations, and review history',
-        'Illustrative scenario sensitivity calculations',
+        'Synthetic intraday settlement register',
+        'Stepwise posting tape and cash trace',
+        'Browser-local shift handoff',
+        'Payment timing and secured credit scenarios',
       ],
       isBasedOn: { '@id': `${REPOSITORY_URL}#source` },
     },

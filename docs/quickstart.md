@@ -6,7 +6,7 @@ Choose the public demo to evaluate the workflow, the connected development works
 
 [Open Financial Digital Twin](https://safetymp.github.io/Financial-Digital-Twin-Compliance/). No account or backend is required.
 
-Select an issue, read its explanation, open Evidence, and acknowledge or escalate it with a note. Review history remains in that browser. Scenario lab uses synthetic calculations. All institutions, values, evidence, and reviews in this mode are illustrative.
+Choose a receipt time, customer batch release and credit limit. Advance the settlement clock, inspect the posting tape, then save a shift handoff to compare with another run. The account, amounts and cutoffs are fictional. The [technical reference](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/) links to the browser model and connected components.
 
 To run that same demo locally, use Node 22:
 
