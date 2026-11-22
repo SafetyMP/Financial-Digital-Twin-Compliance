@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { issues, scenarioImpact } from '../lib/demo';
+import { REPOSITORY_URL } from '../lib/site';
 import styles from './LiquidityCase.module.css';
 
 const issue = issues.find((item) => item.id === 'GOV-1042')!;
@@ -24,6 +25,7 @@ export default function LiquidityCase() {
   const annualReviews = reviews * 12;
   const capacity = annualReviews * minutes / 60 * hourlyCost;
   const breakEven = yearCost / (annualReviews * hourlyCost) * 60;
+  const chartMax = Math.max(yearCost, capacity);
 
   return <main className={styles.case}>
     <header className={styles.mast}>
@@ -55,6 +57,14 @@ export default function LiquidityCase() {
             <span><strong>€{option.amount}m</strong><small>{option.label}</small></span>
           </label>)}
         </div></fieldset>
+        <figure className={styles.trail}>
+          <figcaption>Trace the outflow assumption to the review</figcaption>
+          <ol>
+            <li><b>Treasury record</b><span>€100m net outflows</span><small>Original 30-day estimate</small></li>
+            <li><b>Review assumption</b><span>€{amount}m net outflows</span><small>{choice === 0 ? 'Original input retained' : 'Hypothetical revision'}</small></li>
+            <li><b>Independent check</b><span>€92m ÷ €{amount}m</span><small>Compare with the 100% line</small></li>
+          </ol>
+        </figure>
         <div className={styles.result} aria-live="polite" aria-atomic="true">
           <strong>{Number(result.projected.toFixed(1))}%</strong>
           <div><b>{result.breached ? 'Below the monitoring line' : 'At the monitoring line'}</b><p>{note}</p></div>
@@ -79,6 +89,13 @@ export default function LiquidityCase() {
           <label htmlFor="minutes">Minutes saved per review <b>{minutes}</b></label>
           <input id="minutes" type="range" min="0" max="30" value={minutes} onChange={(event) => setMinutes(Number(event.target.value))} />
         </div>
+        <figure className={styles.chart}>
+          <figcaption>First-year cost compared with time freed</figcaption>
+          <div className={styles.barLabel}><span>Pilot cost</span><b>{euros.format(yearCost)}</b></div>
+          <div className={styles.track} aria-hidden="true"><span style={{ width: (yearCost / chartMax * 100) + '%' }} /></div>
+          <div className={styles.barLabel}><span>Estimated value of time</span><b>{euros.format(capacity)}</b></div>
+          <div className={styles.track} aria-hidden="true"><span className={styles.valueBar} style={{ width: (capacity / chartMax * 100) + '%' }} /></div>
+        </figure>
         <div className={styles.economics} aria-live="polite" aria-atomic="true">
           <div><strong>{euros.format(capacity - yearCost)}</strong><span>Annual capacity value less first-year cost</span></div>
           <div><strong>{breakEven.toLocaleString('en-IE', { maximumFractionDigits: 1 })} min</strong><span>Time needed per review to break even</span></div>
@@ -91,6 +108,19 @@ export default function LiquidityCase() {
       <div className={styles.method}>
         <p>Pair a Treasury analyst with an independent liquidity-risk reviewer. Try matched historical cases with the current workflow, the checklist and the linked workspace. Rotate the order and time both people through handoff, including corrections.</p>
         <p>Treasury must show the source and period for both figures. Independent risk must be able to reproduce the ratio and flag an unsupported assumption. The CFO should fund rollout only if the workspace beats the cheaper viable option on measured capacity net of cost and reviewers can still find every unsupported assumption in the test cases.</p>
+      </div>
+    </section>
+    <section className={styles.technical} aria-labelledby="technical-title">
+      <div><p className={styles.eyebrow}>Technical workspace</p>
+        <h2 id="technical-title">Inspect the original alert.</h2>
+        <p>The browser starts from one synthetic Northstar record. Changing the worksheet leaves its evidence and review history intact.</p>
+        <Link className={styles.action} href="/workspace/">Open the review workspace</Link>
+      </div>
+      <div className={styles.method}>
+        <details><summary>Fixture, calculation and connected services</summary>
+          <p>The browser divides €92m of illustrative liquid assets by the revised net outflows, then compares the unrounded result with 100%. The alert links its source observation and monitoring rule. Browser reviews stay on this device.</p>
+          <p>The separate development workspace reads service-backed alerts and can request an audit-chain check. <a href={REPOSITORY_URL + '/blob/main/apps/governance-console/src/lib/demo.ts'}>View the fixture and calculation</a> · <a href={REPOSITORY_URL + '/blob/main/docs/governance-integration.md'}>Connected workflow guide</a></p>
+        </details>
         <details><summary>Research behind this case</summary>
           <p>Basel’s liquidity guidance assigns senior management oversight and calls for independent challenge of business-line assumptions. The OCC describes how liquidity responsibilities may sit with a CFO or asset/liability committee. Northstar’s CFO is the fictional project sponsor. <a href="https://www.bis.org/committees/bcbs/basel-consolidated-guidelines/module/lqy/10">Basel liquidity governance guidance</a> · <a href="https://www.occ.gov/publications-and-resources/publications/comptrollers-handbook/files/liquidity/pub-ch-liquidity.pdf">OCC liquidity handbook</a></p>
           <p>The Basel Committee describes liquidity coverage over a 30-day stress period and the use of the buffer during stress. The simplified fixture prompts a review. A regulatory conclusion requires institution-specific data and assessment. <a href="https://www.bis.org/publications/201301-standards-basel-iii-liquidity-coverage-ratio-and-liquidity-risk-monitoring-tools">Basel Committee liquidity coverage standard</a></p>

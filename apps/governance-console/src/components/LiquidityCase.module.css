@@ -1,5 +1,5 @@
 .case { padding: 0; background: #fff; color: #18273f; font-size: 1rem; line-height: 1.55; }
-.mast, .lead, .section { padding-inline: max(5vw, calc((100vw - 1120px) / 2)); }
+.mast, .lead, .section, .technical { padding-inline: max(5vw, calc((100vw - 1120px) / 2)); }
 .mast { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-block: 1.1rem; background: #101c32; color: white; }
 .mast a, .returnBar a, .method a { text-decoration: underline; text-underline-offset: .2em; }
 .mast a { font-size: .9rem; }
@@ -43,7 +43,35 @@
 .method details p { margin-top: .6rem; }
 .method a { color: #784027; }
 .returnBar { background: white; text-align: right; padding: .65rem 1.5rem; font-size: .9rem; }
+
+.trail, .chart { margin: 1.25rem 0; }
+.trail figcaption, .chart figcaption { margin-bottom: .7rem; font-weight: 700; }
+.trail ol { display: grid; grid-template-columns: repeat(3, 1fr); padding: 0; margin: 0; list-style: none; }
+.trail li { position: relative; padding: 1.1rem .65rem 0 0; }
+.trail li::before { content: ''; position: absolute; top: .3rem; left: 0; width: 100%; border-top: 2px solid #8c98a8; }
+.trail li:last-child::before { width: 0; }
+.trail li::after { content: ''; position: absolute; left: 0; top: 0; width: .7rem; height: .7rem; border-radius: 50%; background: #854b2b; }
+.trail li b, .trail li span, .trail li small { display: block; }
+.trail li b, .trail li small { font-size: .84rem; }
+.trail li span { font-variant-numeric: tabular-nums; }
+.trail li small { color: #46556b; }
+.chart { padding: 1rem; border: 1px solid #c8d1df; background: white; }
+.barLabel { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; font-size: .92rem; }
+.track { height: .65rem; margin: .25rem 0 .85rem; background: #d7dfe9; }
+.track:last-child { margin-bottom: 0; }
+.track span { height: 100%; display: block; background: #192e4f; }
+.track .valueBar { background: #93572f; }
+.technical { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; padding-block: 1.7rem; background: #f2f5fa; }
+.technical h2 { font-size: 1.45rem; margin: .4rem 0; }
+.technical .method details { padding-bottom: .4rem; margin: 0 0 .5rem; border-bottom: 1px solid #b6c2d2; }
 @media (max-width: 760px) {
+  .technical { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+  .trail ol { grid-template-columns: 1fr; }
+  .trail li { padding: 0 0 .8rem 1.3rem; }
+  .trail li::before { height: 100%; width: 0; left: .3rem; border-top: 0; border-left: 2px solid #8c98a8; }
+  .trail li:last-child::before { height: 0; }
+  .trail li::after { top: .32rem; }
+
   .lead, .section { grid-template-columns: minmax(0,1fr); gap: 1.5rem; }
   .choices label { align-items: flex-start; flex-direction: column; }
   .result { flex-direction: column; gap: .4rem; }
