@@ -17,7 +17,7 @@
 .recordFoot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .35rem; color: #e1e7f0; font-size: .85rem; }
 .section { grid-template-columns: .8fr 1.2fr; padding-block: 2.8rem; border-bottom: 1px solid #cdd5e1; }
 .section h2 { font-size: clamp(2rem, 3vw, 3rem); margin: .55rem 0 .9rem; }
-.case :is(a, input, summary):focus-visible { outline: 3px solid #a35225; outline-offset: 3px; }
+.case :is(a, button, input, select, summary):focus-visible { outline: 3px solid #a35225; outline-offset: 3px; }
 .mast a:focus-visible { outline-color: #f0c6a6; }
 .section p + p, .method details { margin-top: .9rem; }
 .scenario fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
@@ -76,3 +76,22 @@
   .choices label { align-items: flex-start; flex-direction: column; }
   .result { flex-direction: column; gap: .4rem; }
 }
+
+.textLink, .reopen { color: #784027; text-decoration: underline; text-underline-offset: .2em; }
+.handoff { min-width: 0; padding: 1.2rem; background: #f5f7fa; border: 1px solid #c8d1df; border-radius: .5rem; }
+.handoff label, .handoff legend { font-weight: 700; }
+.handoff select { font-size: 1rem; line-height: 1.4; display: block; width: 100%; padding: .55rem; margin: .4rem 0; color: #18273f; background: #fff; border: 1px solid #7d8a9e; border-radius: .3rem; }
+.handoff fieldset { border: 0; padding: 0; margin: 1rem 0; min-width: 0; }
+.evidenceState, .intro .provenance { font-size: .9rem; color: #46556b; }
+.actions { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .4rem; }
+.actions button { padding: .55rem .7rem; background: white; color: #192e4f; border: 1px solid #718198; border-radius: .3rem; }
+.actions button[aria-pressed="true"] { background: #192e4f; color: white; }
+.queue { background: #fff; border-left: .25rem solid #854b2b; padding: .8rem; }
+.queue small { font-size: .85rem; color: #69503f; }
+.queue h3 { font-size: 1.12rem; margin: .2rem 0; }
+.reopen { background: transparent; border: 0; padding: .4rem 0; margin-top: .5rem; }
+
+.sourceCard { margin: 0 0 .9rem; padding: .65rem .85rem; border-left: .2rem solid #506992; background: white; }
+.sourceCard dt { color: #46556b; font-size: .9rem; }
+.sourceCard dd { display: flex; flex-wrap: wrap; gap: .2rem 1rem; justify-content: space-between; margin: .2rem 0 0; font-weight: 650; }
+.sourceCard dd span { font-weight: 500; }

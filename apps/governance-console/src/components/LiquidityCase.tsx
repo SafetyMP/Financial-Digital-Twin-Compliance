@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { issues, scenarioImpact } from '../lib/demo';
+import { liquidityHandoff, schedules, type ReviewAction, type SourcePeriod } from '../lib/liquidity-handoff';
 import { REPOSITORY_URL } from '../lib/site';
 import styles from './LiquidityCase.module.css';
 
@@ -16,10 +17,13 @@ const options = [
 
 export default function LiquidityCase() {
   const [choice, setChoice] = useState(0);
+  const [period, setPeriod] = useState<SourcePeriod>('prior');
+  const [action, setAction] = useState<ReviewAction | null>(null);
   const [reviews, setReviews] = useState(100);
   const [minutes, setMinutes] = useState(12);
   const { amount, note } = options[choice];
   const result = scenarioImpact('Liquidity', amount - 100);
+  const handoff = action && liquidityHandoff(action, period, result.breached);
   const yearCost = 12000;
   const hourlyCost = 60;
   const annualReviews = reviews * 12;
@@ -53,7 +57,7 @@ export default function LiquidityCase() {
       <div className={styles.scenario}>
         <fieldset><legend>30-day net cash outflows</legend><div className={styles.choices}>
           {options.map((option, index) => <label key={option.amount} className={index === choice ? styles.chosen : ''}>
-            <input type="radio" name="outflows" checked={choice === index} onChange={() => setChoice(index)} />
+            <input type="radio" name="outflows" checked={choice === index} onChange={() => { setChoice(index); setAction(null); }} />
             <span><strong>€{option.amount}m</strong><small>{option.label}</small></span>
           </label>)}
         </div></fieldset>
@@ -69,8 +73,41 @@ export default function LiquidityCase() {
           <strong>{Number(result.projected.toFixed(1))}%</strong>
           <div><b>{result.breached ? 'Below the monitoring line' : 'At the monitoring line'}</b><p>{note}</p></div>
         </div>
-        <p>Open the original case to inspect its source observation, rule match and review history. Scenario changes stay in this worksheet.</p>
-        <Link className={styles.action} href="/workspace/">Inspect {issue.id} in the review queue</Link>
+        <p>Open the original case to inspect its source observation, rule match and review history. <Link className={styles.textLink} href="/workspace/">Inspect {issue.id} in the review queue</Link></p>
+      </div>
+    </section>
+    <section className={styles.section} aria-labelledby="handoff-title">
+      <div className={styles.intro}><p className={styles.eyebrow}>Morning funding meeting</p>
+        <h2 id="handoff-title">Where should this review go?</h2>
+        <p>Read the two records Treasury brought to the meeting. Can you support the coverage figure from this evidence? Choose the next action you would put in the handoff.</p>
+        <p className={styles.provenance}>The dates and assignments are simulated. Your choice updates this worksheet only. Workspace reviews are recorded separately in the review queue.</p>
+      </div>
+      <div className={styles.handoff}>
+        <dl className={styles.sourceCard}><dt>Treasury asset register</dt>
+          <dd>€92m liquid assets <span>As of 14 November</span></dd>
+        </dl>
+        <label htmlFor="schedule-date">Outflow schedule used for the €{amount}m estimate</label>
+        <select id="schedule-date" value={period} onChange={event => {
+          setPeriod(event.target.value === 'matched' ? 'matched' : 'prior'); setAction(null);
+        }}>
+          <option value="prior">As of {schedules.prior.date}</option>
+          <option value="matched">As of {schedules.matched.date}</option>
+        </select>
+        <p className={styles.evidenceState}>30-day projection · {Number(result.projected.toFixed(1))}% illustrative coverage</p>
+        <fieldset><legend>Choose the reviewer’s next action</legend>
+          <div className={styles.actions}>
+            <button type="button" aria-pressed={action === 'request'} onClick={() => setAction('request')}>Request source evidence</button>
+            <button type="button" aria-pressed={action === 'document'} onClick={() => setAction('document')}>Document review</button>
+            <button type="button" aria-pressed={action === 'escalate'} onClick={() => setAction('escalate')}>Escalate for assessment</button>
+          </div>
+        </fieldset>
+        <div className={styles.queue} role="status" aria-atomic="true">{handoff ? <>
+          <small>Next owner · {handoff.owner}</small><h3>{handoff.task}</h3><p>{schedules[period].feedback} {handoff.next}</p>
+        </> : <p>Awaiting your choice. The simulated queue has no assigned task.</p>}</div>
+        {handoff && <button type="button" className={styles.reopen} onClick={() => {
+          if (period === 'prior') setPeriod('matched');
+          setAction(null);
+        }}>{period === 'prior' ? 'Try a corrected schedule and reconsider' : 'Reopen this review'}</button>}
       </div>
     </section>
     <section className={styles.section} aria-labelledby="pilot-title">
@@ -107,7 +144,7 @@ export default function LiquidityCase() {
       <div className={styles.intro}><p className={styles.eyebrow}>Pilot evidence</p><h2 id="evidence-title">What would justify a rollout?</h2></div>
       <div className={styles.method}>
         <p>Pair a Treasury analyst with an independent liquidity-risk reviewer. Try matched historical cases with the current workflow, the checklist and the linked workspace. Rotate the order and time both people through handoff, including corrections.</p>
-        <p>Treasury must show the source and period for both figures. Independent risk must be able to reproduce the ratio and flag an unsupported assumption. The CFO should fund rollout only if the workspace beats the cheaper viable option on measured capacity net of cost and reviewers can still find every unsupported assumption in the test cases.</p>
+        <p>Treasury must show the source and observation date for the asset balance, plus the as-of date and 30-day horizon of the outflow schedule. Independent risk must be able to reproduce the ratio and flag an unsupported assumption. The CFO should fund rollout only if the workspace beats the cheaper viable option on measured capacity net of cost and reviewers can still find every unsupported assumption in the test cases.</p>
       </div>
     </section>
     <section className={styles.technical} aria-labelledby="technical-title">
