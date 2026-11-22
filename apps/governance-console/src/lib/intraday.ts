@@ -1,3 +1,5 @@
+import { minutesBetween } from './posting-clock.ts';
+
 export const times = ['09:00', '09:10', '09:20', '09:30', '09:45', '10:00', '10:05', '10:15'] as const;
 export const openingCash = 50;
 export type Plan = { delayed: boolean; holdBatch: boolean; line: 0 | 20 | 40 };
@@ -62,6 +64,5 @@ export function replay(plan: Plan): Frame[] {
 }
 
 export function minutesLate(index: number, due: number) {
-  const inMinutes = (t: string) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3));
-  return Math.max(0, inMinutes(times[index]) - inMinutes(times[due]));
+  return Math.max(0, minutesBetween(times[due], times[index]));
 }

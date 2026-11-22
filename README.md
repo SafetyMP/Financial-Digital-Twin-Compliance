@@ -37,11 +37,11 @@ Ease of use is the redesign's priority. The interface and workflow are implement
 | | Public demo | Connected development workspace |
 | --- | --- | --- |
 | Start | [Open in a browser](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) | [Setup guide](docs/governance-integration.md), port `3006` |
-| Data | One synthetic USD settlement account | Alerts from the existing backend services |
-| Reviews | Saved in this browser | Stored transactionally by the alert service in PostgreSQL |
-| Evidence | Time-stamped posting tape and cash trace | Linked audit entries and an explicit audit-chain verification action |
+| Data | Northstar 30-day liquidity case | Alerts from the existing backend services |
+| Reviews | Selected challenge and pilot assumptions carried in the case link | Stored transactionally by the alert service in PostgreSQL |
+| Evidence | Source schedules, illustrative posting trials and a browser checksum | Linked audit entries and an explicit audit-chain verification action |
 | Identity | Browser-local demonstration | Server-configured development reviewer; not end-user authentication |
-| Extra exploration | Receipt timing, customer batch release and a secured line | Selected-alert context; no live graph query or scenario lab |
+| Extra exploration | Outflow sensitivity, reviewer handoffs and first-year capacity | Selected-alert context; no live graph query or scenario lab |
 
 The GitHub Pages demo has no backend connection. The connected workspace never replaces a failed backend with demo fixtures. Review history is application data in PostgreSQL, separate from the immudb alert evidence ledger. [Integration boundaries](docs/governance-integration.md).
 
@@ -49,9 +49,9 @@ The GitHub Pages demo has no backend connection. The connected workspace never r
 
 ### Explore without installation
 
-On the [intraday liquidity desk](https://safetymp.github.io/Financial-Digital-Twin-Compliance/), a treasury operator replays a morning of customer and market payments. Move a correspondent receipt past the margin cutoff, change when to release the customer batch, or pledge collateral for a secured line. Follow actual settlements on the posting tape. Save a shift handoff and rerun the morning to compare which obligations missed their cutoffs and how much credit was used. The fictional account has no connection to payment rails.
+In the [Northstar liquidity case](https://safetymp.github.io/Financial-Digital-Twin-Compliance/), Treasury reports €92m of liquid assets against €100m in projected 30-day outflows. Challenge the amount or source date as independent risk, choose the next handoff, then compare the linked review file with the current process and a checklist for the CFO.
 
-The [technical reference](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/) maps the browser model, streaming pipeline, review storage and audit evidence to repository components.
+The [GOV-1042 technical inspector](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/) follows that same selection through the source snapshot, coverage calculation and fixture checksum. Compare packets posted either side of the meeting cutoff. An intraday arrival time determines whether a packet can be inspected; the 30-day horizon determines what the coverage ratio measures.
 
 ### Run the demo locally
 
