@@ -1,8 +1,10 @@
 # Financial Digital Twin · Governance workspace
 
-An open-source financial governance workspace for professionals at financial institutions. Bring monitoring issues, supporting evidence, and review decisions into one place: **understand what needs attention, follow the evidence, and record the next review action**.
+A transfer Northstar counted on has yet to arrive. Treasury must decide when to release customer payments while the clearinghouse waits for cash from the same account. At the funding meeting, independent risk must decide whether the team can rely on its 30-day liquidity figure when the asset and outflow schedules may come from different dates.
 
-**[Try the interactive demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/)** · **[Run the connected workspace](docs/governance-integration.md)** · [Documentation](docs/README.md) · [Roadmap](ROADMAP.md)
+The financial digital twin keeps the bank’s reported position and the reading that triggered an alert. The synthetic case lets Treasury replay a release instruction against each payment deadline. A risk reviewer can follow the alert back to its source assumptions and leave a handoff the next reviewer can explain.
+
+**[Take the payments desk before the funding meeting](https://safetymp.github.io/Financial-Digital-Twin-Compliance/)** · **[Trace the payment and liquidity evidence](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/)** · [Run the connected workspace](docs/governance-integration.md) · [Documentation](docs/README.md) · [Roadmap](ROADMAP.md)
 
 [![Governance integration](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/governance-integration.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/governance-integration.yml)
 [![Pages demo](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/governance-pages.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/governance-pages.yml)
@@ -10,19 +12,19 @@ An open-source financial governance workspace for professionals at financial ins
 [![CodeQL](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/actions/workflows/codeql.yml)
 [![License](https://img.shields.io/github/license/SafetyMP/Financial-Digital-Twin-Compliance)](LICENSE)
 
-![Connected Financial Digital Twin governance workspace displaying synthetic integration-test reviews](docs/assets/governance-workspace.png)
-
-Connected development workspace with synthetic integration-test data and real alert/audit services.
-
 ## Who this is for
 
-- **Governance, risk, and compliance professionals** exploring a clearer workflow for reviewing financial monitoring issues.
-- **Financial institution engineering teams** connecting review experiences to alert, policy, and audit services.
-- **Open-source contributors and coding agents** improving usability, evidence handling, and reliable integrations with reproducible checks.
+- **Treasury payments analyst.** Try releasing the dollar batch at 09:10 or holding until 10:00. Keep the expected receipt and credit line fixed to see which payments meet their cutoffs and who waits.
+- **Independent liquidity-risk reviewer.** Compare the dates behind Northstar’s €92m of liquid assets and €100m of projected outflows. Decide what to document, ask Treasury to substantiate or escalate before the funding lead acts.
+- **CFO evaluating a pilot.** Give Treasury and risk the same historical cases under the current handoff, an evidence checklist and a shared review file. Time both teams through corrections and check whether the next reviewer catches an unsupported estimate. The worksheet estimates staff capacity.
 
 The repository combines a governance application with a runnable financial digital twin reference backend. It uses synthetic banking data for development and demonstrations. It is not a production banking system, a certified compliance engine, or a regulatory filing product.
 
 ## The connected review workflow
+
+![Connected Financial Digital Twin governance workspace displaying synthetic integration-test reviews](docs/assets/governance-workspace.png)
+
+Connected development workspace with synthetic integration-test data and real alert/audit services.
 
 1. **Find an issue.** Search and filter the review queue by severity and review status.
 2. **Understand the trigger.** See the observation, threshold, monitoring rule, and available context together.
@@ -55,9 +57,7 @@ The GitHub Pages demo has no backend connection. The connected workspace never r
 
 ### Explore without installation
 
-In the [Northstar liquidity case](https://safetymp.github.io/Financial-Digital-Twin-Compliance/), the dollar desk must decide whether to release a customer batch before an expected transfer arrives. Try both instructions and compare settlement against each deadline. In a separate euro review, Treasury reports €92m of liquid assets against €100m in projected 30-day outflows. Challenge the amount or source date as independent risk, choose the next handoff, then compare the linked review file with the current process and a checklist for the CFO.
-
-The [GOV-1042 technical inspector](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/) carries the dollar instruction into the payment replay and the euro review into the source snapshot, coverage calculation and fixture checksum. Compare packets posted either side of the meeting cutoff. An intraday arrival time determines whether a packet can be inspected; the 30-day horizon determines what the coverage ratio measures.
+Open the [Northstar case](https://safetymp.github.io/Financial-Digital-Twin-Compliance/) and follow your selection into its technical guide. The inspector carries the dollar payment and settlement time alongside the separate euro alert, source dates and fixture checksum. [Open the evidence inspector](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/)
 
 ### Run the demo locally
 
