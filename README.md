@@ -45,6 +45,12 @@ Ease of use is the redesign's priority. The interface and workflow are implement
 
 The GitHub Pages demo has no backend connection. The connected workspace never replaces a failed backend with demo fixtures. Review history is application data in PostgreSQL, separate from the immudb alert evidence ledger. [Integration boundaries](docs/governance-integration.md).
 
+## Follow Northstar’s decisions into the code
+
+- **Treasury, USD payment timing.** The settlement model starts with the opening cash statement, posts each incoming transfer and tries the released orders against cash and available credit at eight timestamps. Inspect which order settles at each cutoff, then replay the same receipts with the other release instruction. [Payment replay](apps/governance-console/src/lib/intraday.ts) · [Cutoff tests](apps/governance-console/src/lib/intraday.test.ts)
+- **Independent risk, EUR 30-day coverage.** The browser lets the reviewer challenge the outflow schedule behind the alert. The connected Flink job reads the ratio already supplied by the twin and checks it against the monitoring threshold. The reviewer still needs Treasury’s dated inputs to substantiate the figure. [Source schedules and review handoff](apps/governance-console/src/lib/liquidity-handoff.ts) · [Flink threshold check](jobs/compliance-cep/src/main/java/com/digitaltwin/jobs/cep/patterns/LcrChecker.java)
+- **Engineering, evidence that survives the session.** The demo encodes selections in the inspector link and checks a fixture fingerprint. In the connected workspace the server calls the alert and audit services, and the alert service stores review notes in PostgreSQL. [Inspector link and receipt tests](apps/governance-console/src/lib/northstar-case.test.ts) · [Server gateway](apps/governance-live/src/lib/gateway.ts) · [Review store](services/alert-service/internal/store/reviews.go)
+
 ## Quick start
 
 ### Explore without installation
