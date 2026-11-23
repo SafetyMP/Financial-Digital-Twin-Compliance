@@ -1,27 +1,70 @@
-.panel { min-height:100vh; padding:0; background:#f4f6fa; color:#18273f; font:1rem/1.5 system-ui,sans-serif; }
-.bar { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1rem max(5vw,calc((100vw - 960px)/2)); background:#152744; color:white; }
-.panel a { text-decoration:underline; text-underline-offset:.18em; }
-.body { max-width:960px; margin:auto; padding:clamp(1rem,4vw,2.5rem) 1rem; }
-.label { color:#814b2c; font-weight:700; text-transform:uppercase; font-size:.78rem; letter-spacing:.06em; }
-.body h1 { font:500 clamp(2rem,4vw,3.2rem)/1.1 Georgia,serif; margin:.2rem 0 .6rem; }
-.body h2 { font:500 clamp(1.45rem,2.8vw,1.9rem)/1.12 Georgia,serif; margin-bottom:.55rem; }
-.flow { display:flex; gap:.4rem; margin:1.2rem 0 .8rem; }
-.flow button,.verify { border:1px solid #7c8ba0; background:white; color:#18273f; border-radius:.28rem; padding:.6rem .75rem; font-weight:600; text-align:left; }
-.flow button { flex:1; }
-.flow button small { font:600 .72rem ui-monospace,monospace; margin-right:.5rem; }
-.flow button[aria-pressed=true],.verify { background:#193454; color:white; border-color:#193454; }
-.trials { display:flex; gap:1rem; flex-wrap:wrap; }
-.trials label { display:grid; gap:.15rem; font-size:.84rem; font-weight:650; }
-.trials select { color:#18273f; background:white; border:1px solid #7c8ba0; border-radius:.25rem; padding:.35rem; font:inherit; }
-.detail { margin:1rem 0 .6rem; background:white; padding:clamp(.9rem,3vw,1.45rem); border:1px solid #bec8d4; border-top:3px solid #ad7958; }
-.detail dl { margin:.6rem 0; }
-.detail dl > div { display:grid; grid-template-columns: minmax(140px, .4fr) 1fr; gap:.6rem; padding:.36rem 0; border-top:1px solid #e0e4ec; }
-.detail dt { font-weight:650; }
-.detail dd { margin:0; }
-.detail p,.body details p { font-size:.93rem; margin:.5rem 0; }
-.body summary { cursor:pointer; padding:.45rem 0; font-weight:600; }
-.detail code { display:block; overflow-wrap:anywhere; padding:.25rem; background:#eef1f4; }
-.verify { margin:.4rem 0; }
-.verify:disabled { background:#e8edf2; color:#485563; border-color:#b8c2ce; }
-.bottom { display:flex; flex-wrap:wrap; gap:.5rem 1.2rem; padding:.4rem 0; }
-@media(max-width:600px){.flow{gap:.2rem;}.flow button{padding:.4rem .35rem;font-size:.84rem;}.flow button small{display:block;}.detail dl>div{grid-template-columns:1fr;gap:.08rem;}.bar{font-size:.83rem;}}
+.panel {
+  min-height: 100vh;
+  max-width: none;
+  padding: 0;
+  background: #f5f6f7;
+  color: #192a3e;
+  font: 1rem/1.5 system-ui, sans-serif;
+}
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem max(5vw, calc((100vw - 960px) / 2));
+  background: #152744;
+  color: white;
+}
+.panel a { text-decoration: underline; text-underline-offset: .2em; }
+.body { max-width: 900px; margin: auto; padding: clamp(1.4rem, 4vw, 2.5rem) 1rem; }
+.label { color: #814b2c; font-weight: 700; text-transform: uppercase; font-size: .78rem; letter-spacing: .08em; }
+.body h1 { font: 500 clamp(2.05rem, 4.5vw, 3.25rem)/1.08 Georgia, serif; letter-spacing: -.035em; margin: .3rem 0 .6rem; }
+.intro { max-width: 75ch; color: #47586a; }
+.flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: .35rem; margin: 1.4rem 0 .5rem; }
+.flow button, .verify {
+  min-height: 2.7rem;
+  padding: .5rem .7rem;
+  border: 1px solid #8493a3;
+  border-radius: .25rem;
+  background: white;
+  color: #192a3e;
+  font-weight: 650;
+}
+.flow button[aria-pressed=true], .verify { background: #1e3954; color: white; border-color: #1e3954; }
+.flow button:hover:not([aria-pressed=true]) { background: #e9edf0; }
+.detail { background: white; padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid #c5cdd2; border-top: 3px solid #ad7958; }
+.detail h2 { font: 500 clamp(1.45rem, 3vw, 1.9rem)/1.15 Georgia, serif; letter-spacing: -.025em; margin: .25rem 0 .7rem; }
+.detail p, .reference p { font-size: .95rem; }
+.trials { display: flex; gap: .7rem 1.3rem; flex-wrap: wrap; align-items: flex-end; padding-bottom: .9rem; margin-bottom: 1rem; border-bottom: 1px solid #d7dde0; }
+.trials label, .order { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; font-size: .85rem; font-weight: 650; }
+.order { margin: .85rem 0; }
+.detail select { color: #192a3e; font: inherit; border: 1px solid #8493a3; border-radius: .25rem; padding: .3rem .4rem; }
+.timeline { list-style: none; padding: 0; margin: .6rem 0; }
+.timeline li { display: grid; grid-template-columns: 3.2rem 1fr; gap: .85rem; }
+.timeline time { font: 650 .88rem/1.6 ui-monospace, monospace; }
+.timeline li > div { border-left: 2px solid #d9c6b6; padding: 0 0 .85rem 1rem; position: relative; }
+.timeline li:last-child > div { border-color: transparent; padding-bottom: 0; }
+.timeline li > div::before { content: ''; position: absolute; width: .58rem; height: .58rem; border-radius: 50%; background: #94613c; left: -.35rem; top: .4rem; }
+.record { margin: .7rem 0; }
+.record > div { display: grid; grid-template-columns: minmax(155px, .4fr) 1fr; gap: .6rem; padding: .42rem 0; border-top: 1px solid #dee3e6; }
+.record dt { font-weight: 650; }
+.record dd { margin: 0; }
+.implementation { margin-top: 1rem; padding: .75rem 1rem; background: #edf2f4; color: #28394b; }
+.verify { margin: .6rem 0 .3rem; }
+.verify:disabled { background: #e8edf2; color: #485563; border-color: #b8c2ce; }
+.feedback { font-weight: 600; margin-top: .4rem; }
+.body summary { cursor: pointer; padding: .4rem 0; font-weight: 600; }
+.bytes { margin-top: .5rem; }
+.bytes code { display: block; overflow-wrap: anywhere; padding: .3rem; background: #eef1f4; }
+.bottom { display: flex; flex-wrap: wrap; gap: .35rem 1.2rem; padding: .9rem 0 .5rem; }
+.reference { color: #465568; }
+@media (max-width: 600px) {
+  .flow { grid-template-columns: repeat(2, 1fr); }
+  .flow button { padding: .4rem; font-size: .88rem; }
+  .record > div { grid-template-columns: 1fr; gap: .08rem; }
+  .bar { font-size: .83rem; }
+  .trials { gap: .6rem; }
+  .trials label { align-items: flex-start; flex-direction: column; }
+}
+
+.panel button[aria-pressed] { transition-property: border-color; }

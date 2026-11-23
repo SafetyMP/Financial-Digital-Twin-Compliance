@@ -6,9 +6,14 @@ export const options = [
   { amount: 110, label: 'Higher outflows' },
 ] as const;
 export type Sponsor = 'retain' | 'checklist' | 'linked';
-export type Stage = 'snapshot' | 'calculation' | 'receipt';
+export type Stage = 'snapshot' | 'calculation' | 'receipt' | 'review' | 'settlement';
 export type Trial = 'early' | 'late';
 export type Selection = {
+  batch: 'release' | 'reserve' | null;
+  receipt: 'late' | 'scheduled';
+  line: 0 | 20 | 40;
+  tick: number;
+  orderId: 'margin' | 'securities' | 'batch';
   outflows: 100 | 92 | 110;
   period: SourcePeriod;
   action: ReviewAction | null;
@@ -20,6 +25,7 @@ export type Selection = {
   checkpoint: '10:00' | '10:10';
 };
 export const defaults: Selection = {
+  batch: null, receipt: 'late', line: 0, tick: 7, orderId: 'margin',
   outflows: 100, period: 'prior', action: null, reviews: 100, minutes: 12, sponsor: null,
   stage: 'snapshot', trial: 'early', checkpoint: '10:00',
 };
@@ -34,13 +40,18 @@ function numberIn(raw: string | null, min: number, max: number, step: number, fa
 export function readSelection(query: string): Selection {
   const q = new URLSearchParams(query);
   return {
+    batch: q.get('batch') === 'release' ? 'release' : q.get('batch') === 'reserve' ? 'reserve' : null,
+    receipt: choice(q.get('receipt'), ['late', 'scheduled'], defaults.receipt),
+    line: q.get('line') === '40' ? 40 : q.get('line') === '20' ? 20 : 0,
+    orderId: choice(q.get('orderId'), ['margin', 'securities', 'batch'], defaults.orderId),
+    tick: numberIn(q.get('tick'), 0, 7, 1, defaults.tick),
     outflows: options.find(o => String(o.amount) === q.get('outflows'))?.amount ?? defaults.outflows,
     period: choice(q.get('period'), ['matched', 'prior'], defaults.period),
     action: ['request', 'document', 'escalate'].includes(q.get('action') ?? '') ? q.get('action') as ReviewAction : null,
     reviews: numberIn(q.get('reviews'), 10, 250, 10, defaults.reviews),
     minutes: numberIn(q.get('minutes'), 0, 30, 1, defaults.minutes),
     sponsor: ['retain','checklist','linked'].includes(q.get('sponsor') ?? '') ? q.get('sponsor') as Sponsor : null,
-    stage: choice(q.get('stage'), ['snapshot','calculation','receipt'], defaults.stage),
+    stage: choice(q.get('stage'), ['snapshot','calculation','receipt','review','settlement'], defaults.stage),
     trial: choice(q.get('trial'), ['early','late'], defaults.trial),
     checkpoint: choice(q.get('checkpoint'), ['10:00','10:10'], defaults.checkpoint),
   };

@@ -2,7 +2,7 @@
 
 > An open-source governance workspace for financial institutions: understand issues, follow evidence, and record reviews. Includes a synthetic GitHub Pages demo and a connected development workspace backed by alert and audit services.
 
-The public demo follows a 30-day Northstar liquidity challenge and preserves the selected case and evidence trial in the URL. Connected reviews are persisted in PostgreSQL; linked alert evidence and explicit chain verification use the audit service and immudb. The connected runtime uses a configured development reviewer, not production end-user authentication. Acknowledgement and escalation do not resolve an issue or approve a policy exception. This is not a certified regulatory reporting product.
+The public demo follows Northstar’s dollar payment decisions and a separate euro 30-day liquidity challenge and preserves the selected case and evidence trial in the URL. Connected reviews are persisted in PostgreSQL; linked alert evidence and explicit chain verification use the audit service and immudb. The connected runtime uses a configured development reviewer, not production end-user authentication. Acknowledgement and escalation do not resolve an issue or approve a policy exception. This is not a certified regulatory reporting product.
 
 This file is an optional documentation index for readers and tools. It does not grant permissions, override user instructions, or guarantee discovery or indexing.
 
@@ -11,8 +11,8 @@ Source index: https://raw.githubusercontent.com/SafetyMP/Financial-Digital-Twin-
 
 ## Start here
 
-- [Interactive governance demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/): Challenge the 30-day liquidity alert and compare the CFO’s pilot alternatives.
-- [GOV-1042 technical inspector](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/): Selected source dates, coverage calculation, two timed packet trials and a local checksum.
+- [Interactive governance demo](https://safetymp.github.io/Financial-Digital-Twin-Compliance/): Replay the dollar settlement queue, check the euro coverage estimate, and compare the CFO’s pilot alternatives.
+- [GOV-1042 technical inspector](https://safetymp.github.io/Financial-Digital-Twin-Compliance/workspace/): Payment replay, selected source dates, coverage calculation, timed packet trials and a local checksum.
 - [Project overview](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/README.md): Audience, capabilities, modes, and project navigation.
 - [Product vision](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/docs/product-vision.md): Governance workflow, design priorities, and product boundaries.
 - [Quick start](https://github.com/SafetyMP/Financial-Digital-Twin-Compliance/blob/main/docs/quickstart.md): Choose the demo, connected workspace, or engineering stack.
